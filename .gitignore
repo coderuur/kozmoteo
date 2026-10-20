@@ -1,0 +1,46 @@
+# Python & Sanal Ortam
+.venv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyd
+
+# Veritabanı & Yüklemeler
+*.db
+*.sqlite
+*.sqlite3
+inanc_app.db
+backend/inanc_app.db
+uploads/
+backend/uploads/
+
+# Node.js & Next.js
+node_modules/
+arayuz/node_modules/
+.next/
+arayuz/.next/
+out/
+build/
+*.tsbuildinfo
+arayuz/*.tsbuildinfo
+next-env.d.ts
+
+# Ortam Değişkenleri & Anahtarlar
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+arayuz/.env
+arayuz/.env.local
+backend/.env
+
+# Loglar & Sistem Dosyaları
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.DS_Store
+Thumbs.db
