@@ -12,6 +12,9 @@ import { ArchetypeModal } from '../components/ArchetypeModal';
 import { BeliefDetailModal } from '../components/BeliefDetailModal';
 import { VoiceVerification } from '../components/VoiceVerification';
 import { ChatRoom } from '../components/ChatRoom';
+import { AuthModal } from '../components/AuthModal';
+import { ProfileModal } from '../components/ProfileModal';
+import { FooterPolicyModal } from '../components/FooterPolicyModal';
 
 export default function Home() {
   const [testType, setTestType] = useState<'short' | 'medium' | 'long' | null>(null);
@@ -21,6 +24,14 @@ export default function Home() {
   const [dilemmaVector, setDilemmaVector] = useState<number[]>([]);
   const [result, setResult] = useState<MatchResult | null>(null);
   const [pastVector, setPastVector] = useState<number[] | null>(null);
+
+  // Kullanıcı Oturumu & Kozmik Pasaport
+  const [currentUser, setCurrentUser] = useState<any>(null);
+  const [authToken, setAuthToken] = useState<string | null>(null);
+  const [showAuth, setShowAuth] = useState(false);
+  const [showProfile, setShowProfile] = useState(false);
+  const [showPolicy, setShowPolicy] = useState(false);
+  const [saveToast, setSaveToast] = useState<string | null>(null);
 
   // Stepper / Kart Modu
   const [viewMode, setViewMode] = useState<'stepper' | 'list'>('stepper');
@@ -62,6 +73,16 @@ export default function Home() {
 
   // Sayfa yüklendiğinde hafızadaki son durumu yükle, URL duo parametresini tara ve Render'ı uyandır
   useEffect(() => {
+    // 0. Oturum Kontrolü (Token & Kullanıcı)
+    try {
+      const token = localStorage.getItem('kozmo_auth_token');
+      const user = localStorage.getItem('kozmo_user');
+      if (token && user) {
+        setAuthToken(token);
+        setCurrentUser(JSON.parse(user));
+      }
+    } catch (e) {}
+
     // 1. Geçmiş Vektör
     const saved = localStorage.getItem('kozmo_past_vector');
     if (saved) {
@@ -320,6 +341,49 @@ export default function Home() {
     }
   };
 
+  // Kozmik Pasaporta Test Sonucu Kaydetme
+  const handleSaveResultToPassport = async (passedToken?: string, passedUser?: any) => {
+    if (!result) return;
+    const activeToken = passedToken || authToken;
+    const activeUser = passedUser || currentUser;
+
+    if (!activeToken || !activeUser) {
+      setShowAuth(true);
+      return;
+    }
+
+    try {
+      const res = await fetch(`${getApiUrl()}/api/user/save-result`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          token: activeToken,
+          test_type: testType || 'short',
+          archetype: result.archetype,
+          similarity_percentage: result.similarity_percentage,
+          belief_name: result.belief_name,
+          vector_5d: compressVectorTo5D(vector)
+        })
+      });
+      if (res.ok) {
+        setSaveToast('✓ Sonuç Kozmik Pasaportuna Başarıyla Kaydedildi!');
+        playCosmicChime(soundEnabled);
+        setTimeout(() => setSaveToast(null), 3500);
+      }
+    } catch (e) {
+      alert("Sonuç kaydedilirken ağ hatası oluştu.");
+    }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('kozmo_auth_token');
+    localStorage.removeItem('kozmo_user');
+    setAuthToken(null);
+    setCurrentUser(null);
+    setShowProfile(false);
+    playTone(340, 'sine', 0.3, soundEnabled);
+  };
+
   const handleDuoSync = () => {
     try {
       if (partnerCode.length !== 10 || !/^\d+$/.test(partnerCode)) {
@@ -365,11 +429,50 @@ export default function Home() {
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
       `}} />
 
-      {/* Üst Çubuk - Mistik Ses Kontrolü */}
+      {/* Üst Çubuk - Kozmik Pasaport & Mistik Ses Kontrolü */}
       <div style={{ maxWidth: '720px', margin: '0 auto 20px auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative', zIndex: 10 }}>
-        <span style={{ fontSize: '13px', color: '#9ca3af', letterSpacing: '2px', textTransform: 'uppercase' }}>
-          ✦ Kozmik & Teolojik Ağ ✦
-        </span>
+        {/* Sol: Kozmik Pasaport Giriş / Profil Butonu */}
+        {currentUser ? (
+          <button
+            onClick={() => setShowProfile(true)}
+            style={{
+              background: 'rgba(212, 175, 55, 0.12)',
+              border: '1px solid #D4AF37',
+              color: '#FFE699',
+              padding: '6px 14px',
+              borderRadius: '20px',
+              fontSize: '12px',
+              fontWeight: 'bold',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              boxShadow: '0 0 15px rgba(212, 175, 55, 0.2)'
+            }}
+          >
+            🪪 @{currentUser.username} {currentUser.archetype ? `• ${currentUser.archetype}` : ''}
+          </button>
+        ) : (
+          <button
+            onClick={() => setShowAuth(true)}
+            style={{
+              background: 'rgba(21, 18, 32, 0.8)',
+              border: '1px solid #3d3558',
+              color: '#d1d5db',
+              padding: '6px 14px',
+              borderRadius: '20px',
+              fontSize: '12px',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px'
+            }}
+          >
+            🔑 Kozmik Pasaport / Giriş
+          </button>
+        )}
+
+        {/* Sağ: Mistik Ses Kontrolü */}
         <button
           onClick={() => setSoundEnabled(!soundEnabled)}
           style={{ background: 'rgba(21, 18, 32, 0.7)', border: '1px solid #332d4a', color: soundEnabled ? '#FFE699' : '#6b7280', padding: '6px 14px', borderRadius: '20px', fontSize: '12px', cursor: 'pointer', backdropFilter: 'blur(4px)' }}
@@ -377,6 +480,13 @@ export default function Home() {
           {soundEnabled ? '🔊 432Hz Mistik Ses: Açık' : '🔇 Mistik Ses: Sessiz'}
         </button>
       </div>
+
+      {/* KAYDEDILDI TOAST BILDIRIMI */}
+      {saveToast && (
+        <div style={{ position: 'fixed', top: '25px', left: '50%', transform: 'translateX(-50%)', backgroundColor: '#10b981', color: '#ffffff', padding: '12px 24px', borderRadius: '30px', fontWeight: 'bold', fontSize: '13px', zIndex: 1001, boxShadow: '0 10px 30px rgba(0,0,0,0.5)' }}>
+          {saveToast}
+        </div>
+      )}
 
       {/* ARKADAŞ DAVETİ KARŞILAMA BANNERI (?duo=...) */}
       {duoInvite && !result && (
@@ -462,13 +572,16 @@ export default function Home() {
             <h2 style={{ margin: '0 0 10px 0', color: '#FFE699', fontSize: '3.4rem', textShadow: '0 0 25px rgba(212, 175, 55, 0.4)' }}>%{result.similarity_percentage}</h2>
             <p style={{ color: '#d1d5db', fontSize: '16px', fontStyle: 'italic', marginBottom: '25px', maxWidth: '580px', margin: '0 auto 25px auto' }}>"{result.description}"</p>
 
-            {/* Butonlar: Keşfet + Hikaye + Duo Link */}
+            {/* Butonlar: Keşfet + Hikaye + Pasaporta Kaydet + Duo Link */}
             <div style={{ display: 'flex', justifyContent: 'center', gap: '12px', marginBottom: '30px', flexWrap: 'wrap' }}>
               <button onClick={() => setShowModal(true)} style={{ padding: '12px 20px', backgroundColor: 'transparent', border: '1px solid #D4AF37', color: '#D4AF37', cursor: 'pointer', borderRadius: '24px', fontSize: '13px', fontWeight: 'bold' }}>
                 ✦ İnancı İncele
               </button>
               <button onClick={() => setShowArchetype(true)} style={{ padding: '12px 24px', background: 'linear-gradient(135deg, #FFE699 0%, #D4AF37 100%)', border: 'none', color: '#07060c', cursor: 'pointer', borderRadius: '24px', fontSize: '13px', fontWeight: 'bold', boxShadow: '0 0 20px rgba(212, 175, 55, 0.4)' }}>
                 ✨ Hikayede Paylaş
+              </button>
+              <button onClick={() => handleSaveResultToPassport()} style={{ padding: '12px 22px', background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)', border: 'none', color: '#ffffff', cursor: 'pointer', borderRadius: '24px', fontSize: '13px', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '6px', boxShadow: '0 0 18px rgba(16, 185, 129, 0.35)' }}>
+                💾 Pasaportuma Kaydet
               </button>
               <button onClick={handleCopyDuoLink} style={{ padding: '12px 20px', backgroundColor: '#1d1830', border: '1px solid #9d72ff', color: '#d8b4fe', cursor: 'pointer', borderRadius: '24px', fontSize: '13px', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '6px' }}>
                 🔗 Arkadaşınla Uyumunu Ölç
@@ -662,6 +775,36 @@ export default function Home() {
             result={result}
             onClose={() => setShowModal(false)}
           />
+        )}
+
+        {/* KOZMİK PASAPORT & GİRİŞ MODALI */}
+        {showAuth && (
+          <AuthModal
+            soundEnabled={soundEnabled}
+            onClose={() => setShowAuth(false)}
+            onSuccess={(user, token) => {
+              setCurrentUser(user);
+              setAuthToken(token);
+              if (result) {
+                handleSaveResultToPassport(token, user);
+              }
+            }}
+          />
+        )}
+
+        {/* KOZMİK PASAPORT PROFİL GÖRÜNTÜLEYİCİ */}
+        {showProfile && authToken && (
+          <ProfileModal
+            token={authToken}
+            soundEnabled={soundEnabled}
+            onClose={() => setShowProfile(false)}
+            onLogout={handleLogout}
+          />
+        )}
+
+        {/* GİZLİLİK & GÜVENLİK İLKELERİ MODALI */}
+        {showPolicy && (
+          <FooterPolicyModal onClose={() => setShowPolicy(false)} />
         )}
 
         {/* TEST SEÇİM EKRANI */}
@@ -898,6 +1041,19 @@ export default function Home() {
             )}
           </div>
         ) : null}
+
+        {/* ALT BİLGİ (FOOTER) */}
+        <footer style={{ marginTop: '70px', padding: '30px 10px', textAlign: 'center', borderTop: '1px solid #1a162b' }}>
+          <p style={{ fontSize: '12px', color: '#64748b', margin: '0 0 8px 0', letterSpacing: '1px' }}>
+            ✦ KOZMO-TEO • Bilinçaltı Teolojik & Ontolojik Harita Platformu ✦
+          </p>
+          <button
+            onClick={() => setShowPolicy(true)}
+            style={{ background: 'transparent', border: 'none', color: '#9ca3af', fontSize: '11px', textDecoration: 'underline', cursor: 'pointer' }}
+          >
+            Felsefi Gizlilik & Güvenlik İlkeleri (KVKK)
+          </button>
+        </footer>
       </div>
     </div>
   );

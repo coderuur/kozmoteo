@@ -365,6 +365,48 @@ def calculate_true_similarity(v1: list[float], v2: list[float]) -> float:
     mae = sum(diffs) / len(diffs)
     return float(1.0 - mae)
 
+import hashlib
+import secrets
+
+# KIMLIK DOGRULAMA & GUVERLIK YARDIMCILARI
+def hash_password(password: str, salt: str = None) -> str:
+    if not salt:
+        salt = secrets.token_hex(16)
+    hashed = hashlib.pbkdf2_hmac('sha256', password.encode('utf-8'), salt.encode('utf-8'), 100000).hex()
+    return f"{salt}${hashed}"
+
+def verify_password(password: str, stored_hash: str) -> bool:
+    try:
+        salt, hashed = stored_hash.split('$')
+        computed = hashlib.pbkdf2_hmac('sha256', password.encode('utf-8'), salt.encode('utf-8'), 100000).hex()
+        return secrets.compare_digest(hashed, computed)
+    except Exception:
+        return False
+
+def generate_token() -> str:
+    return secrets.token_urlsafe(32)
+
+class RegisterAnonymousInput(BaseModel):
+    username: str
+    password: str
+
+class LoginAnonymousInput(BaseModel):
+    username: str
+    password: str
+
+class GoogleAuthInput(BaseModel):
+    email: str
+    name: str
+    google_id: str
+
+class SaveResultInput(BaseModel):
+    token: str
+    test_type: str = "short"
+    archetype: str
+    similarity_percentage: int
+    belief_name: str
+    vector_5d: list[float]
+
 @app.get("/")
 def root():
     return {"status": "ok", "message": "Kozmo-Teo API Calisiyor", "docs": "/docs"}
@@ -372,6 +414,218 @@ def root():
 @app.get("/health")
 def health_check():
     return {"status": "ok", "app": "Kozmo-Teo API", "timestamp": time.time()}
+
+# --- KIMLIK DOGRULAMA & KOZMIK PASAPORT UÇ NOKTALARI ---
+
+@app.post("/api/auth/register-anonymous")
+def register_anonymous(data: RegisterAnonymousInput, db: Session = Depends(get_db)):
+    clean_username = html.escape(data.username.strip().lower())
+    if len(clean_username) < 3 or len(clean_username) > 30:
+        raise HTTPException(status_code=400, detail="Kullanıcı adı 3 ile 30 karakter arasında olmalıdır.")
+    if len(data.password) < 4:
+        raise HTTPException(status_code=400, detail="Şifre en az 4 karakter olmalıdır.")
+
+    existing = db.query(models.User).filter(models.User.username == clean_username).first()
+    if existing:
+        raise HTTPException(status_code=400, detail="Bu kozmik mahlas zaten alınmış. Lütfen başka bir ad seçin.")
+
+    token = generate_token()
+    user = models.User(
+        username=clean_username,
+        hashed_password=hash_password(data.password),
+        auth_provider="anonymous",
+        token=token
+    )
+    db.add(user)
+    db.commit()
+    db.refresh(user)
+
+    return {
+        "status": "ok",
+        "token": user.token,
+        "user": {
+            "id": user.id,
+            "username": user.username,
+            "archetype": user.archetype,
+            "auth_provider": "anonymous",
+            "created_at": user.created_at.isoformat()
+        }
+    }
+
+@app.post("/api/auth/login-anonymous")
+def login_anonymous(data: LoginAnonymousInput, db: Session = Depends(get_db)):
+    clean_username = data.username.strip().lower()
+    user = db.query(models.User).filter(models.User.username == clean_username).first()
+    if not user or not user.hashed_password:
+        raise HTTPException(status_code=400, detail="Kullanıcı adı veya şifre hatalı.")
+
+    if not verify_password(data.password, user.hashed_password):
+        raise HTTPException(status_code=400, detail="Kullanıcı adı veya şifre hatalı.")
+
+    if not user.token:
+        user.token = generate_token()
+        db.commit()
+
+    return {
+        "status": "ok",
+        "token": user.token,
+        "user": {
+            "id": user.id,
+            "username": user.username,
+            "archetype": user.archetype,
+            "auth_provider": user.auth_provider or "anonymous",
+            "created_at": user.created_at.isoformat()
+        }
+    }
+
+@app.post("/api/auth/google")
+def google_auth(data: GoogleAuthInput, db: Session = Depends(get_db)):
+    clean_email = data.email.strip().lower()
+    clean_google_id = data.google_id.strip()
+
+    # Kullanıcıyı e-posta veya google_id ile bul
+    user = db.query(models.User).filter(
+        (models.User.google_id == clean_google_id) | (models.User.email == clean_email)
+    ).first()
+
+    if not user:
+        # Yeni Google kullanıcısı oluştur
+        base_username = data.name.strip().lower().replace(" ", "_") if data.name else clean_email.split("@")[0]
+        base_username = "".join(c for c in base_username if c.isalnum() or c == "_")[:20]
+        unique_username = f"{base_username}_{secrets.token_hex(2)}"
+
+        # Uniqueness garantisi
+        while db.query(models.User).filter(models.User.username == unique_username).first():
+            unique_username = f"{base_username}_{secrets.token_hex(2)}"
+
+        token = generate_token()
+        user = models.User(
+            username=unique_username,
+            email=clean_email,
+            google_id=clean_google_id,
+            auth_provider="google",
+            token=token
+        )
+        db.add(user)
+        db.commit()
+        db.refresh(user)
+    else:
+        if not user.token:
+            user.token = generate_token()
+        if not user.google_id:
+            user.google_id = clean_google_id
+        db.commit()
+
+    return {
+        "status": "ok",
+        "token": user.token,
+        "user": {
+            "id": user.id,
+            "username": user.username,
+            "email": user.email,
+            "archetype": user.archetype,
+            "auth_provider": "google",
+            "created_at": user.created_at.isoformat()
+        }
+    }
+
+@app.post("/api/user/save-result")
+def save_user_result(data: SaveResultInput, db: Session = Depends(get_db)):
+    user = db.query(models.User).filter(models.User.token == data.token).first()
+    if not user:
+        raise HTTPException(status_code=401, detail="Geçersiz kullanıcı oturumu.")
+
+    # 1. Kullanıcının güncel arketipini ve son vektörünü güncelle
+    user.archetype = data.archetype
+    user.belief_vector = json.dumps(data.vector_5d)
+
+    # 2. Test geçmişine yeni kayıt ekle
+    history_entry = models.UserTestHistory(
+        user_id=user.id,
+        test_type=data.test_type,
+        archetype=data.archetype,
+        similarity_percentage=data.similarity_percentage,
+        belief_name=data.belief_name,
+        vector_5d=json.dumps(data.vector_5d)
+    )
+    db.add(history_entry)
+    db.commit()
+
+    return {"status": "ok", "message": "Test sonucu Kozmik Pasaportuna başarıyla kaydedildi."}
+
+@app.get("/api/user/profile")
+def get_user_profile(token: str, db: Session = Depends(get_db)):
+    user = db.query(models.User).filter(models.User.token == token).first()
+    if not user:
+        raise HTTPException(status_code=401, detail="Kullanıcı bulunamadı.")
+
+    history = db.query(models.UserTestHistory).filter(
+        models.UserTestHistory.user_id == user.id
+    ).order_by(models.UserTestHistory.created_at.desc()).all()
+
+    past_tests = []
+    for h in history:
+        try:
+            vec = json.loads(h.vector_5d)
+        except Exception:
+            vec = [0.5, 0.5, 0.5, 0.5, 0.5]
+
+        past_tests.append({
+            "id": h.id,
+            "test_type": h.test_type,
+            "archetype": h.archetype,
+            "similarity_percentage": h.similarity_percentage,
+            "belief_name": h.belief_name,
+            "vector_5d": vec,
+            "created_at": h.created_at.strftime("%d.%m.%Y %H:%M")
+        })
+
+    return {
+        "status": "ok",
+        "user": {
+            "id": user.id,
+            "username": user.username,
+            "email": user.email,
+            "archetype": user.archetype,
+            "auth_provider": user.auth_provider,
+            "created_at": user.created_at.strftime("%d.%m.%Y")
+        },
+        "history": past_tests,
+        "total_tests": len(past_tests)
+    }
+
+@app.get("/api/user/public/{username}")
+def get_public_profile(username: str, db: Session = Depends(get_db)):
+    clean_username = username.strip().lower()
+    user = db.query(models.User).filter(models.User.username == clean_username).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="Kozmik yolcu bulunamadı.")
+
+    latest_test = db.query(models.UserTestHistory).filter(
+        models.UserTestHistory.user_id == user.id
+    ).order_by(models.UserTestHistory.created_at.desc()).first()
+
+    vec = [0.5, 0.5, 0.5, 0.5, 0.5]
+    if latest_test:
+        try:
+            vec = json.loads(latest_test.vector_5d)
+        except Exception:
+            pass
+    elif user.belief_vector:
+        try:
+            vec = json.loads(user.belief_vector)
+        except Exception:
+            pass
+
+    return {
+        "status": "ok",
+        "username": user.username,
+        "archetype": user.archetype or (latest_test.archetype if latest_test else "Arayış Yolcusu"),
+        "similarity_percentage": latest_test.similarity_percentage if latest_test else 100,
+        "belief_name": latest_test.belief_name if latest_test else "Kozmik Bilinçaltı",
+        "vector_5d": vec,
+        "member_since": user.created_at.strftime("%d.%m.%Y")
+    }
 
 @app.post("/api/match/religion", response_model=MatchResult)
 def match_with_religion(data: VectorInput):
