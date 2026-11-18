@@ -584,7 +584,7 @@ export default function Home() {
         </div>
       )}
 
-      <div style={{ maxWidth: '720px', margin: '0 auto', position: 'relative', zIndex: 5 }}>
+      <div style={{ maxWidth: '720px', margin: '0 auto', position: 'relative' }}>
         <h1 style={{ textAlign: 'center', color: '#FFE699', fontSize: '2.6rem', marginBottom: '8px', letterSpacing: '3px', textShadow: '0 0 25px rgba(212, 175, 55, 0.3)' }}>
           KOZMO-TEO KEŞFİ
         </h1>
@@ -831,68 +831,6 @@ export default function Home() {
           </div>
         )}
 
-        {/* MODALLAR */}
-        {showArchetype && result && (
-          <ArchetypeModal
-            result={result}
-            soundEnabled={soundEnabled}
-            onClose={() => setShowArchetype(false)}
-          />
-        )}
-
-        {showModal && result && (
-          <BeliefDetailModal
-            result={result}
-            onClose={() => setShowModal(false)}
-          />
-        )}
-
-        {/* KOZMİK PASAPORT & GİRİŞ MODALI */}
-        {showAuth && (
-          <AuthModal
-            soundEnabled={soundEnabled}
-            onClose={() => setShowAuth(false)}
-            onSuccess={(user, token) => {
-              setCurrentUser(user);
-              setAuthToken(token);
-              if (result) {
-                handleSaveResultToPassport(token, user);
-              }
-            }}
-          />
-        )}
-
-        {/* KOZMİK PASAPORT PROFİL GÖRÜNTÜLEYİCİ */}
-        {showProfile && authToken && (
-          <ProfileModal
-            token={authToken}
-            soundEnabled={soundEnabled}
-            onClose={() => setShowProfile(false)}
-            onLogout={handleLogout}
-          />
-        )}
-
-        {/* GİZLİLİK & GÜVENLİK İLKELERİ MODALI */}
-        {showPolicy && (
-          <FooterPolicyModal onClose={() => setShowPolicy(false)} />
-        )}
-
-        {/* GÜNÜN KOZMİK KEHANETİ & ORTAK İKİLEM MODALI */}
-        {showOracle && (
-          <DailyOracle
-            soundEnabled={soundEnabled}
-            onClose={() => setShowOracle(false)}
-          />
-        )}
-
-        {/* CANLI ZİHİNLER GÖKYÜZÜ MODALI */}
-        {showConstellation && (
-          <ConstellationModal
-            soundEnabled={soundEnabled}
-            userArchetype={result?.archetype}
-            onClose={() => setShowConstellation(false)}
-          />
-        )}
 
         {/* TEST SEÇİM EKRANI */}
         {!testType && !result ? (
@@ -1142,6 +1080,64 @@ export default function Home() {
           </button>
         </footer>
       </div>
+
+      {/* EVRENSEL MODALLAR (Stacking context bağımsız - Z-Index 99999) */}
+      {showArchetype && result && (
+        <ArchetypeModal
+          result={result}
+          soundEnabled={soundEnabled}
+          onClose={() => setShowArchetype(false)}
+        />
+      )}
+
+      {showModal && result && (
+        <BeliefDetailModal
+          result={result}
+          onClose={() => setShowModal(false)}
+        />
+      )}
+
+      {showAuth && (
+        <AuthModal
+          soundEnabled={soundEnabled}
+          onClose={() => setShowAuth(false)}
+          onSuccess={(user, token) => {
+            setCurrentUser(user);
+            setAuthToken(token);
+            if (result) {
+              handleSaveResultToPassport(token, user);
+            }
+          }}
+        />
+      )}
+
+      {showProfile && authToken && (
+        <ProfileModal
+          token={authToken}
+          soundEnabled={soundEnabled}
+          onClose={() => setShowProfile(false)}
+          onLogout={handleLogout}
+        />
+      )}
+
+      {showPolicy && (
+        <FooterPolicyModal onClose={() => setShowPolicy(false)} />
+      )}
+
+      {showOracle && (
+        <DailyOracle
+          soundEnabled={soundEnabled}
+          onClose={() => setShowOracle(false)}
+        />
+      )}
+
+      {showConstellation && (
+        <ConstellationModal
+          soundEnabled={soundEnabled}
+          userArchetype={result?.archetype}
+          onClose={() => setShowConstellation(false)}
+        />
+      )}
     </div>
   );
 }

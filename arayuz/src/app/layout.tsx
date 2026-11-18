@@ -1,13 +1,21 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import './globals.css'
 
+export const viewport: Viewport = {
+  themeColor: '#07060c',
+}
+
 export const metadata: Metadata = {
-  title: 'Kozmo-Teo',
-  description: 'Bilinçaltı İnanç Eşleştirme Motoru',
+  title: 'Kozmo-Teo | Bilinçaltı Teolojik & Ontolojik Harita',
+  description: 'Bilinçaltı Teolojik ve Ontolojik İnanç Eşleştirme Motoru',
   icons: {
-    icon: '/icon.svg',
-    shortcut: '/icon.svg',
-    apple: '/icon.svg',
+    icon: [
+      { url: '/favicon.ico', sizes: 'any' },
+      { url: '/icon.png', type: 'image/png', sizes: '32x32' },
+      { url: '/icon.svg', type: 'image/svg+xml' },
+    ],
+    shortcut: '/favicon.ico',
+    apple: '/apple-icon.png',
   },
 }
 

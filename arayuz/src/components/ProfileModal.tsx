@@ -60,7 +60,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({ onClose, onLogout, t
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
-      zIndex: 1000,
+      zIndex: 99999,
       padding: '20px',
       overflowY: 'auto'
     }}>

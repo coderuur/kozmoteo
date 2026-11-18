@@ -108,7 +108,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, onSuccess, soundE
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
-      zIndex: 1000,
+      zIndex: 99999,
       padding: '20px'
     }}>
       <div style={{

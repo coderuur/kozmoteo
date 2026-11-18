@@ -18,7 +18,7 @@ export const FooterPolicyModal: React.FC<FooterPolicyModalProps> = ({ onClose })
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
-      zIndex: 1000,
+      zIndex: 99999,
       padding: '20px',
       overflowY: 'auto'
     }}>

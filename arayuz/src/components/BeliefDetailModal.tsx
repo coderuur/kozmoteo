@@ -9,7 +9,7 @@ interface BeliefDetailModalProps {
 
 export const BeliefDetailModal: React.FC<BeliefDetailModalProps> = ({ result, onClose }) => {
   return (
-    <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(0,0,0,0.85)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 100, padding: '20px' }}>
+    <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: '#07060b', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 99999, padding: '20px' }}>
       <div style={{ backgroundColor: '#121215', borderRadius: '12px', border: '1px solid #D4AF37', maxWidth: '600px', width: '100%', display: 'flex', flexDirection: 'column', maxHeight: '85vh', overflow: 'hidden' }}>
         <div style={{ padding: '20px 30px', borderBottom: '1px solid #2a2a30', display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#121215', zIndex: 10 }}>
           <h2 style={{ color: '#D4AF37', margin: 0, fontSize: '24px' }}>{result.belief_name}</h2>

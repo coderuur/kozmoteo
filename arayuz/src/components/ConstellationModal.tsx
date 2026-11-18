@@ -169,7 +169,7 @@ export const ConstellationModal: React.FC<ConstellationModalProps> = ({ onClose,
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
-      zIndex: 1000,
+      zIndex: 99999,
       padding: '20px',
       overflowY: 'auto'
     }}>
