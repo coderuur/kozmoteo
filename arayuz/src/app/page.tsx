@@ -15,6 +15,10 @@ import { ChatRoom } from '../components/ChatRoom';
 import { AuthModal } from '../components/AuthModal';
 import { ProfileModal } from '../components/ProfileModal';
 import { FooterPolicyModal } from '../components/FooterPolicyModal';
+import { analyzeShadowParadox } from '../lib/shadow';
+import { DailyOracle } from '../components/DailyOracle';
+import { ConstellationModal } from '../components/ConstellationModal';
+import { SocraticTrial } from '../components/SocraticTrial';
 
 export default function Home() {
   const [testType, setTestType] = useState<'short' | 'medium' | 'long' | null>(null);
@@ -32,6 +36,10 @@ export default function Home() {
   const [showProfile, setShowProfile] = useState(false);
   const [showPolicy, setShowPolicy] = useState(false);
   const [saveToast, setSaveToast] = useState<string | null>(null);
+
+  // Günün İkilemi & Canlı Zihinler Gökyüzü Modalları
+  const [showOracle, setShowOracle] = useState(false);
+  const [showConstellation, setShowConstellation] = useState(false);
 
   // Stepper / Kart Modu
   const [viewMode, setViewMode] = useState<'stepper' | 'list'>('stepper');
@@ -415,6 +423,12 @@ export default function Home() {
     return { strongestBond: diffs[0].axis, potentialConflict: diffs[4].axis };
   }, [duoResult, vector]);
 
+  // Kozmik Gölge & Bilinçaltı Çelişki Raporu
+  const shadowParadox = useMemo(() => {
+    if (!result || vector.length === 0) return null;
+    return analyzeShadowParadox(compressVectorTo5D(vector));
+  }, [result, vector]);
+
   return (
     <div style={{ minHeight: '100vh', backgroundColor: '#07060b', color: '#e5e7eb', fontFamily: '"Georgia", serif', padding: '40px 20px', position: 'relative' }}>
       {/* 🌌 Canlı Kozmik Arka Plan Parçacıkları */}
@@ -429,8 +443,8 @@ export default function Home() {
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
       `}} />
 
-      {/* Üst Çubuk - Kozmik Pasaport & Mistik Ses Kontrolü */}
-      <div style={{ maxWidth: '720px', margin: '0 auto 20px auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative', zIndex: 10 }}>
+      {/* Üst Çubuk - Kozmik Pasaport, Araçlar & Mistik Ses Kontrolü */}
+      <div style={{ maxWidth: '720px', margin: '0 auto 20px auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative', zIndex: 10, flexWrap: 'wrap', gap: '10px' }}>
         {/* Sol: Kozmik Pasaport Giriş / Profil Butonu */}
         {currentUser ? (
           <button
@@ -472,13 +486,27 @@ export default function Home() {
           </button>
         )}
 
-        {/* Sağ: Mistik Ses Kontrolü */}
-        <button
-          onClick={() => setSoundEnabled(!soundEnabled)}
-          style={{ background: 'rgba(21, 18, 32, 0.7)', border: '1px solid #332d4a', color: soundEnabled ? '#FFE699' : '#6b7280', padding: '6px 14px', borderRadius: '20px', fontSize: '12px', cursor: 'pointer', backdropFilter: 'blur(4px)' }}
-        >
-          {soundEnabled ? '🔊 432Hz Mistik Ses: Açık' : '🔇 Mistik Ses: Sessiz'}
-        </button>
+        {/* Sağ: Günün İkilemi + Canlı Gökyüzü + Mistik Ses */}
+        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+          <button
+            onClick={() => setShowOracle(true)}
+            style={{ background: 'rgba(21, 18, 32, 0.8)', border: '1px solid #3d3558', color: '#FFE699', padding: '6px 12px', borderRadius: '20px', fontSize: '12px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
+          >
+            🕯️ Günün İkilemi
+          </button>
+          <button
+            onClick={() => setShowConstellation(true)}
+            style={{ background: 'rgba(21, 18, 32, 0.8)', border: '1px solid #3d3558', color: '#67e8f9', padding: '6px 12px', borderRadius: '20px', fontSize: '12px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
+          >
+            🌌 Canlı Zihinler
+          </button>
+          <button
+            onClick={() => setSoundEnabled(!soundEnabled)}
+            style={{ background: 'rgba(21, 18, 32, 0.7)', border: '1px solid #332d4a', color: soundEnabled ? '#FFE699' : '#6b7280', padding: '6px 12px', borderRadius: '20px', fontSize: '12px', cursor: 'pointer', backdropFilter: 'blur(4px)' }}
+          >
+            {soundEnabled ? '🔊 Ses: Açık' : '🔇 Sessiz'}
+          </button>
+        </div>
       </div>
 
       {/* KAYDEDILDI TOAST BILDIRIMI */}
@@ -608,6 +636,48 @@ export default function Home() {
 
             {/* Radar Grafiği */}
             <RadarChart vector1={compressVectorTo5D(vector)} vector2={result.belief_base_vector} pastVector={compressVectorTo5D(pastVector || [])} label1="Senin Profilin" label2="İdeal İnanç" color1="#f8fafc" color2="#D4AF37" />
+
+            {/* KOZMİK AYNA: BİLİNÇALTI GÖLGE PARADOKSU */}
+            {shadowParadox && (
+              <div style={{
+                background: 'linear-gradient(135deg, #130f24 0%, #0d0a17 100%)',
+                border: '1.5px solid #8A2BE2',
+                borderRadius: '12px',
+                padding: '24px 20px',
+                marginTop: '30px',
+                textAlign: 'left',
+                boxShadow: '0 0 35px rgba(138, 43, 226, 0.25)'
+              }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px', flexWrap: 'wrap', gap: '6px' }}>
+                  <span style={{ fontSize: '11px', color: '#c084fc', letterSpacing: '3px', textTransform: 'uppercase', fontWeight: 'bold' }}>
+                    ✦ KOZMİK AYNA • GÖLGE PARADOKSU ✦
+                  </span>
+                  <span style={{ fontSize: '11px', color: '#9ca3af', fontStyle: 'italic' }}>
+                    {shadowParadox.tension}
+                  </span>
+                </div>
+                <h3 style={{ color: '#FFE699', fontSize: '20px', margin: '0 0 4px 0', fontFamily: 'Georgia, serif' }}>
+                  {shadowParadox.title}
+                </h3>
+                <p style={{ color: '#d8b4fe', fontSize: '12px', margin: '0 0 14px 0', fontStyle: 'italic' }}>
+                  {shadowParadox.subtitle}
+                </p>
+                <p style={{ color: '#f1f5f9', fontSize: '14px', lineHeight: '1.7', margin: '0 0 14px 0' }}>
+                  {shadowParadox.analysis}
+                </p>
+                <div style={{ backgroundColor: 'rgba(138, 43, 226, 0.12)', borderLeft: '3px solid #c084fc', padding: '10px 14px', borderRadius: '4px', fontSize: '13px', color: '#e2e8f0', fontStyle: 'italic' }}>
+                  <strong style={{ color: '#FFE699' }}>Kozmik Tavsiye: </strong>
+                  {shadowParadox.advice}
+                </div>
+              </div>
+            )}
+
+            {/* SOKRATES'İN MAHKEMESİ: FİLOZOFLA YÜZLEŞME */}
+            <SocraticTrial
+              archetype={result.archetype}
+              beliefName={result.belief_name}
+              soundEnabled={soundEnabled}
+            />
 
             {/* İKİLİ ARKADAŞLIK VE DUO UYUM KARTI */}
             <div style={{ backgroundColor: '#110f1c', padding: '25px', borderRadius: '8px', border: '1px solid #332d4a', marginTop: '30px', textAlign: 'left' }}>
@@ -805,6 +875,23 @@ export default function Home() {
         {/* GİZLİLİK & GÜVENLİK İLKELERİ MODALI */}
         {showPolicy && (
           <FooterPolicyModal onClose={() => setShowPolicy(false)} />
+        )}
+
+        {/* GÜNÜN KOZMİK KEHANETİ & ORTAK İKİLEM MODALI */}
+        {showOracle && (
+          <DailyOracle
+            soundEnabled={soundEnabled}
+            onClose={() => setShowOracle(false)}
+          />
+        )}
+
+        {/* CANLI ZİHİNLER GÖKYÜZÜ MODALI */}
+        {showConstellation && (
+          <ConstellationModal
+            soundEnabled={soundEnabled}
+            userArchetype={result?.archetype}
+            onClose={() => setShowConstellation(false)}
+          />
         )}
 
         {/* TEST SEÇİM EKRANI */}
