@@ -17,7 +17,7 @@ export interface MatchResult {
 }
 
 export interface ChatMessageItem {
-  id: number;
+  id: number | string;
   sender: 'user' | 'partner' | 'system';
   sender_name: string;
   text: string;
@@ -30,7 +30,9 @@ export interface MatchSessionData {
   partner_archetype: string;
   partner_gender: string;
   compatibility: number;
+  similarity_percentage?: number;
   greeting: string;
+  match_type?: string;
 }
 
 export interface VoiceVerificationResult {
