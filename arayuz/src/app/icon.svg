@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <linearGradient id="cosmicBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0a0a0f"/>
+      <stop offset="50%" stop-color="#141124"/>
+      <stop offset="100%" stop-color="#1f153a"/>
+    </linearGradient>
+    <linearGradient id="goldGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFE58F"/>
+      <stop offset="50%" stop-color="#D4AF37"/>
+      <stop offset="100%" stop-color="#AA820A"/>
+    </linearGradient>
+    <radialGradient id="aura" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#D4AF37" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="#D4AF37" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Arka Plan Dairesi & Altın Çerçeve -->
+  <circle cx="32" cy="32" r="30" fill="url(#cosmicBg)" stroke="url(#goldGlow)" stroke-width="2"/>
+  <circle cx="32" cy="32" r="22" fill="url(#aura)"/>
+
+  <!-- Kozmik Yörünge Halkası -->
+  <ellipse cx="32" cy="32" rx="24" ry="11" fill="none" stroke="url(#goldGlow)" stroke-width="1.5" stroke-dasharray="3 2" transform="rotate(-25 32 32)"/>
+
+  <!-- Teolojik Sekiz Köşeli Yıldız / Işık Nexus -->
+  <!-- Dikey ve Yatay Ana Işınlar -->
+  <polygon points="32,10 35,27 48,32 35,37 32,54 29,37 16,32 29,27" fill="url(#goldGlow)"/>
+  
+  <!-- Çapraz İkincil Işınlar -->
+  <polygon points="32,17 34,28 43,32 34,36 32,47 30,36 21,32 30,28" fill="#FFF2B2" transform="rotate(45 32 32)"/>
+
+  <!-- Merkez Ruh / Bilinçaltı Çekirdeği -->
+  <circle cx="32" cy="32" r="4.5" fill="#FFFFFF"/>
+  <circle cx="32" cy="32" r="2.5" fill="#D4AF37"/>
+</svg>
