@@ -29,13 +29,12 @@ export const ArchetypeModal: React.FC<ArchetypeModalProps> = ({ result, onClose,
       left: 0,
       width: '100%',
       height: '100%',
-      backgroundColor: 'rgba(5, 4, 8, 0.94)',
-      backdropFilter: 'blur(10px)',
+      backgroundColor: '#07060b',
       display: 'flex',
       flexDirection: 'column',
       justifyContent: 'center',
       alignItems: 'center',
-      zIndex: 200,
+      zIndex: 1000,
       padding: '20px',
       overflowY: 'auto'
     }}>
@@ -185,10 +184,10 @@ export const ArchetypeModal: React.FC<ArchetypeModalProps> = ({ result, onClose,
             letterSpacing: '1px',
             boxShadow: '0 0 15px rgba(212, 175, 55, 0.15)'
           }}>
-            ✦ {result.belief_name.toUpperCase()} ✦
+            ✦ {result.belief_name.split('/')[0].trim().toUpperCase()} ✦
           </div>
 
-          {/* Felsefi Alıntı / Açıklama Özeti */}
+          {/* Felsefi Alıntı / Açıklama Özeti (Parantezsiz ve Akıcı) */}
           <p style={{
             color: '#cbd5e1',
             fontSize: '12px',
@@ -202,7 +201,7 @@ export const ArchetypeModal: React.FC<ArchetypeModalProps> = ({ result, onClose,
             WebkitBoxOrient: 'vertical',
             overflow: 'hidden'
           }}>
-            "{result.description}"
+            "{result.description.replace(/\s*\([^)]*\)/g, '').trim()}"
           </p>
         </div>
 
@@ -256,7 +255,7 @@ export const ArchetypeModal: React.FC<ArchetypeModalProps> = ({ result, onClose,
             gap: '8px'
           }}
         >
-          {isExporting ? '✨ Görsel Hazırlanıyor...' : '✨ Hikaye Kartını İndir (Instagram 9:16 PNG)'}
+          {isExporting ? 'Görsel Hazırlanıyor...' : '✨ Hikaye Kartını İndir'}
         </button>
 
         <button

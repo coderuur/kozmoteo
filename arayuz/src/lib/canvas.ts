@@ -191,7 +191,7 @@ export const downloadStoryCard = async (result: MatchResult): Promise<void> => {
   ctx.restore();
 
   // 8. İnanç Sistemi Rozeti (Pill Badge)
-  const beliefLabel = `✦  ${result.belief_name.toUpperCase()}  ✦`;
+  const beliefLabel = `✦  ${result.belief_name.split('/')[0].trim().toUpperCase()}  ✦`;
   ctx.font = 'bold 34px Georgia, serif';
   const badgeMetrics = ctx.measureText(beliefLabel);
   const badgeWidth = Math.min(840, badgeMetrics.width + 80);
@@ -237,10 +237,10 @@ export const downloadStoryCard = async (result: MatchResult): Promise<void> => {
     return currY;
   };
 
-  // 10. Arketip Felsefi Tanımı (Aura Alıntısı)
+  // 10. Arketip Felsefi Tanımı (Aura Alıntısı - Parantezsiz)
   ctx.fillStyle = '#e2e8f0';
   ctx.font = 'italic 34px Georgia, serif';
-  wrapText(`"${result.description}"`, 540, 1070, 820, 52, 4);
+  wrapText(`"${result.description.replace(/\s*\([^)]*\)/g, '').trim()}"`, 540, 1070, 820, 52, 4);
 
   // 11. "Günün Ruhsal Pratiği" Kart Kutusu
   const boxX = 140;

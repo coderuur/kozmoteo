@@ -468,7 +468,7 @@ export default function Home() {
                 ✦ İnancı İncele
               </button>
               <button onClick={() => setShowArchetype(true)} style={{ padding: '12px 24px', background: 'linear-gradient(135deg, #FFE699 0%, #D4AF37 100%)', border: 'none', color: '#07060c', cursor: 'pointer', borderRadius: '24px', fontSize: '13px', fontWeight: 'bold', boxShadow: '0 0 20px rgba(212, 175, 55, 0.4)' }}>
-                ✨ Hikayede Paylaş (Instagram)
+                ✨ Hikayede Paylaş
               </button>
               <button onClick={handleCopyDuoLink} style={{ padding: '12px 20px', backgroundColor: '#1d1830', border: '1px solid #9d72ff', color: '#d8b4fe', cursor: 'pointer', borderRadius: '24px', fontSize: '13px', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '6px' }}>
                 🔗 Arkadaşınla Uyumunu Ölç
@@ -551,7 +551,7 @@ export default function Home() {
 
             {/* CANLI ANONİM AĞ VE SES DOĞRULAMA MODÜLÜ */}
             <div style={{ backgroundColor: '#110f1c', padding: '25px', borderRadius: '8px', border: '1px solid #2d2645', marginTop: '30px', textAlign: 'left' }}>
-              <h3 style={{ color: '#f8fafc', marginBottom: '8px' }}>🌌 Kozmos'ta Yalnız mısın? (Anonim Ağ)</h3>
+              <h3 style={{ color: '#f8fafc', marginBottom: '8px' }}>🌌 Kozmos'ta Yalnız mısın? • Anonim Ağ</h3>
               <p style={{ color: '#94a3af', fontSize: '13px', marginBottom: '20px' }}>
                 Koda gerek kalmadan sesli canlılık doğrulamasıyla botlardan arındırılmış gerçek insanlarla eşleş ve anonim felsefi sohbet başlat.
               </p>
@@ -668,13 +668,13 @@ export default function Home() {
         {!testType && !result ? (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', alignItems: 'center', marginTop: '40px' }}>
             <button onClick={() => handleTestSelection('short')} style={{ width: '88%', maxWidth: '520px', padding: '22px', backgroundColor: '#110f1c', border: '1px solid #D4AF37', color: '#FFE699', fontSize: '18px', cursor: 'pointer', borderRadius: '8px', boxShadow: '0 4px 20px rgba(212, 175, 55, 0.1)', transition: 'transform 0.2s' }}>
-              Kısa Analiz <br /><span style={{ fontSize: '13px', color: '#9ca3af' }}>20 Soru (Rastgele Seçim) + 1 İkilem</span>
+              Kısa Analiz <br /><span style={{ fontSize: '13px', color: '#9ca3af' }}>20 Soru + 1 İkilem</span>
             </button>
             <button onClick={() => handleTestSelection('medium')} style={{ width: '88%', maxWidth: '520px', padding: '22px', backgroundColor: '#110f1c', border: '1px solid #8b7322', color: '#e2e8f0', fontSize: '18px', cursor: 'pointer', borderRadius: '8px', transition: 'transform 0.2s' }}>
-              Orta Keşif <br /><span style={{ fontSize: '13px', color: '#9ca3af' }}>60 Soru (Rastgele Seçim) + 1 İkilem</span>
+              Orta Keşif <br /><span style={{ fontSize: '13px', color: '#9ca3af' }}>60 Soru + 1 İkilem</span>
             </button>
             <button onClick={() => handleTestSelection('long')} style={{ width: '88%', maxWidth: '520px', padding: '22px', backgroundColor: '#110f1c', border: '1px solid #332d4a', color: '#e2e8f0', fontSize: '18px', cursor: 'pointer', borderRadius: '8px', transition: 'transform 0.2s' }}>
-              Derin Çözümleme <br /><span style={{ fontSize: '13px', color: '#9ca3af' }}>100 Soru (Rastgele Seçim) + 1 İkilem</span>
+              Derin Çözümleme <br /><span style={{ fontSize: '13px', color: '#9ca3af' }}>100 Soru + 1 İkilem</span>
             </button>
           </div>
         ) : null}
@@ -741,9 +741,9 @@ export default function Home() {
                       style={{ width: '100%', cursor: 'pointer', accentColor: '#D4AF37' }}
                     />
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '10px', fontSize: '12px', color: '#6b7280' }}>
-                      <span>Hiç Katılmıyorum (0.0)</span>
+                      <span>Hiç Katılmıyorum</span>
                       <span style={{ color: '#FFE699', fontWeight: 'bold', fontSize: '14px' }}>{vector[currentStep]}</span>
-                      <span>Tamamen Katılıyorum (1.0)</span>
+                      <span>Tamamen Katılıyorum</span>
                     </div>
                   </div>
                 ) : (
