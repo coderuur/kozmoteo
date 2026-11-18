@@ -45,11 +45,17 @@ export default function Home() {
   const [aiReading, setAiReading] = useState<string | null>(null);
   const [isAiLoading, setIsAiLoading] = useState(false);
 
-  // Sayfa yüklendiğinde hafızadaki son durumu yükle
+  // Sayfa yüklendiğinde hafızadaki son durumu yükle ve Render backend'ini sessizce uyandır
   useEffect(() => {
     const saved = localStorage.getItem('kozmo_past_vector');
     if (saved) {
       setPastVector(JSON.parse(saved));
+    }
+    // Render Cold Start önleyici sessiz uyandırma pingi
+    try {
+      fetch(`${getApiUrl()}/health`).catch(() => {});
+    } catch {
+      // sessizce geç
     }
   }, []);
 

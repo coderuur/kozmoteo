@@ -365,6 +365,10 @@ def calculate_true_similarity(v1: list[float], v2: list[float]) -> float:
     mae = sum(diffs) / len(diffs)
     return float(1.0 - mae)
 
+@app.get("/")
+def root():
+    return {"status": "ok", "message": "Kozmo-Teo API Calisiyor", "docs": "/docs"}
+
 @app.get("/health")
 def health_check():
     return {"status": "ok", "app": "Kozmo-Teo API", "timestamp": time.time()}
