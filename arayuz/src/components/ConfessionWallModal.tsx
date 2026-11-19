@@ -151,20 +151,30 @@ export const ConfessionWallModal: React.FC<ConfessionWallModalProps> = ({
         </div>
 
         {/* Filtre Rozetleri */}
-        <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '10px', marginBottom: '14px' }}>
+        <div style={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          gap: '8px',
+          marginBottom: '18px',
+          justifyContent: 'center'
+        }}>
           {['ALL', 'HİÇLİK YOLCUSU', 'GELENEK MUHAFIZI', 'AKIŞIN USTASI', 'KOZMİK RUH', 'SARSILMAZ İRADE'].map((f) => (
             <button
               key={f}
-              onClick={() => setFilter(f)}
+              onClick={() => {
+                setFilter(f);
+                playTone(560, 'sine', 0.15, soundEnabled);
+              }}
               style={{
-                padding: '5px 12px',
-                borderRadius: '16px',
-                border: filter === f ? '1px solid #c084fc' : '1px solid #2d2645',
-                backgroundColor: filter === f ? 'rgba(192, 132, 252, 0.2)' : 'transparent',
-                color: filter === f ? '#e9d5ff' : '#94a3b8',
+                padding: '6px 14px',
+                borderRadius: '20px',
+                border: filter === f ? '1.5px solid #c084fc' : '1px solid #2d2645',
+                backgroundColor: filter === f ? 'rgba(192, 132, 252, 0.25)' : '#120f1e',
+                color: filter === f ? '#f3e8ff' : '#94a3b8',
                 fontSize: '11px',
+                fontWeight: filter === f ? 'bold' : 'normal',
                 cursor: 'pointer',
-                whiteSpace: 'nowrap'
+                transition: 'all 0.2s'
               }}
             >
               {f === 'ALL' ? '✦ Tüm Zihinler' : f}
@@ -214,7 +224,7 @@ export const ConfessionWallModal: React.FC<ConfessionWallModalProps> = ({
                     gap: '4px'
                   }}
                 >
-                  🌌 Yankıla ({conf.echoCount})
+                  🌌 Yankıla • {conf.echoCount}
                 </button>
 
                 <button

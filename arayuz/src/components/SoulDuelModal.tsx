@@ -194,7 +194,7 @@ export const SoulDuelModal: React.FC<SoulDuelModalProps> = ({
                   }}
                 >
                   <span style={{ color: '#D4AF37', fontWeight: 'bold', marginRight: '8px' }}>
-                    {String.fromCharCode(65 + i)})
+                    {String.fromCharCode(65 + i)} •
                   </span>
                   {opt.text}
                 </button>
@@ -310,7 +310,7 @@ export const SoulDuelModal: React.FC<SoulDuelModalProps> = ({
                   }}
                 >
                   <span style={{ color: '#67e8f9', fontWeight: 'bold', marginRight: '8px' }}>
-                    {String.fromCharCode(65 + i)})
+                    {String.fromCharCode(65 + i)} •
                   </span>
                   {opt.text}
                 </button>

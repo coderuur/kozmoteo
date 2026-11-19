@@ -45,7 +45,7 @@ export const DuoReportModal: React.FC<DuoReportModalProps> = ({
   const handleCopyShareLink = () => {
     playCosmicChime(soundEnabled);
     if (typeof window !== 'undefined') {
-      const shareText = `Bizim Kozmo-Teo felsefi uyumumuz %${report.compatibilityScore} çıktı! (${report.title}) 🔥 Bakalım seninki kaç: ${window.location.origin}`;
+      const shareText = `Bizim Kozmo-Teo felsefi uyumumuz %${report.compatibilityScore} çıktı! • ${report.title} 🔥 Bakalım seninki kaç: ${window.location.origin}`;
       navigator.clipboard.writeText(shareText);
       setCopied(true);
       setTimeout(() => setCopied(false), 3000);
@@ -183,7 +183,7 @@ export const DuoReportModal: React.FC<DuoReportModalProps> = ({
             <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: '#cbd5e1', marginBottom: '6px' }}>
               <span>⚔️ Zehirli Çatışma Riski:</span>
               <span style={{ color: report.conflictRisk >= 75 ? '#ef4444' : '#f59e0b', fontWeight: 'bold' }}>
-                %{report.conflictRisk} ({report.conflictLabel})
+                %{report.conflictRisk} • {report.conflictLabel}
               </span>
             </div>
             <div style={{ width: '100%', height: '7px', backgroundColor: '#1e1b2e', borderRadius: '4px', overflow: 'hidden' }}>
@@ -250,7 +250,7 @@ export const DuoReportModal: React.FC<DuoReportModalProps> = ({
               boxShadow: '0 4px 20px rgba(212, 175, 55, 0.3)'
             }}
           >
-            {isExporting ? '⏳ Hikaye Kartı Hazırlanıyor...' : '📸 İkili Hikaye Kartı İndir (Instagram 9:16 PNG)'}
+            {isExporting ? '⏳ Hikaye Kartı Hazırlanıyor...' : '📸 İkili Hikaye Kartı İndir'}
           </button>
 
           <button

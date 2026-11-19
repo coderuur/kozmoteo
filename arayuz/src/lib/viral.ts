@@ -165,7 +165,7 @@ export const getDuoRelationshipReport = (
     conflictRisk = 30;
     title = "Kusursuz Ayna Sendromu";
     subtitle = "Tek Bir Ruhun İki Beden Dağılımı";
-    dynamics = `İkiniz de aynı arketipin (${userResult.archetype}) frekansındasınız. Birbirinizin cümlelerini henüz söylemeden tamamlarsınız. Gece konuşmalarınız saatlerce sürer çünkü dünyayı aynı filtreden seyrediyorsunuz. Ancak dikkat: Birbirinizin kör noktalarını göremezsiniz; biri batarken diğeri onu kurtarmak yerine batışı felsefi olarak onaylayabilir!`;
+    dynamics = `İkiniz de aynı arketipin • ${userResult.archetype} • frekansındasınız. Birbirinizin cümlelerini henüz söylemeden tamamlarsınız. Gece konuşmalarınız saatlerce sürer çünkü dünyayı aynı filtreden seyrediyorsunuz. Ancak dikkat: Birbirinizin kör noktalarını göremezsiniz; biri batarken diğeri onu kurtarmak yerine batışı felsefi olarak onaylayabilir!`;
     biggestFightTopic = "Kim daha tutarlı bir varoluşçu / inançlı? Küçük detaylardaki felsefi kibir tartışmaları.";
     secretBond = "Dünyada kimsenin anlamadığı o garip şakaları ve varoluşsal sancıları sadece siz ikiniz anlıyorsunuz.";
     verdictBadge = "🔥 %98 Ruh İkizi";
@@ -198,7 +198,7 @@ export const getDuoRelationshipReport = (
     verdictBadge = "✦ %" + compatibility + " Zihinsel Simya";
   }
 
-  const conflictLabel = conflictRisk >= 75 ? "Kritik (Volkanik)" : conflictRisk >= 50 ? "Orta (Dinamik Tartışmalar)" : "Düşük (Zen Dinginliği)";
+  const conflictLabel = conflictRisk >= 75 ? "Kritik • Volkanik" : conflictRisk >= 50 ? "Orta • Dinamik Tartışmalar" : "Düşük • Zen Dinginliği";
 
   return {
     userArchetype: userResult.archetype,

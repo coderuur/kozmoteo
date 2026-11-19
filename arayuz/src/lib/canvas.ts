@@ -254,7 +254,7 @@ export const downloadStoryCard = async (result: MatchResult): Promise<void> => {
     canvas,
     `KozmoTeo_${result.archetype.replace(/\s+/g, '_')}.png`,
     `Kozmo-Teo: ${result.archetype}`,
-    `Benim Kozmo-Teo inanç arketipim: ${result.archetype} (%${result.similarity_percentage})! kozmoteo.netlify.app`
+    `Benim Kozmo-Teo inanç arketipim: ${result.archetype} • %${result.similarity_percentage}! kozmoteo.netlify.app`
   );
 };
 
@@ -282,7 +282,7 @@ export const downloadSocraticStoryCard = async (result: MatchResult, brutal: Bru
   ctx.fillText('V A R O L U Ş S A L   R U H   T O K A D I', 540, 290);
 
   // Arketip Rozeti
-  const tag = `✦  ${result.archetype.toUpperCase()} (%${result.similarity_percentage})  ✦`;
+  const tag = `✦  ${result.archetype.toUpperCase()} • %${result.similarity_percentage}  ✦`;
   ctx.font = 'bold 24px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
   const tagW = ctx.measureText(tag).width + 50;
   ctx.fillStyle = 'rgba(244, 63, 94, 0.12)';
@@ -474,7 +474,7 @@ export const downloadDuoStoryCard = async (
   // Zehirli Çatışma Riski Barı
   ctx.fillStyle = '#9ca3af';
   ctx.font = '20px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-  ctx.fillText(`Zehirli Çatışma Riski: %${report.conflictRisk} (${report.conflictLabel})`, 540, 1020);
+  ctx.fillText(`Zehirli Çatışma Riski: %${report.conflictRisk} • ${report.conflictLabel}`, 540, 1020);
 
   ctx.fillStyle = '#1e1b2e';
   ctx.beginPath();
@@ -539,7 +539,7 @@ export const downloadDuoStoryCard = async (
     canvas,
     `KozmoTeo_Duo_${userResult.archetype}_${report.partnerArchetype}.png`,
     `Kozmo-Teo: Felsefi Uyum Raporu`,
-    `Bizim felsefi uyumumuz %${report.compatibilityScore} çıktı! (${report.title}) - Seninki kaç? kozmoteo.netlify.app`
+    `Bizim felsefi uyumumuz %${report.compatibilityScore} çıktı! • ${report.title} - Seninki kaç? kozmoteo.netlify.app`
   );
 };
 

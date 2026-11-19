@@ -3,7 +3,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { MatchResult, MatchSessionData, ChatMessageItem } from '../lib/types';
 import { QUESTION_POOL, getRandomSample } from '../lib/questions';
 import { compressVectorTo5D } from '../lib/dictionary';
-import { playTone, playCosmicChime } from '../lib/audio';
+import { playTone, playCosmicChime, toggleCosmicAmbient } from '../lib/audio';
 import { getApiUrl } from '../lib/api';
 
 import { CosmicBackground } from '../components/CosmicBackground';
@@ -145,6 +145,15 @@ export default function Home() {
     } catch {
       // sessiz geç
     }
+
+    // 5. İlk etkileşimde 432 Hz Kozmik Tınıyı başlat (Web Audio API)
+    const handleFirstInteraction = () => {
+      toggleCosmicAmbient(true);
+      window.removeEventListener('click', handleFirstInteraction);
+      window.removeEventListener('keydown', handleFirstInteraction);
+    };
+    window.addEventListener('click', handleFirstInteraction, { once: true });
+    window.addEventListener('keydown', handleFirstInteraction, { once: true });
   }, []);
 
   // Yarıda Kalan Testi Geri Yükle
@@ -545,10 +554,14 @@ export default function Home() {
             🌙 Fısıltı Duvarı
           </button>
           <button
-            onClick={() => setSoundEnabled(!soundEnabled)}
+            onClick={() => {
+              const next = !soundEnabled;
+              setSoundEnabled(next);
+              toggleCosmicAmbient(next);
+            }}
             style={{ background: 'rgba(21, 18, 32, 0.7)', border: '1px solid #332d4a', color: soundEnabled ? '#FFE699' : '#6b7280', padding: '6px 12px', borderRadius: '20px', fontSize: '12px', cursor: 'pointer', backdropFilter: 'blur(4px)' }}
           >
-            {soundEnabled ? '🔊 Ses: Açık' : '🔇 Sessiz'}
+            {soundEnabled ? '🔊 432Hz Mistik Tını: Açık' : '🔇 Mistik Ses: Kapalı'}
           </button>
         </div>
       </div>
@@ -640,7 +653,7 @@ export default function Home() {
         {result && (
           <div style={{ marginBottom: '40px', padding: '35px 25px', backgroundColor: 'rgba(13, 11, 20, 0.85)', backdropFilter: 'blur(8px)', border: '1px solid #D4AF37', borderRadius: '12px', textAlign: 'center', boxShadow: '0 0 40px rgba(212, 175, 55, 0.2)' }}>
             <p style={{ color: '#9ca3af', fontSize: '13px', letterSpacing: '3px', textTransform: 'uppercase' }}>Bilinçaltı İnanç Eşleşmesi</p>
-            <h3 style={{ margin: '10px 0', color: '#f8fafc', fontSize: '2.2rem', fontFamily: 'Georgia, serif' }}>{result.belief_name}</h3>
+            <h3 style={{ margin: '10px 0', color: '#f8fafc', fontSize: '2.2rem', fontFamily: 'Georgia, serif' }}>{result.belief_name.replace(/\s*\([^)]*\)/g, '').trim()}</h3>
             <h2 style={{ margin: '0 0 10px 0', color: '#FFE699', fontSize: '3.4rem', textShadow: '0 0 25px rgba(212, 175, 55, 0.4)' }}>%{result.similarity_percentage}</h2>
             <p style={{ color: '#d1d5db', fontSize: '16px', fontStyle: 'italic', marginBottom: '25px', maxWidth: '580px', margin: '0 auto 25px auto' }}>"{result.description}"</p>
 
@@ -1169,7 +1182,7 @@ export default function Home() {
             onClick={() => setShowPolicy(true)}
             style={{ background: 'transparent', border: 'none', color: '#9ca3af', fontSize: '11px', textDecoration: 'underline', cursor: 'pointer' }}
           >
-            Felsefi Gizlilik & Güvenlik İlkeleri (KVKK)
+            Felsefi Gizlilik & Güvenlik İlkeleri • KVKK
           </button>
         </footer>
       </div>

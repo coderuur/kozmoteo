@@ -317,7 +317,7 @@ export const ArchetypeModal: React.FC<ArchetypeModalProps> = ({ result, onClose,
             gap: '6px'
           }}
         >
-          {isExporting ? 'Görsel Hazırlanıyor...' : '📸 Bu Kartı İndir (9:16 PNG)'}
+          {isExporting ? 'Görsel Hazırlanıyor...' : '📸 Bu Kartı İndir'}
         </button>
 
         <button
