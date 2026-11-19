@@ -19,6 +19,10 @@ import { analyzeShadowParadox } from '../lib/shadow';
 import { DailyOracle } from '../components/DailyOracle';
 import { ConstellationModal } from '../components/ConstellationModal';
 import { SocraticTrial } from '../components/SocraticTrial';
+import { DuoReportModal } from '../components/DuoReportModal';
+import { SoulDuelModal } from '../components/SoulDuelModal';
+import { ConfessionWallModal } from '../components/ConfessionWallModal';
+import { getBrutalTruth, decodeSoulDuel, SoulDuelData } from '../lib/viral';
 
 export default function Home() {
   const [testType, setTestType] = useState<'short' | 'medium' | 'long' | null>(null);
@@ -40,6 +44,12 @@ export default function Home() {
   // Günün İkilemi & Canlı Zihinler Gökyüzü Modalları
   const [showOracle, setShowOracle] = useState(false);
   const [showConstellation, setShowConstellation] = useState(false);
+
+  // Viral & Organik Büyüme Modalları
+  const [showDuoReport, setShowDuoReport] = useState(false);
+  const [showDuelModal, setShowDuelModal] = useState(false);
+  const [activeDuel, setActiveDuel] = useState<SoulDuelData | null>(null);
+  const [showConfessionWall, setShowConfessionWall] = useState(false);
 
   // Stepper / Kart Modu
   const [viewMode, setViewMode] = useState<'stepper' | 'list'>('stepper');
@@ -118,6 +128,15 @@ export default function Home() {
         setDuoInvite({ code: duoCode, archetype, percentage: pct });
         setPartnerCode(duoCode);
       }
+
+      // 3.5. URL Parametrelerinden Felsefi Meydan Okuma (?duel=BASE64)
+      const duelToken = params.get('duel');
+      if (duelToken) {
+        const decoded = decodeSoulDuel(duelToken);
+        if (decoded) {
+          setActiveDuel(decoded);
+        }
+      }
     } catch (e) {}
 
     // 4. Render Cold Start sessiz ping
@@ -173,7 +192,8 @@ export default function Home() {
   // Modal açıkken arka plan kaydırmasını kilitle
   useEffect(() => {
     const isAnyModalOpen = Boolean(
-      showArchetype || showModal || showAuth || showProfile || showPolicy || showOracle || showConstellation
+      showArchetype || showModal || showAuth || showProfile || showPolicy ||
+      showOracle || showConstellation || showDuoReport || showDuelModal || activeDuel || showConfessionWall
     );
     if (isAnyModalOpen) {
       document.body.style.overflow = 'hidden';
@@ -183,7 +203,10 @@ export default function Home() {
     return () => {
       document.body.style.overflow = '';
     };
-  }, [showArchetype, showModal, showAuth, showProfile, showPolicy, showOracle, showConstellation]);
+  }, [
+    showArchetype, showModal, showAuth, showProfile, showPolicy,
+    showOracle, showConstellation, showDuoReport, showDuelModal, activeDuel, showConfessionWall
+  ]);
 
   // Test Seçimi ve Soru Üretimi (Tekrarsız Fisher-Yates)
   const handleTestSelection = (type: 'short' | 'medium' | 'long') => {
@@ -516,6 +539,12 @@ export default function Home() {
             🌌 Canlı Zihinler
           </button>
           <button
+            onClick={() => setShowConfessionWall(true)}
+            style={{ background: 'rgba(21, 18, 32, 0.8)', border: '1px solid #7c3aed', color: '#c084fc', padding: '6px 12px', borderRadius: '20px', fontSize: '12px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
+          >
+            🌙 Fısıltı Duvarı
+          </button>
+          <button
             onClick={() => setSoundEnabled(!soundEnabled)}
             style={{ background: 'rgba(21, 18, 32, 0.7)', border: '1px solid #332d4a', color: soundEnabled ? '#FFE699' : '#6b7280', padding: '6px 12px', borderRadius: '20px', fontSize: '12px', cursor: 'pointer', backdropFilter: 'blur(4px)' }}
           >
@@ -615,19 +644,25 @@ export default function Home() {
             <h2 style={{ margin: '0 0 10px 0', color: '#FFE699', fontSize: '3.4rem', textShadow: '0 0 25px rgba(212, 175, 55, 0.4)' }}>%{result.similarity_percentage}</h2>
             <p style={{ color: '#d1d5db', fontSize: '16px', fontStyle: 'italic', marginBottom: '25px', maxWidth: '580px', margin: '0 auto 25px auto' }}>"{result.description}"</p>
 
-            {/* Butonlar: Keşfet + Hikaye + Pasaporta Kaydet + Duo Link */}
-            <div style={{ display: 'flex', justifyContent: 'center', gap: '12px', marginBottom: '30px', flexWrap: 'wrap' }}>
-              <button onClick={() => setShowModal(true)} style={{ padding: '12px 20px', backgroundColor: 'transparent', border: '1px solid #D4AF37', color: '#D4AF37', cursor: 'pointer', borderRadius: '24px', fontSize: '13px', fontWeight: 'bold' }}>
+            {/* Butonlar: Keşfet + Hikaye + Pasaporta Kaydet + Meydan Oku + İlişki Raporu */}
+            <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', marginBottom: '30px', flexWrap: 'wrap' }}>
+              <button onClick={() => setShowModal(true)} style={{ padding: '12px 18px', backgroundColor: 'transparent', border: '1px solid #D4AF37', color: '#D4AF37', cursor: 'pointer', borderRadius: '24px', fontSize: '13px', fontWeight: 'bold' }}>
                 ✦ İnancı İncele
               </button>
-              <button onClick={() => setShowArchetype(true)} style={{ padding: '12px 24px', background: 'linear-gradient(135deg, #FFE699 0%, #D4AF37 100%)', border: 'none', color: '#07060c', cursor: 'pointer', borderRadius: '24px', fontSize: '13px', fontWeight: 'bold', boxShadow: '0 0 20px rgba(212, 175, 55, 0.4)' }}>
-                ✨ Hikayede Paylaş
+              <button onClick={() => setShowArchetype(true)} style={{ padding: '12px 22px', background: 'linear-gradient(135deg, #FFE699 0%, #D4AF37 100%)', border: 'none', color: '#07060c', cursor: 'pointer', borderRadius: '24px', fontSize: '13px', fontWeight: 'bold', boxShadow: '0 0 20px rgba(212, 175, 55, 0.4)' }}>
+                ✨ 3'lü Hikaye Kartı
               </button>
-              <button onClick={() => handleSaveResultToPassport()} style={{ padding: '12px 22px', background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)', border: 'none', color: '#ffffff', cursor: 'pointer', borderRadius: '24px', fontSize: '13px', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '6px', boxShadow: '0 0 18px rgba(16, 185, 129, 0.35)' }}>
+              <button onClick={() => setShowDuelModal(true)} style={{ padding: '12px 20px', background: 'linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%)', border: 'none', color: '#ffffff', cursor: 'pointer', borderRadius: '24px', fontSize: '13px', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '6px', boxShadow: '0 0 20px rgba(139, 92, 246, 0.35)' }}>
+                ⚔️ Arkadaşlarına Meydan Oku
+              </button>
+              <button onClick={() => setShowDuoReport(true)} style={{ padding: '12px 20px', backgroundColor: '#1d1830', border: '1px solid #67e8f9', color: '#a5f3fc', cursor: 'pointer', borderRadius: '24px', fontSize: '13px', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                💞 İlişki & Çatışma Raporu
+              </button>
+              <button onClick={() => handleSaveResultToPassport()} style={{ padding: '12px 20px', background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)', border: 'none', color: '#ffffff', cursor: 'pointer', borderRadius: '24px', fontSize: '13px', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '6px', boxShadow: '0 0 18px rgba(16, 185, 129, 0.35)' }}>
                 💾 Pasaportuma Kaydet
               </button>
-              <button onClick={handleCopyDuoLink} style={{ padding: '12px 20px', backgroundColor: '#1d1830', border: '1px solid #9d72ff', color: '#d8b4fe', cursor: 'pointer', borderRadius: '24px', fontSize: '13px', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                🔗 Arkadaşınla Uyumunu Ölç
+              <button onClick={handleCopyDuoLink} style={{ padding: '12px 18px', backgroundColor: '#13111f', border: '1px solid #3d3558', color: '#9ca3af', cursor: 'pointer', borderRadius: '24px', fontSize: '12px' }}>
+                🔗 İkili Linki Kopyala
               </button>
             </div>
 
@@ -686,6 +721,49 @@ export default function Home() {
                 </div>
               </div>
             )}
+
+            {/* SOKRATES'İN AYNASI: RUH TOKADI (SAVAGE INSIGHT) */}
+            <div style={{
+              background: 'linear-gradient(135deg, rgba(244, 63, 94, 0.12) 0%, rgba(13, 11, 20, 0.95) 100%)',
+              border: '1.5px solid #f43f5e',
+              borderRadius: '12px',
+              padding: '24px 20px',
+              marginTop: '30px',
+              textAlign: 'left',
+              boxShadow: '0 0 30px rgba(244, 63, 94, 0.25)'
+            }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px', flexWrap: 'wrap', gap: '6px' }}>
+                <span style={{ fontSize: '11px', color: '#f43f5e', letterSpacing: '3px', textTransform: 'uppercase', fontWeight: 'bold' }}>
+                  ⚡ SOKRATES'İN AYNASI • RUH TOKADI ⚡
+                </span>
+                <span style={{ fontSize: '11px', color: '#fda4af', fontStyle: 'italic' }}>
+                  Acımasız Gerçek
+                </span>
+              </div>
+              <p style={{ color: '#ffffff', fontSize: '15px', fontStyle: 'italic', fontFamily: 'Georgia, serif', lineHeight: '1.6', margin: '0 0 14px 0' }}>
+                "{getBrutalTruth(result.archetype).quote}"
+              </p>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px', paddingTop: '10px', borderTop: '1px solid rgba(244, 63, 94, 0.2)' }}>
+                <span style={{ fontSize: '12px', color: '#9ca3af' }}>
+                  Tarihteki Ruh İkizin: <strong style={{ color: '#FFE699' }}>{getBrutalTruth(result.archetype).historicalMirror}</strong>
+                </span>
+                <button
+                  onClick={() => setShowArchetype(true)}
+                  style={{
+                    background: 'rgba(244, 63, 94, 0.2)',
+                    border: '1px solid #f43f5e',
+                    color: '#fda4af',
+                    borderRadius: '16px',
+                    padding: '6px 14px',
+                    fontSize: '11px',
+                    fontWeight: 'bold',
+                    cursor: 'pointer'
+                  }}
+                >
+                  📸 Ruh Tokadı Kartını İndir
+                </button>
+              </div>
+            </div>
 
             {/* SOKRATES'İN MAHKEMESİ: FİLOZOFLA YÜZLEŞME */}
             <SocraticTrial
@@ -1151,6 +1229,52 @@ export default function Home() {
           soundEnabled={soundEnabled}
           userArchetype={result?.archetype}
           onClose={() => setShowConstellation(false)}
+        />
+      )}
+
+      {/* 8. KOZMİK İLİŞKİ & ÇATIŞMA RAPORU (DUO 2.0) */}
+      {showDuoReport && result && (
+        <DuoReportModal
+          userResult={result}
+          partnerName={duoInvite?.archetype ? 'Arkadaşın' : 'Partner'}
+          partnerArchetype={duoInvite?.archetype || 'Gelenek Muhafızı'}
+          partnerPercentage={duoInvite?.percentage || 85}
+          soundEnabled={soundEnabled}
+          onClose={() => setShowDuoReport(false)}
+        />
+      )}
+
+      {/* 9. BENİ NE KADAR TANIYORSUN? MEYDAN OKUMA (OLUŞTURUCU) */}
+      {showDuelModal && (
+        <SoulDuelModal
+          mode="create"
+          userName={currentUser?.username || 'Gezgin'}
+          userArchetype={result?.archetype || 'Kozmik Yolcu'}
+          soundEnabled={soundEnabled}
+          onClose={() => setShowDuelModal(false)}
+        />
+      )}
+
+      {/* 10. BENİ NE KADAR TANIYORSUN? MEYDAN OKUMA (MİSAFİR TAHMİN EDER) */}
+      {activeDuel && (
+        <SoulDuelModal
+          mode="play"
+          duelData={activeDuel}
+          soundEnabled={soundEnabled}
+          onClose={() => setActiveDuel(null)}
+          onTakeTest={() => {
+            setActiveDuel(null);
+            handleTestSelection('short');
+          }}
+        />
+      )}
+
+      {/* 11. KOZMİK GECE FISILTILARI & İTİRAF DUVARI */}
+      {showConfessionWall && (
+        <ConfessionWallModal
+          userArchetype={result?.archetype}
+          soundEnabled={soundEnabled}
+          onClose={() => setShowConfessionWall(false)}
         />
       )}
     </div>

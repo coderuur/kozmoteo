@@ -1,7 +1,10 @@
+'use client';
+
 import React, { useState } from 'react';
 import { MatchResult } from '../lib/types';
-import { downloadStoryCard } from '../lib/canvas';
-import { playTone } from '../lib/audio';
+import { downloadStoryCard, downloadSocraticStoryCard } from '../lib/canvas';
+import { getBrutalTruth, BrutalTruth } from '../lib/viral';
+import { playTone, playCosmicChime } from '../lib/audio';
 
 interface ArchetypeModalProps {
   result: MatchResult;
@@ -10,17 +13,41 @@ interface ArchetypeModalProps {
 }
 
 export const ArchetypeModal: React.FC<ArchetypeModalProps> = ({ result, onClose, soundEnabled }) => {
+  const [activeSlide, setActiveSlide] = useState<0 | 1 | 2>(0);
   const [isExporting, setIsExporting] = useState(false);
 
-  const handleDownload = async () => {
+  const brutal: BrutalTruth = getBrutalTruth(result.archetype);
+
+  const handleDownloadActive = async () => {
     setIsExporting(true);
     playTone(720, 'sine', 0.5, soundEnabled);
     try {
-      await downloadStoryCard(result);
+      if (activeSlide === 0) {
+        await downloadStoryCard(result);
+      } else if (activeSlide === 1) {
+        await downloadSocraticStoryCard(result, brutal);
+      } else {
+        await downloadStoryCard(result);
+      }
     } finally {
       setIsExporting(false);
     }
   };
+
+  const handleDownloadAll = async () => {
+    setIsExporting(true);
+    playCosmicChime(soundEnabled);
+    try {
+      await downloadStoryCard(result);
+      await new Promise((r) => setTimeout(r, 600));
+      await downloadSocraticStoryCard(result, brutal);
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
+  const cleanDescription = result.description.replace(/\s*\([^)]*\)/g, '').trim();
+  const cleanBeliefName = result.belief_name.replace(/\s*\([^)]*\)/g, '').trim();
 
   return (
     <div style={{
@@ -38,68 +65,84 @@ export const ArchetypeModal: React.FC<ArchetypeModalProps> = ({ result, onClose,
       padding: '20px',
       overflowY: 'auto'
     }}>
+      {/* SPOTIFY WRAPPED TARZI SLIDE SEÇİCİ TABS */}
+      <div style={{ display: 'flex', gap: '8px', marginBottom: '14px', flexWrap: 'wrap', justifyContent: 'center' }}>
+        <button
+          onClick={() => { setActiveSlide(0); playTone(540, 'sine', 0.15, soundEnabled); }}
+          style={{
+            padding: '6px 14px',
+            borderRadius: '20px',
+            border: activeSlide === 0 ? '1px solid #D4AF37' : '1px solid #2d2645',
+            backgroundColor: activeSlide === 0 ? 'rgba(212, 175, 55, 0.2)' : '#110f1c',
+            color: activeSlide === 0 ? '#FFE699' : '#9ca3af',
+            fontSize: '11px',
+            fontWeight: 'bold',
+            cursor: 'pointer'
+          }}
+        >
+          ✦ 1. Kozmik Kimlik
+        </button>
+
+        <button
+          onClick={() => { setActiveSlide(1); playTone(580, 'sine', 0.15, soundEnabled); }}
+          style={{
+            padding: '6px 14px',
+            borderRadius: '20px',
+            border: activeSlide === 1 ? '1px solid #f43f5e' : '1px solid #2d2645',
+            backgroundColor: activeSlide === 1 ? 'rgba(244, 63, 94, 0.2)' : '#110f1c',
+            color: activeSlide === 1 ? '#fda4af' : '#9ca3af',
+            fontSize: '11px',
+            fontWeight: 'bold',
+            cursor: 'pointer'
+          }}
+        >
+          ⚡ 2. Sokrates'in Aynası
+        </button>
+
+        <button
+          onClick={() => { setActiveSlide(2); playTone(620, 'sine', 0.15, soundEnabled); }}
+          style={{
+            padding: '6px 14px',
+            borderRadius: '20px',
+            border: activeSlide === 2 ? '1px solid #c084fc' : '1px solid #2d2645',
+            backgroundColor: activeSlide === 2 ? 'rgba(192, 132, 252, 0.2)' : '#110f1c',
+            color: activeSlide === 2 ? '#e9d5ff' : '#9ca3af',
+            fontSize: '11px',
+            fontWeight: 'bold',
+            cursor: 'pointer'
+          }}
+        >
+          🌌 3. Tarihteki Ruh İkizin
+        </button>
+      </div>
+
       {/* 9:16 MAJESTİK HİKAYE ÖNİZLEME KARTI */}
       <div style={{
         width: '340px',
         height: '604px',
-        background: 'linear-gradient(180deg, #07060c 0%, #130f26 40%, #0e0a1c 80%, #06050a 100%)',
-        border: '2px solid #D4AF37',
+        background: activeSlide === 1
+          ? 'linear-gradient(180deg, #09050b 0%, #1a0814 40%, #12050f 80%, #060205 100%)'
+          : 'linear-gradient(180deg, #07060c 0%, #130f26 40%, #0e0a1c 80%, #06050a 100%)',
+        border: activeSlide === 1 ? '2px solid #f43f5e' : '2px solid #D4AF37',
         borderRadius: '20px',
         position: 'relative',
-        boxShadow: '0 0 60px rgba(212, 175, 55, 0.28), inset 0 0 40px rgba(212, 175, 55, 0.08)',
-        marginBottom: '20px',
+        boxShadow: activeSlide === 1 ? '0 0 60px rgba(244, 63, 94, 0.28)' : '0 0 60px rgba(212, 175, 55, 0.28)',
+        marginBottom: '16px',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'space-between',
-        padding: '28px 20px',
+        padding: '24px 18px',
         textAlign: 'center',
         overflow: 'hidden'
       }}>
-        {/* Arka Plan Ethereal Nebula Parıltısı */}
-        <div style={{
-          position: 'absolute',
-          top: '25%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          width: '280px',
-          height: '280px',
-          background: 'radial-gradient(circle, rgba(212, 175, 55, 0.22) 0%, rgba(138, 43, 226, 0.15) 50%, transparent 80%)',
-          pointerEvents: 'none',
-          borderRadius: '50%'
-        }} />
-
-        {/* Kutsal Geometri / Astrolabe Çemberi */}
-        <div style={{
-          position: 'absolute',
-          top: '38%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          width: '240px',
-          height: '240px',
-          border: '1px dashed rgba(212, 175, 55, 0.25)',
-          borderRadius: '50%',
-          pointerEvents: 'none'
-        }} />
-        <div style={{
-          position: 'absolute',
-          top: '38%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          width: '210px',
-          height: '210px',
-          border: '1px solid rgba(212, 175, 55, 0.18)',
-          borderRadius: '50%',
-          pointerEvents: 'none'
-        }} />
-
-        {/* İç İnce Altın Çerçeve & Köşe Süsleri */}
+        {/* Köşe Süsleri */}
         <div style={{
           position: 'absolute',
           top: '8px',
           left: '8px',
           right: '8px',
           bottom: '8px',
-          border: '1px solid rgba(212, 175, 55, 0.35)',
+          border: '1px solid rgba(212, 175, 55, 0.25)',
           borderRadius: '14px',
           pointerEvents: 'none'
         }}>
@@ -109,167 +152,202 @@ export const ArchetypeModal: React.FC<ArchetypeModalProps> = ({ result, onClose,
           <span style={{ position: 'absolute', bottom: '4px', right: '6px', color: '#FFE699', fontSize: '10px' }}>✦</span>
         </div>
 
-        {/* ÜST BAŞLIK ALANI */}
-        <div style={{ position: 'relative', zIndex: 2 }}>
-          <h4 style={{
-            color: '#FFE699',
-            letterSpacing: '5px',
-            fontSize: '11px',
-            margin: '0 0 4px 0',
-            fontFamily: 'Georgia, serif',
-            fontWeight: 'bold'
-          }}>
-            ✦ KOZMO-TEO ✦
-          </h4>
-          <p style={{
-            color: '#9ca3af',
-            letterSpacing: '3px',
-            fontSize: '9px',
-            margin: 0,
-            textTransform: 'uppercase'
-          }}>
-            Bilinçaltı İnanç Arketipi
-          </p>
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '8px',
-            marginTop: '8px',
-            opacity: 0.6
-          }}>
-            <span style={{ height: '1px', width: '40px', background: '#D4AF37' }} />
-            <span style={{ color: '#D4AF37', fontSize: '10px' }}>✧</span>
-            <span style={{ height: '1px', width: '40px', background: '#D4AF37' }} />
-          </div>
-        </div>
+        {/* -------------------------------------------------------- */}
+        {/* SLIDE 0: KOZMİK KİMLİK */}
+        {/* -------------------------------------------------------- */}
+        {activeSlide === 0 && (
+          <>
+            <div>
+              <h4 style={{ color: '#FFE699', letterSpacing: '4px', fontSize: '10px', margin: '0 0 2px 0', fontFamily: 'Georgia, serif', fontWeight: 'bold' }}>
+                ✦ KOZMO-TEO ✦
+              </h4>
+              <p style={{ color: '#9ca3af', letterSpacing: '2px', fontSize: '8px', margin: 0, textTransform: 'uppercase' }}>
+                Bilinçaltı İnanç Arketipi
+              </p>
+            </div>
 
-        {/* ORTA ANA BÖLÜM: ARKETİP + YÜZDE + ROZET */}
-        <div style={{ position: 'relative', zIndex: 2, margin: '15px 0' }}>
-          <h1 style={{
-            color: '#FFE699',
-            fontSize: '26px',
-            margin: '0 0 6px 0',
-            letterSpacing: '1px',
-            fontFamily: 'Georgia, serif',
-            fontWeight: 'bold',
-            textShadow: '0 0 25px rgba(212, 175, 55, 0.7)'
-          }}>
-            {result.archetype}
-          </h1>
+            <div>
+              <h1 style={{ color: '#FFE699', fontSize: '20px', letterSpacing: '2px', margin: '0 0 4px 0', fontFamily: 'Georgia, serif', textTransform: 'uppercase' }}>
+                {result.archetype}
+              </h1>
+              <h2 style={{ fontSize: '56px', fontWeight: 'bold', color: '#ffffff', margin: '0 0 8px 0', textShadow: '0 0 30px rgba(212, 175, 55, 0.4)' }}>
+                %{result.similarity_percentage}
+              </h2>
 
-          <div style={{
-            color: '#FFFFFF',
-            fontSize: '62px',
-            fontWeight: 'bold',
-            fontFamily: 'Georgia, serif',
-            lineHeight: 1,
-            margin: '6px 0 14px 0',
-            textShadow: '0 0 30px rgba(255, 255, 255, 0.4), 0 0 60px rgba(212, 175, 55, 0.3)'
-          }}>
-            %{result.similarity_percentage}
-          </div>
+              <div style={{ display: 'inline-block', border: '1px solid rgba(212, 175, 55, 0.5)', borderRadius: '20px', padding: '4px 14px', backgroundColor: 'rgba(212, 175, 55, 0.08)', marginBottom: '14px' }}>
+                <span style={{ color: '#FFE8A3', fontSize: '10px', letterSpacing: '1px', fontWeight: 'bold' }}>
+                  ✦ {cleanBeliefName.toUpperCase()} ✦
+                </span>
+              </div>
 
-          {/* İnanç Rozeti */}
-          <div style={{
-            display: 'inline-block',
-            padding: '6px 16px',
-            background: 'rgba(212, 175, 55, 0.12)',
-            border: '1px solid rgba(212, 175, 55, 0.55)',
-            borderRadius: '20px',
-            color: '#FFE8A3',
-            fontSize: '12px',
-            fontFamily: 'Georgia, serif',
-            fontWeight: 'bold',
-            letterSpacing: '1px',
-            boxShadow: '0 0 15px rgba(212, 175, 55, 0.15)'
-          }}>
-            ✦ {result.belief_name.split('/')[0].trim().toUpperCase()} ✦
-          </div>
+              <p style={{ color: '#e2e8f0', fontSize: '12px', fontStyle: 'italic', lineHeight: '1.4', margin: '0 auto', maxWidth: '270px' }}>
+                "{cleanDescription}"
+              </p>
+            </div>
 
-          {/* Felsefi Alıntı / Açıklama Özeti (Parantezsiz ve Akıcı) */}
-          <p style={{
-            color: '#cbd5e1',
-            fontSize: '12px',
-            fontFamily: 'Georgia, serif',
-            fontStyle: 'italic',
-            lineHeight: '1.5',
-            margin: '18px auto 0 auto',
-            maxWidth: '280px',
-            display: '-webkit-box',
-            WebkitLineClamp: 3,
-            WebkitBoxOrient: 'vertical',
-            overflow: 'hidden'
-          }}>
-            "{result.description.replace(/\s*\([^)]*\)/g, '').trim()}"
-          </p>
-        </div>
+            <div style={{ backgroundColor: 'rgba(18, 15, 30, 0.7)', border: '1px solid rgba(212, 175, 55, 0.25)', borderRadius: '10px', padding: '12px 10px', margin: '0 6px' }}>
+              <span style={{ color: '#FFE699', fontSize: '9px', letterSpacing: '2px', fontWeight: 'bold', display: 'block', marginBottom: '4px' }}>
+                ✦ GÜNÜN RUHSAL PRATİĞİ ✦
+              </span>
+              <p style={{ color: '#f1f5f9', fontSize: '11px', fontStyle: 'italic', margin: 0, lineHeight: '1.4' }}>
+                "{result.daily_reflection}"
+              </p>
+            </div>
+          </>
+        )}
 
-        {/* ALT VİRAL ALAN */}
-        <div style={{
-          position: 'relative',
-          zIndex: 2,
-          borderTop: '1px solid rgba(212, 175, 55, 0.25)',
-          paddingTop: '12px'
-        }}>
-          <p style={{
-            fontSize: '10px',
-            color: '#94a3b8',
-            letterSpacing: '1px',
-            margin: '0 0 4px 0'
-          }}>
+        {/* -------------------------------------------------------- */}
+        {/* SLIDE 1: SOKRATES'İN AYNASI (RUH TOKADI) */}
+        {/* -------------------------------------------------------- */}
+        {activeSlide === 1 && (
+          <>
+            <div>
+              <h4 style={{ color: '#FFE699', letterSpacing: '4px', fontSize: '10px', margin: '0 0 2px 0', fontFamily: 'Georgia, serif', fontWeight: 'bold' }}>
+                ✦ SOKRATES'İN AYNASI ✦
+              </h4>
+              <p style={{ color: '#f43f5e', letterSpacing: '2px', fontSize: '8px', margin: 0, textTransform: 'uppercase', fontWeight: 'bold' }}>
+                Varoluşsal Ruh Tokadı
+              </p>
+            </div>
+
+            <div>
+              <span style={{ color: '#fda4af', fontSize: '10px', border: '1px solid rgba(244, 63, 94, 0.4)', borderRadius: '12px', padding: '2px 10px', display: 'inline-block', marginBottom: '10px' }}>
+                ✦ {result.archetype} ✦
+              </span>
+              <p style={{ color: '#ffffff', fontSize: '14px', fontStyle: 'italic', lineHeight: '1.5', fontFamily: 'Georgia, serif', margin: '0 auto 12px auto', maxWidth: '280px', textShadow: '0 0 20px rgba(244, 63, 94, 0.3)' }}>
+                "{brutal.quote}"
+              </p>
+
+              <div style={{ backgroundColor: 'rgba(18, 15, 30, 0.8)', border: '1px solid rgba(212, 175, 55, 0.25)', borderRadius: '8px', padding: '10px', marginBottom: '8px', textAlign: 'left' }}>
+                <span style={{ color: '#FFE699', fontSize: '9px', fontWeight: 'bold', display: 'block', marginBottom: '2px' }}>
+                  ⚡ Zihinsel Çelişkin:
+                </span>
+                <p style={{ color: '#cbd5e1', fontSize: '10px', margin: 0, lineHeight: '1.4' }}>
+                  {brutal.contradiction}
+                </p>
+              </div>
+            </div>
+
+            <div style={{ backgroundColor: 'rgba(138, 43, 226, 0.1)', border: '1px solid rgba(138, 43, 226, 0.3)', borderRadius: '8px', padding: '8px 10px' }}>
+              <span style={{ color: '#c084fc', fontSize: '9px', fontWeight: 'bold', display: 'block' }}>
+                🌌 Tarihteki Ruh İkizin:
+              </span>
+              <span style={{ color: '#FFE699', fontSize: '11px', fontFamily: 'Georgia, serif', fontWeight: 'bold' }}>
+                {brutal.historicalMirror}
+              </span>
+            </div>
+          </>
+        )}
+
+        {/* -------------------------------------------------------- */}
+        {/* SLIDE 2: TARİHTEKİ RUH İKİZİ & DERİN FELSEFE */}
+        {/* -------------------------------------------------------- */}
+        {activeSlide === 2 && (
+          <>
+            <div>
+              <h4 style={{ color: '#FFE699', letterSpacing: '4px', fontSize: '10px', margin: '0 0 2px 0', fontFamily: 'Georgia, serif', fontWeight: 'bold' }}>
+                ✦ KOZMO-TEO ✦
+              </h4>
+              <p style={{ color: '#c084fc', letterSpacing: '2px', fontSize: '8px', margin: 0, textTransform: 'uppercase' }}>
+                Tarihsel Rezonans
+              </p>
+            </div>
+
+            <div>
+              <h3 style={{ color: '#FFE699', fontSize: '17px', margin: '0 0 8px 0', fontFamily: 'Georgia, serif' }}>
+                Kozmik Felsefi Akrabaların
+              </h3>
+              <div style={{ display: 'flex', gap: '6px', justifyContent: 'center', flexWrap: 'wrap', marginBottom: '14px' }}>
+                {(result.figures || ['Spinoza', 'Nietzsche']).map((fig, idx) => (
+                  <span key={idx} style={{ padding: '3px 10px', backgroundColor: 'rgba(212, 175, 55, 0.15)', border: '1px solid #D4AF37', borderRadius: '14px', color: '#FFE8A3', fontSize: '10px', fontWeight: 'bold' }}>
+                    ✦ {fig}
+                  </span>
+                ))}
+              </div>
+
+              <div style={{ backgroundColor: '#0a0912', border: '1px solid #2d2645', borderRadius: '10px', padding: '12px', margin: '0 auto', maxWidth: '280px' }}>
+                <span style={{ color: '#9ca3af', fontSize: '9px', letterSpacing: '1px', display: 'block', marginBottom: '4px' }}>
+                  KADİM ALINTI
+                </span>
+                <p style={{ color: '#f8fafc', fontSize: '12px', fontStyle: 'italic', margin: 0, lineHeight: '1.4' }}>
+                  "{result.quotes?.[0] || 'Kendini bilmek, tüm bilgeliğin başlangıcıdır.'}"
+                </p>
+              </div>
+            </div>
+
+            <div style={{ backgroundColor: 'rgba(18, 15, 30, 0.7)', border: '1px solid rgba(212, 175, 55, 0.25)', borderRadius: '10px', padding: '10px' }}>
+              <span style={{ color: '#FFE699', fontSize: '9px', letterSpacing: '2px', fontWeight: 'bold', display: 'block', marginBottom: '4px' }}>
+                ✦ BİLİNÇALTI DETAYI ✦
+              </span>
+              <p style={{ color: '#cbd5e1', fontSize: '10px', margin: 0, lineHeight: '1.4' }}>
+                {result.details?.slice(0, 140)}...
+              </p>
+            </div>
+          </>
+        )}
+
+        {/* ALT BİLGİ */}
+        <div>
+          <p style={{ fontSize: '9px', color: '#94a3b8', margin: '0 0 2px 0' }}>
             Senin inanç pusulan ne söylüyor?
           </p>
-          <p style={{
-            fontSize: '11px',
-            color: '#FFE699',
-            fontFamily: 'Georgia, serif',
-            fontWeight: 'bold',
-            letterSpacing: '2px',
-            margin: 0
-          }}>
-            ✦ test.kozmoteo.com ✦
+          <p style={{ fontSize: '10px', color: '#FFE699', fontFamily: 'Georgia, serif', fontWeight: 'bold', letterSpacing: '2px', margin: 0 }}>
+            ✦ kozmoteo.netlify.app ✦
           </p>
         </div>
       </div>
 
       {/* BUTONLAR */}
-      <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', justifyContent: 'center' }}>
+      <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', justifyContent: 'center' }}>
         <button
-          onClick={handleDownload}
+          onClick={handleDownloadActive}
           disabled={isExporting}
           style={{
-            padding: '14px 28px',
+            padding: '12px 24px',
             background: 'linear-gradient(135deg, #FFE699 0%, #D4AF37 50%, #AA820A 100%)',
             color: '#07060c',
             border: 'none',
-            borderRadius: '30px',
+            borderRadius: '24px',
             fontWeight: 'bold',
             cursor: 'pointer',
-            fontSize: '14px',
-            letterSpacing: '0.5px',
-            boxShadow: '0 0 30px rgba(212, 175, 55, 0.4)',
-            transition: 'transform 0.2s, box-shadow 0.2s',
+            fontSize: '13px',
+            boxShadow: '0 0 25px rgba(212, 175, 55, 0.4)',
             display: 'flex',
             alignItems: 'center',
-            gap: '8px'
+            gap: '6px'
           }}
         >
-          {isExporting ? 'Görsel Hazırlanıyor...' : '✨ Hikaye Kartını İndir'}
+          {isExporting ? 'Görsel Hazırlanıyor...' : '📸 Bu Kartı İndir (9:16 PNG)'}
+        </button>
+
+        <button
+          onClick={handleDownloadAll}
+          disabled={isExporting}
+          style={{
+            padding: '12px 18px',
+            backgroundColor: '#12101c',
+            color: '#FFE699',
+            border: '1px solid #D4AF37',
+            borderRadius: '24px',
+            fontWeight: 'bold',
+            cursor: 'pointer',
+            fontSize: '12px'
+          }}
+        >
+          ✨ 2'li Seriyi İndir
         </button>
 
         <button
           onClick={onClose}
           style={{
-            padding: '14px 24px',
+            padding: '12px 20px',
             backgroundColor: '#12101c',
             color: '#e2e8f0',
-            border: '1px solid rgba(212, 175, 55, 0.4)',
-            borderRadius: '30px',
+            border: '1px solid #3d3558',
+            borderRadius: '24px',
             fontWeight: 'bold',
             cursor: 'pointer',
-            fontSize: '14px',
-            transition: 'background-color 0.2s'
+            fontSize: '13px'
           }}
         >
           Kapat

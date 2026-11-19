@@ -1,14 +1,8 @@
 import { MatchResult } from './types';
+import { BrutalTruth, DuoRelationshipReport, ConfessionItem } from './viral';
 
-export const downloadStoryCard = async (result: MatchResult): Promise<void> => {
-  if (typeof window === 'undefined') return;
-
-  const canvas = document.createElement('canvas');
-  canvas.width = 1080;
-  canvas.height = 1920;
-  const ctx = canvas.getContext('2d');
-  if (!ctx) return;
-
+// Ortak Kozmik Nebula & Yıldız Arka Planı
+const drawSharedBackground = (ctx: CanvasRenderingContext2D) => {
   // 1. Derin Kozmik Boşluk & Nebula Arka Planı
   const bgGrad = ctx.createLinearGradient(0, 0, 1080, 1920);
   bgGrad.addColorStop(0, '#06050a');
@@ -35,7 +29,7 @@ export const downloadStoryCard = async (result: MatchResult): Promise<void> => {
   ctx.fillStyle = nebula2;
   ctx.fillRect(0, 0, 1080, 1920);
 
-  // 2. Yıldız Tozu & Takımyıldız Parıltıları
+  // Yıldız Tozu
   for (let i = 0; i < 220; i++) {
     const x = ((Math.sin(i * 197.3) * 0.5 + 0.5) * 1040) + 20;
     const y = ((Math.cos(i * 73.7) * 0.5 + 0.5) * 1880) + 20;
@@ -48,7 +42,6 @@ export const downloadStoryCard = async (result: MatchResult): Promise<void> => {
     ctx.arc(x, y, radius, 0, Math.PI * 2);
     ctx.fill();
 
-    // Bazı parlak yıldızlara 4 köşeli parlama ekle
     if (i % 18 === 0) {
       ctx.strokeStyle = 'rgba(255, 232, 163, 0.5)';
       ctx.lineWidth = 1;
@@ -62,12 +55,98 @@ export const downloadStoryCard = async (result: MatchResult): Promise<void> => {
   }
   ctx.globalAlpha = 1.0;
 
-  // 3. Kutsal Geometri / Astrolabe Kozmik Çemberleri (Merkez: 540, 720)
+  // Dış Çerçeve & Köşe Köşegenleri
+  ctx.strokeStyle = 'rgba(212, 175, 55, 0.55)';
+  ctx.lineWidth = 3;
+  ctx.strokeRect(40, 40, 1000, 1840);
+
+  ctx.strokeStyle = 'rgba(212, 175, 55, 0.25)';
+  ctx.lineWidth = 1;
+  ctx.strokeRect(55, 55, 970, 1810);
+
+  ctx.fillStyle = '#FFE8A3';
+  ctx.font = '22px Georgia, serif';
+  ctx.fillText('✦', 65, 80);
+  ctx.fillText('✦', 1015, 80);
+  ctx.fillText('✦', 65, 1840);
+  ctx.fillText('✦', 1015, 1840);
+};
+
+// Metin Sarmalama Yardımcısı
+const wrapCanvasText = (
+  ctx: CanvasRenderingContext2D,
+  text: string,
+  x: number,
+  startY: number,
+  maxW: number,
+  lineH: number,
+  maxLines = 4
+) => {
+  const words = text.split(' ');
+  let line = '';
+  let currY = startY;
+  let lineCount = 0;
+
+  for (let n = 0; n < words.length; n++) {
+    const testLine = line + words[n] + ' ';
+    const metrics = ctx.measureText(testLine);
+    if (metrics.width > maxW && n > 0) {
+      lineCount++;
+      if (lineCount >= maxLines) {
+        ctx.fillText(line.trim() + '...', x, currY);
+        return currY;
+      }
+      ctx.fillText(line.trim(), x, currY);
+      line = words[n] + ' ';
+      currY += lineH;
+    } else {
+      line = testLine;
+    }
+  }
+  ctx.fillText(line.trim(), x, currY);
+  return currY;
+};
+
+// Paylaş veya İndir Tetikleyicisi
+const saveOrShareCanvas = async (canvas: HTMLCanvasElement, filename: string, title: string, text: string) => {
+  if (navigator.canShare) {
+    try {
+      const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/png'));
+      if (blob) {
+        const file = new File([blob], filename, { type: 'image/png' });
+        if (navigator.canShare({ files: [file] })) {
+          await navigator.share({ title, text, files: [file] });
+          return;
+        }
+      }
+    } catch (e) {}
+  }
+  const dataUrl = canvas.toDataURL('image/png');
+  const a = document.createElement('a');
+  a.download = filename;
+  a.href = dataUrl;
+  a.click();
+};
+
+// -------------------------------------------------------------
+// 1. TEKLİ MAJESTİK HİKAYE KARTI
+// -------------------------------------------------------------
+export const downloadStoryCard = async (result: MatchResult): Promise<void> => {
+  if (typeof window === 'undefined') return;
+
+  const canvas = document.createElement('canvas');
+  canvas.width = 1080;
+  canvas.height = 1920;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return;
+
+  drawSharedBackground(ctx);
+
   const cx = 540;
   const cy = 720;
 
+  // Astrolabe Çemberleri
   ctx.save();
-  // Dış Kesikli Halka
   ctx.strokeStyle = 'rgba(212, 175, 55, 0.22)';
   ctx.lineWidth = 1.5;
   ctx.setLineDash([6, 8]);
@@ -75,7 +154,6 @@ export const downloadStoryCard = async (result: MatchResult): Promise<void> => {
   ctx.arc(cx, cy, 320, 0, Math.PI * 2);
   ctx.stroke();
 
-  // İnce İç Halka
   ctx.setLineDash([]);
   ctx.strokeStyle = 'rgba(212, 175, 55, 0.35)';
   ctx.lineWidth = 1;
@@ -83,14 +161,12 @@ export const downloadStoryCard = async (result: MatchResult): Promise<void> => {
   ctx.arc(cx, cy, 280, 0, Math.PI * 2);
   ctx.stroke();
 
-  // 12 Astroloji / Felsefe Işını
   for (let a = 0; a < 12; a++) {
     const angle = (a * Math.PI) / 6;
     const x1 = cx + Math.cos(angle) * 280;
     const y1 = cy + Math.sin(angle) * 280;
     const x2 = cx + Math.cos(angle) * 315;
     const y2 = cy + Math.sin(angle) * 315;
-
     ctx.strokeStyle = 'rgba(212, 175, 55, 0.4)';
     ctx.lineWidth = 1.5;
     ctx.beginPath();
@@ -98,161 +174,62 @@ export const downloadStoryCard = async (result: MatchResult): Promise<void> => {
     ctx.lineTo(x2, y2);
     ctx.stroke();
   }
-
-  // 45 Derece Döndürülmüş Çift Kare (Sekiz Köşeli Ruh Geometrisi)
-  ctx.strokeStyle = 'rgba(212, 175, 55, 0.15)';
-  ctx.lineWidth = 1;
-  const side = 380;
-  ctx.strokeRect(cx - side / 2, cy - side / 2, side, side);
-  ctx.translate(cx, cy);
-  ctx.rotate(Math.PI / 4);
-  ctx.strokeRect(-side / 2, -side / 2, side, side);
   ctx.restore();
 
-  // 4. Majestik Kraliyet Çerçevesi (Çift Kat Altın + Köşe Süsleri)
-  const borderGrad = ctx.createLinearGradient(0, 0, 1080, 1920);
-  borderGrad.addColorStop(0, '#AA820A');
-  borderGrad.addColorStop(0.3, '#FFE699');
-  borderGrad.addColorStop(0.5, '#D4AF37');
-  borderGrad.addColorStop(0.8, '#FFE699');
-  borderGrad.addColorStop(1, '#AA820A');
-
-  ctx.strokeStyle = borderGrad;
-  ctx.lineWidth = 3.5;
-  ctx.strokeRect(60, 60, 960, 1800);
-
-  // İç İnce Çerçeve
-  ctx.strokeStyle = 'rgba(212, 175, 55, 0.35)';
-  ctx.lineWidth = 1;
-  ctx.strokeRect(76, 76, 928, 1768);
-
-  // Köşe Baklava / Yıldız Süsleri
-  const corners = [
-    [76, 76],
-    [1004, 76],
-    [76, 1844],
-    [1004, 1844]
-  ];
-  corners.forEach(([kx, ky]) => {
-    ctx.fillStyle = '#FFE699';
-    ctx.beginPath();
-    ctx.arc(kx, ky, 5, 0, Math.PI * 2);
-    ctx.fill();
-
-    ctx.strokeStyle = '#D4AF37';
-    ctx.lineWidth = 1.5;
-    ctx.beginPath();
-    ctx.moveTo(kx - 16, ky);
-    ctx.lineTo(kx + 16, ky);
-    ctx.moveTo(kx, ky - 16);
-    ctx.lineTo(kx, ky + 16);
-    ctx.stroke();
-  });
-
-  // 5. Başlık Bölümü (Header)
+  // Başlıklar
   ctx.textAlign = 'center';
-
-  ctx.fillStyle = '#FFE699';
-  ctx.font = 'bold 32px Georgia, serif';
-  ctx.fillText('✦  K O Z M O  -  T E O  ✦', 540, 195);
+  ctx.fillStyle = '#FFE58F';
+  ctx.font = 'bold 36px Georgia, serif';
+  ctx.fillText('✦   K O Z M O - T E O   ✦', 540, 240);
 
   ctx.fillStyle = '#9ca3af';
-  ctx.font = '500 24px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-  ctx.fillText('B İ L İ N Ç A L T I   İ N A N Ç   A R K E T İ P İ', 540, 245);
+  ctx.font = '22px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+  ctx.fillText('B İ L İ N Ç A L T I   İ N A N Ç   A R K E T İ P İ', 540, 285);
 
-  // İnce Ayırıcı Çizgi
-  ctx.strokeStyle = 'rgba(212, 175, 55, 0.4)';
-  ctx.lineWidth = 1;
-  ctx.beginPath();
-  ctx.moveTo(380, 280);
-  ctx.lineTo(700, 280);
-  ctx.stroke();
-
-  ctx.fillStyle = '#D4AF37';
-  ctx.font = '18px Georgia, serif';
-  ctx.fillText('✧', 540, 286);
-
-  // 6. Arketip Adı & Parıldama
-  ctx.save();
-  ctx.shadowColor = 'rgba(212, 175, 55, 0.7)';
-  ctx.shadowBlur = 35;
-  ctx.fillStyle = '#FFE699';
-  ctx.font = 'bold 78px Georgia, serif';
-  ctx.fillText(result.archetype, 540, 600);
-  ctx.restore();
-
-  // 7. Yüzde Göstergesi (%100 vb.)
-  ctx.save();
-  ctx.shadowColor = 'rgba(255, 255, 255, 0.5)';
+  // Arketip Adı
+  ctx.fillStyle = '#FFE58F';
+  ctx.font = 'bold 64px Georgia, serif';
+  ctx.shadowColor = 'rgba(212, 175, 55, 0.6)';
   ctx.shadowBlur = 30;
-  ctx.fillStyle = '#FFFFFF';
-  ctx.font = 'bold 175px Georgia, serif';
-  ctx.fillText(`%${result.similarity_percentage}`, 540, 790);
-  ctx.restore();
+  ctx.fillText(result.archetype.toUpperCase(), 540, 640);
 
-  // 8. İnanç Sistemi Rozeti (Pill Badge)
-  const beliefLabel = `✦  ${result.belief_name.split('/')[0].trim().toUpperCase()}  ✦`;
-  ctx.font = 'bold 34px Georgia, serif';
-  const badgeMetrics = ctx.measureText(beliefLabel);
-  const badgeWidth = Math.min(840, badgeMetrics.width + 80);
-  const badgeHeight = 64;
-  const badgeX = 540 - badgeWidth / 2;
+  // Yüzde
+  ctx.fillStyle = '#FFFFFF';
+  ctx.font = 'bold 150px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+  ctx.shadowBlur = 45;
+  ctx.fillText(`%${result.similarity_percentage}`, 540, 785);
+  ctx.shadowBlur = 0;
+
+  // Rozet
+  const beliefLabel = `✦  ${result.belief_name.replace(/\s*\([^)]*\)/g, '').trim().toUpperCase()}  ✦`;
+  ctx.font = 'bold 26px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+  const badgeWidth = Math.max(480, ctx.measureText(beliefLabel).width + 60);
+  const badgeX = (1080 - badgeWidth) / 2;
   const badgeY = 880;
 
   ctx.fillStyle = 'rgba(212, 175, 55, 0.12)';
   ctx.strokeStyle = 'rgba(212, 175, 55, 0.55)';
   ctx.lineWidth = 1.5;
   ctx.beginPath();
-  ctx.roundRect(badgeX, badgeY, badgeWidth, badgeHeight, 32);
+  ctx.roundRect(badgeX, badgeY, badgeWidth, 60, 30);
   ctx.fill();
   ctx.stroke();
 
   ctx.fillStyle = '#FFE8A3';
-  ctx.fillText(beliefLabel, 540, badgeY + 44);
+  ctx.fillText(beliefLabel, 540, badgeY + 40);
 
-  // 9. Metin Sarmalama Yardımcısı
-  const wrapText = (text: string, x: number, startY: number, maxW: number, lineH: number, maxLines = 4) => {
-    const words = text.split(' ');
-    let line = '';
-    let currY = startY;
-    let lineCount = 0;
-
-    for (let n = 0; n < words.length; n++) {
-      const testLine = line + words[n] + ' ';
-      const metrics = ctx.measureText(testLine);
-      if (metrics.width > maxW && n > 0) {
-        lineCount++;
-        if (lineCount >= maxLines) {
-          ctx.fillText(line.trim() + '...', x, currY);
-          return currY;
-        }
-        ctx.fillText(line.trim(), x, currY);
-        line = words[n] + ' ';
-        currY += lineH;
-      } else {
-        line = testLine;
-      }
-    }
-    ctx.fillText(line.trim(), x, currY);
-    return currY;
-  };
-
-  // 10. Arketip Felsefi Tanımı (Aura Alıntısı - Parantezsiz)
+  // Felsefi Tanım
   ctx.fillStyle = '#e2e8f0';
   ctx.font = 'italic 34px Georgia, serif';
-  wrapText(`"${result.description.replace(/\s*\([^)]*\)/g, '').trim()}"`, 540, 1070, 820, 52, 4);
+  wrapCanvasText(ctx, `"${result.description.replace(/\s*\([^)]*\)/g, '').trim()}"`, 540, 1070, 820, 52, 4);
 
-  // 11. "Günün Ruhsal Pratiği" Kart Kutusu
-  const boxX = 140;
+  // Günün Ruhsal Pratiği
   const boxY = 1320;
-  const boxW = 800;
-  const boxH = 290;
-
   ctx.fillStyle = 'rgba(18, 15, 30, 0.7)';
   ctx.strokeStyle = 'rgba(212, 175, 55, 0.35)';
   ctx.lineWidth = 1.5;
   ctx.beginPath();
-  ctx.roundRect(boxX, boxY, boxW, boxH, 16);
+  ctx.roundRect(140, boxY, 800, 290, 16);
   ctx.fill();
   ctx.stroke();
 
@@ -260,49 +237,379 @@ export const downloadStoryCard = async (result: MatchResult): Promise<void> => {
   ctx.font = 'bold 24px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
   ctx.fillText('✦  G Ü N Ü N   R U H S A L   P R A T İ Ğ İ  ✦', 540, boxY + 60);
 
-  ctx.strokeStyle = 'rgba(212, 175, 55, 0.25)';
-  ctx.lineWidth = 1;
-  ctx.beginPath();
-  ctx.moveTo(340, boxY + 85);
-  ctx.lineTo(740, boxY + 85);
-  ctx.stroke();
-
   ctx.fillStyle = '#f1f5f9';
   ctx.font = 'italic 30px Georgia, serif';
-  wrapText(result.daily_reflection, 540, boxY + 145, 720, 46, 3);
+  wrapCanvasText(ctx, result.daily_reflection, 540, boxY + 145, 720, 46, 3);
 
-  // 12. Viral Alt Bilgi (Footer / Watermark)
+  // Footer
   ctx.fillStyle = '#94a3b8';
   ctx.font = '26px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
   ctx.fillText('Senin inanç pusulan ne söylüyor?', 540, 1715);
 
   ctx.fillStyle = '#FFE699';
   ctx.font = 'bold 30px Georgia, serif';
-  ctx.fillText('✦  test.kozmoteo.com  ✦', 540, 1765);
+  ctx.fillText('✦  kozmoteo.netlify.app  ✦', 540, 1765);
 
-  // 13. Paylaşım & İndirme İşlemi
-  if (navigator.canShare) {
-    try {
-      const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/png'));
-      if (blob) {
-        const file = new File([blob], `KozmoTeo_${result.archetype.replace(/\s+/g, '_')}.png`, { type: 'image/png' });
-        if (navigator.canShare({ files: [file] })) {
-          await navigator.share({
-            title: `Kozmo-Teo: ${result.archetype}`,
-            text: `Benim Kozmo-Teo inanç arketipim: ${result.archetype} (%${result.similarity_percentage})! Kendi pusulanı test et: test.kozmoteo.com`,
-            files: [file]
-          });
-          return;
-        }
-      }
-    } catch (e) {
-      // Paylaşım hatası durumunda indirmeye devam et
-    }
-  }
+  await saveOrShareCanvas(
+    canvas,
+    `KozmoTeo_${result.archetype.replace(/\s+/g, '_')}.png`,
+    `Kozmo-Teo: ${result.archetype}`,
+    `Benim Kozmo-Teo inanç arketipim: ${result.archetype} (%${result.similarity_percentage})! kozmoteo.netlify.app`
+  );
+};
 
-  const dataUrl = canvas.toDataURL('image/png');
-  const a = document.createElement('a');
-  a.download = `KozmoTeo_${result.archetype.replace(/\s+/g, '_')}.png`;
-  a.href = dataUrl;
-  a.click();
+// -------------------------------------------------------------
+// 2. SOKRATES'İN AYNASI (RUH TOKADI) STORY KARTI
+// -------------------------------------------------------------
+export const downloadSocraticStoryCard = async (result: MatchResult, brutal: BrutalTruth): Promise<void> => {
+  if (typeof window === 'undefined') return;
+
+  const canvas = document.createElement('canvas');
+  canvas.width = 1080;
+  canvas.height = 1920;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return;
+
+  drawSharedBackground(ctx);
+
+  ctx.textAlign = 'center';
+  ctx.fillStyle = '#FFE58F';
+  ctx.font = 'bold 36px Georgia, serif';
+  ctx.fillText('✦   S O K R A T E S \' İ N   A Y N A S I   ✦', 540, 240);
+
+  ctx.fillStyle = '#f43f5e';
+  ctx.font = 'bold 24px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+  ctx.fillText('V A R O L U Ş S A L   R U H   T O K A D I', 540, 290);
+
+  // Arketip Rozeti
+  const tag = `✦  ${result.archetype.toUpperCase()} (%${result.similarity_percentage})  ✦`;
+  ctx.font = 'bold 24px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+  const tagW = ctx.measureText(tag).width + 50;
+  ctx.fillStyle = 'rgba(244, 63, 94, 0.12)';
+  ctx.strokeStyle = 'rgba(244, 63, 94, 0.5)';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.roundRect((1080 - tagW) / 2, 350, tagW, 50, 25);
+  ctx.fill();
+  ctx.stroke();
+
+  ctx.fillStyle = '#fda4af';
+  ctx.fillText(tag, 540, 384);
+
+  // Acımasız Gerçek (Tırnak İçinde Büyük Metin)
+  ctx.fillStyle = '#FFE699';
+  ctx.font = 'bold 120px Georgia, serif';
+  ctx.fillText('“', 540, 520);
+
+  ctx.fillStyle = '#f8fafc';
+  ctx.font = 'italic 44px Georgia, serif';
+  ctx.shadowColor = 'rgba(244, 63, 94, 0.4)';
+  ctx.shadowBlur = 25;
+  wrapCanvasText(ctx, brutal.quote, 540, 610, 840, 64, 5);
+  ctx.shadowBlur = 0;
+
+  // Kutu 1: Zihinsel Çelişkin
+  const box1Y = 990;
+  ctx.fillStyle = 'rgba(18, 15, 30, 0.85)';
+  ctx.strokeStyle = 'rgba(212, 175, 55, 0.35)';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.roundRect(120, box1Y, 840, 220, 16);
+  ctx.fill();
+  ctx.stroke();
+
+  ctx.fillStyle = '#FFE699';
+  ctx.font = 'bold 22px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+  ctx.fillText('⚡  Z İ H İ N S E L   Ç E L İ Ş K İ N', 540, box1Y + 50);
+
+  ctx.fillStyle = '#cbd5e1';
+  ctx.font = '30px Georgia, serif';
+  wrapCanvasText(ctx, brutal.contradiction, 540, box1Y + 115, 760, 44, 3);
+
+  // Kutu 2: Tarihteki Ruh İkizin
+  const box2Y = 1260;
+  ctx.fillStyle = 'rgba(18, 15, 30, 0.85)';
+  ctx.strokeStyle = 'rgba(138, 43, 226, 0.4)';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.roundRect(120, box2Y, 840, 190, 16);
+  ctx.fill();
+  ctx.stroke();
+
+  ctx.fillStyle = '#c084fc';
+  ctx.font = 'bold 22px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+  ctx.fillText('🌌  T A R İ H T E K İ   R U H   İ K İ Z İ N', 540, box2Y + 50);
+
+  ctx.fillStyle = '#FFE58F';
+  ctx.font = 'bold 36px Georgia, serif';
+  ctx.fillText(brutal.historicalMirror, 540, box2Y + 120);
+
+  // Footer
+  ctx.fillStyle = '#94a3b8';
+  ctx.font = '26px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+  ctx.fillText('Kendi karanlığınla yüzleşmeye cesaretin var mı?', 540, 1715);
+
+  ctx.fillStyle = '#FFE699';
+  ctx.font = 'bold 30px Georgia, serif';
+  ctx.fillText('✦  kozmoteo.netlify.app  ✦', 540, 1765);
+
+  await saveOrShareCanvas(
+    canvas,
+    `KozmoTeo_RuhTokadi_${result.archetype.replace(/\s+/g, '_')}.png`,
+    `Kozmo-Teo: Sokrates'in Aynası`,
+    `Sokrates'in Aynası bana şunu dedi: "${brutal.quote}" - Kendi karanlığını çöz: kozmoteo.netlify.app`
+  );
+};
+
+// -------------------------------------------------------------
+// 3. KOZMİK İLİŞKİ & ÇATIŞMA (DUO 2.0) STORY KARTI
+// -------------------------------------------------------------
+export const downloadDuoStoryCard = async (
+  userResult: MatchResult,
+  partnerName: string,
+  report: DuoRelationshipReport
+): Promise<void> => {
+  if (typeof window === 'undefined') return;
+
+  const canvas = document.createElement('canvas');
+  canvas.width = 1080;
+  canvas.height = 1920;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return;
+
+  drawSharedBackground(ctx);
+
+  ctx.textAlign = 'center';
+  ctx.fillStyle = '#FFE58F';
+  ctx.font = 'bold 36px Georgia, serif';
+  ctx.fillText('✦   K O Z M O - T E O   ✦', 540, 220);
+
+  ctx.fillStyle = '#67e8f9';
+  ctx.font = 'bold 22px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+  ctx.fillText('F E L S E F İ   U Y U M   &   Ç A T I Ş M A   R A P O R U', 540, 265);
+
+  // İki Ruhun Karşılaşması (Sol: Ben, Sağ: Partner)
+  // Sol Kart (Ben)
+  ctx.fillStyle = 'rgba(212, 175, 55, 0.1)';
+  ctx.strokeStyle = '#D4AF37';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.roundRect(100, 340, 390, 180, 16);
+  ctx.fill();
+  ctx.stroke();
+
+  ctx.fillStyle = '#9ca3af';
+  ctx.font = '18px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+  ctx.fillText('BENİM ARKETİPİM', 295, 380);
+
+  ctx.fillStyle = '#FFE699';
+  ctx.font = 'bold 24px Georgia, serif';
+  ctx.fillText(userResult.archetype, 295, 430);
+
+  ctx.fillStyle = '#FFFFFF';
+  ctx.font = 'bold 38px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+  ctx.fillText(`%${userResult.similarity_percentage}`, 295, 485);
+
+  // Sağ Kart (Partner)
+  ctx.fillStyle = 'rgba(103, 232, 249, 0.1)';
+  ctx.strokeStyle = '#67e8f9';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.roundRect(590, 340, 390, 180, 16);
+  ctx.fill();
+  ctx.stroke();
+
+  ctx.fillStyle = '#9ca3af';
+  ctx.font = '18px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+  ctx.fillText(`${(partnerName || 'PARTNER').toUpperCase()}`, 785, 380);
+
+  ctx.fillStyle = '#a5f3fc';
+  ctx.font = 'bold 24px Georgia, serif';
+  ctx.fillText(report.partnerArchetype, 785, 430);
+
+  ctx.fillStyle = '#FFFFFF';
+  ctx.font = 'bold 38px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+  ctx.fillText('EŞLEŞTİ', 785, 485);
+
+  // Merkez Uyum Skoru Çemberi
+  ctx.fillStyle = '#07060c';
+  ctx.strokeStyle = '#D4AF37';
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.arc(540, 680, 130, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.stroke();
+
+  ctx.fillStyle = '#FFE699';
+  ctx.font = 'bold 88px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+  ctx.shadowColor = 'rgba(212, 175, 55, 0.7)';
+  ctx.shadowBlur = 35;
+  ctx.fillText(`%${report.compatibilityScore}`, 540, 710);
+  ctx.shadowBlur = 0;
+
+  ctx.fillStyle = '#9ca3af';
+  ctx.font = '20px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+  ctx.fillText('RUHSAL UYUM', 540, 755);
+
+  // Karar Rozeti
+  ctx.font = 'bold 26px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+  const bText = report.verdictBadge;
+  const bW = ctx.measureText(bText).width + 60;
+  ctx.fillStyle = 'rgba(212, 175, 55, 0.18)';
+  ctx.strokeStyle = 'rgba(212, 175, 55, 0.6)';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.roundRect((1080 - bW) / 2, 850, bW, 54, 27);
+  ctx.fill();
+  ctx.stroke();
+
+  ctx.fillStyle = '#FFE8A3';
+  ctx.fillText(bText, 540, 886);
+
+  // İlişki Başlığı
+  ctx.fillStyle = '#f8fafc';
+  ctx.font = 'bold 38px Georgia, serif';
+  ctx.fillText(`"${report.title}"`, 540, 960);
+
+  // Zehirli Çatışma Riski Barı
+  ctx.fillStyle = '#9ca3af';
+  ctx.font = '20px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+  ctx.fillText(`Zehirli Çatışma Riski: %${report.conflictRisk} (${report.conflictLabel})`, 540, 1020);
+
+  ctx.fillStyle = '#1e1b2e';
+  ctx.beginPath();
+  ctx.roundRect(240, 1045, 600, 16, 8);
+  ctx.fill();
+
+  const fillGrad = ctx.createLinearGradient(240, 0, 840, 0);
+  fillGrad.addColorStop(0, '#10b981');
+  fillGrad.addColorStop(0.5, '#f59e0b');
+  fillGrad.addColorStop(1, '#ef4444');
+  ctx.fillStyle = fillGrad;
+  ctx.beginPath();
+  ctx.roundRect(240, 1045, 600 * (report.conflictRisk / 100), 16, 8);
+  ctx.fill();
+
+  // Kutu: İlişkinizin Felsefi Paradoksu
+  const boxY = 1100;
+  ctx.fillStyle = 'rgba(18, 15, 30, 0.85)';
+  ctx.strokeStyle = 'rgba(212, 175, 55, 0.35)';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.roundRect(100, boxY, 880, 270, 16);
+  ctx.fill();
+  ctx.stroke();
+
+  ctx.fillStyle = '#FFE699';
+  ctx.font = 'bold 22px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+  ctx.fillText('✦  A Ş K I N I Z I N   P A R A D O K S U  ✦', 540, boxY + 45);
+
+  ctx.fillStyle = '#e2e8f0';
+  ctx.font = 'italic 28px Georgia, serif';
+  wrapCanvasText(ctx, report.dynamics, 540, boxY + 105, 800, 42, 4);
+
+  // Kutu 2: En Büyük Kavga Noktanız
+  const box2Y = 1400;
+  ctx.fillStyle = 'rgba(18, 15, 30, 0.85)';
+  ctx.strokeStyle = 'rgba(239, 68, 68, 0.4)';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.roundRect(100, box2Y, 880, 180, 16);
+  ctx.fill();
+  ctx.stroke();
+
+  ctx.fillStyle = '#f87171';
+  ctx.font = 'bold 20px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+  ctx.fillText('⚠️  E N   B Ü Y Ü K   K A V G A   N O K T A N I Z', 540, box2Y + 45);
+
+  ctx.fillStyle = '#f1f5f9';
+  ctx.font = '26px Georgia, serif';
+  wrapCanvasText(ctx, report.biggestFightTopic, 540, box2Y + 95, 800, 38, 2);
+
+  // Footer
+  ctx.fillStyle = '#94a3b8';
+  ctx.font = '26px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+  ctx.fillText('Sizin frekansınız yüzde kaç uyuşuyor?', 540, 1715);
+
+  ctx.fillStyle = '#FFE699';
+  ctx.font = 'bold 30px Georgia, serif';
+  ctx.fillText('✦  kozmoteo.netlify.app  ✦', 540, 1765);
+
+  await saveOrShareCanvas(
+    canvas,
+    `KozmoTeo_Duo_${userResult.archetype}_${report.partnerArchetype}.png`,
+    `Kozmo-Teo: Felsefi Uyum Raporu`,
+    `Bizim felsefi uyumumuz %${report.compatibilityScore} çıktı! (${report.title}) - Seninki kaç? kozmoteo.netlify.app`
+  );
+};
+
+// -------------------------------------------------------------
+// 4. KOZMİK İTİRAF & GECE FISILTISI KARTI
+// -------------------------------------------------------------
+export const downloadConfessionCard = async (confession: ConfessionItem): Promise<void> => {
+  if (typeof window === 'undefined') return;
+
+  const canvas = document.createElement('canvas');
+  canvas.width = 1080;
+  canvas.height = 1920;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return;
+
+  drawSharedBackground(ctx);
+
+  ctx.textAlign = 'center';
+  ctx.fillStyle = '#FFE58F';
+  ctx.font = 'bold 36px Georgia, serif';
+  ctx.fillText('✦   K O Z M O - T E O   ✦', 540, 260);
+
+  ctx.fillStyle = '#c084fc';
+  ctx.font = 'bold 24px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+  ctx.fillText('G E C E   F I S I L T I S I   &   İ T İ R A F', 540, 310);
+
+  // Tag
+  ctx.fillStyle = '#94a3b8';
+  ctx.font = '22px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+  ctx.fillText(`✦ ${confession.archetype} • ${confession.timestamp} ✦`, 540, 420);
+
+  // Büyük Tırnak
+  ctx.fillStyle = 'rgba(192, 132, 252, 0.25)';
+  ctx.font = 'bold 160px Georgia, serif';
+  ctx.fillText('“', 540, 620);
+
+  // İtiraf Metni
+  ctx.fillStyle = '#f8fafc';
+  ctx.font = 'italic 46px Georgia, serif';
+  ctx.shadowColor = 'rgba(192, 132, 252, 0.5)';
+  ctx.shadowBlur = 30;
+  wrapCanvasText(ctx, `"${confession.text}"`, 540, 720, 840, 68, 8);
+  ctx.shadowBlur = 0;
+
+  // Yankılanma Sayısı
+  ctx.fillStyle = 'rgba(192, 132, 252, 0.15)';
+  ctx.strokeStyle = 'rgba(192, 132, 252, 0.5)';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.roundRect(280, 1340, 520, 70, 35);
+  ctx.fill();
+  ctx.stroke();
+
+  ctx.fillStyle = '#e9d5ff';
+  ctx.font = 'bold 26px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+  ctx.fillText(`🌌  ${confession.echoCount} Zihin Bu Fısıltıyı Yankıladı`, 540, 1385);
+
+  // Footer
+  ctx.fillStyle = '#94a3b8';
+  ctx.font = '26px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+  ctx.fillText('Senin zihninde hangi fısıltı yankılanıyor?', 540, 1715);
+
+  ctx.fillStyle = '#FFE699';
+  ctx.font = 'bold 30px Georgia, serif';
+  ctx.fillText('✦  kozmoteo.netlify.app  ✦', 540, 1765);
+
+  await saveOrShareCanvas(
+    canvas,
+    `KozmoTeo_Fisilti_${confession.id}.png`,
+    `Kozmo-Teo Gece Fısıltısı`,
+    `"${confession.text}" - Kozmik fısıltıları dinle: kozmoteo.netlify.app`
+  );
 };
