@@ -170,6 +170,21 @@ export default function Home() {
     }
   }, [testType, result, currentQuestions, currentDilemmas, vector, dilemmaVector, currentStep]);
 
+  // Modal açıkken arka plan kaydırmasını kilitle
+  useEffect(() => {
+    const isAnyModalOpen = Boolean(
+      showArchetype || showModal || showAuth || showProfile || showPolicy || showOracle || showConstellation
+    );
+    if (isAnyModalOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [showArchetype, showModal, showAuth, showProfile, showPolicy, showOracle, showConstellation]);
+
   // Test Seçimi ve Soru Üretimi (Tekrarsız Fisher-Yates)
   const handleTestSelection = (type: 'short' | 'medium' | 'long') => {
     playTone(432, 'triangle', 0.8, soundEnabled);
@@ -444,7 +459,7 @@ export default function Home() {
       `}} />
 
       {/* Üst Çubuk - Kozmik Pasaport, Araçlar & Mistik Ses Kontrolü */}
-      <div style={{ maxWidth: '720px', margin: '0 auto 20px auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative', zIndex: 10, flexWrap: 'wrap', gap: '10px' }}>
+      <div style={{ maxWidth: '720px', margin: '0 auto 20px auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative', flexWrap: 'wrap', gap: '10px' }}>
         {/* Sol: Kozmik Pasaport Giriş / Profil Butonu */}
         {currentUser ? (
           <button
@@ -518,7 +533,7 @@ export default function Home() {
 
       {/* ARKADAŞ DAVETİ KARŞILAMA BANNERI (?duo=...) */}
       {duoInvite && !result && (
-        <div style={{ maxWidth: '720px', margin: '0 auto 25px auto', padding: '16px 20px', background: 'linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(138, 43, 226, 0.15) 100%)', border: '1px solid #D4AF37', borderRadius: '10px', textAlign: 'center', position: 'relative', zIndex: 10, boxShadow: '0 0 30px rgba(212, 175, 55, 0.2)' }}>
+        <div style={{ maxWidth: '720px', margin: '0 auto 25px auto', padding: '16px 20px', background: 'linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(138, 43, 226, 0.15) 100%)', border: '1px solid #D4AF37', borderRadius: '10px', textAlign: 'center', position: 'relative', boxShadow: '0 0 30px rgba(212, 175, 55, 0.2)' }}>
           <h4 style={{ margin: '0 0 6px 0', color: '#FFE699', fontSize: '16px' }}>
             ⚔️ Felsefi Düello & Uyum Daveti!
           </h4>
@@ -530,7 +545,7 @@ export default function Home() {
 
       {/* YARIDA KALAN TESTİ KURTARMA BANNERI */}
       {hasSavedDraft && !testType && !result && (
-        <div style={{ maxWidth: '720px', margin: '0 auto 25px auto', padding: '16px 20px', backgroundColor: '#13111f', border: '1px solid #D4AF37', borderRadius: '10px', textAlign: 'center', position: 'relative', zIndex: 10, boxShadow: '0 0 25px rgba(212, 175, 55, 0.2)' }}>
+        <div style={{ maxWidth: '720px', margin: '0 auto 25px auto', padding: '16px 20px', backgroundColor: '#13111f', border: '1px solid #D4AF37', borderRadius: '10px', textAlign: 'center', position: 'relative', boxShadow: '0 0 25px rgba(212, 175, 55, 0.2)' }}>
           <h4 style={{ margin: '0 0 8px 0', color: '#FFE699', fontSize: '15px' }}>
             💾 Yarıda Kalan Bir Testin Var!
           </h4>
