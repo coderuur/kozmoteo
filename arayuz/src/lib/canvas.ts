@@ -247,14 +247,14 @@ export const downloadStoryCard = async (result: MatchResult): Promise<void> => {
   ctx.fillText('Senin inanç pusulan ne söylüyor?', 540, 1715);
 
   ctx.fillStyle = '#FFE699';
-  ctx.font = 'bold 30px Georgia, serif';
-  ctx.fillText('✦  kozmoteo.netlify.app  ✦', 540, 1765);
+  ctx.font = 'bold 26px Georgia, serif';
+  ctx.fillText('kozmoteo.vercel.app  ·  kozmoteo.netlify.app', 540, 1765);
 
   await saveOrShareCanvas(
     canvas,
     `KozmoTeo_${result.archetype.replace(/\s+/g, '_')}.png`,
     `Kozmo-Teo: ${result.archetype}`,
-    `Benim Kozmo-Teo inanç arketipim: ${result.archetype} • %${result.similarity_percentage}! kozmoteo.netlify.app`
+    `Benim Kozmo-Teo inanç arketipim: ${result.archetype} • %${result.similarity_percentage}! kozmoteo.vercel.app`
   );
 };
 
@@ -350,14 +350,14 @@ export const downloadSocraticStoryCard = async (result: MatchResult, brutal: Bru
   ctx.fillText('Kendi karanlığınla yüzleşmeye cesaretin var mı?', 540, 1715);
 
   ctx.fillStyle = '#FFE699';
-  ctx.font = 'bold 30px Georgia, serif';
-  ctx.fillText('✦  kozmoteo.netlify.app  ✦', 540, 1765);
+  ctx.font = 'bold 26px Georgia, serif';
+  ctx.fillText('kozmoteo.vercel.app  ·  kozmoteo.netlify.app', 540, 1765);
 
   await saveOrShareCanvas(
     canvas,
     `KozmoTeo_RuhTokadi_${result.archetype.replace(/\s+/g, '_')}.png`,
     `Kozmo-Teo: Sokrates'in Aynası`,
-    `Sokrates'in Aynası bana şunu dedi: "${brutal.quote}" - Kendi karanlığını çöz: kozmoteo.netlify.app`
+    `Sokrates'in Aynası bana şunu dedi: "${brutal.quote}" - Kendi karanlığını çöz: kozmoteo.vercel.app`
   );
 };
 
@@ -532,14 +532,14 @@ export const downloadDuoStoryCard = async (
   ctx.fillText('Sizin frekansınız yüzde kaç uyuşuyor?', 540, 1715);
 
   ctx.fillStyle = '#FFE699';
-  ctx.font = 'bold 30px Georgia, serif';
-  ctx.fillText('✦  kozmoteo.netlify.app  ✦', 540, 1765);
+  ctx.font = 'bold 26px Georgia, serif';
+  ctx.fillText('kozmoteo.vercel.app  ·  kozmoteo.netlify.app', 540, 1765);
 
   await saveOrShareCanvas(
     canvas,
     `KozmoTeo_Duo_${userResult.archetype}_${report.partnerArchetype}.png`,
     `Kozmo-Teo: Felsefi Uyum Raporu`,
-    `Bizim felsefi uyumumuz %${report.compatibilityScore} çıktı! • ${report.title} - Seninki kaç? kozmoteo.netlify.app`
+    `Bizim felsefi uyumumuz %${report.compatibilityScore} çıktı! • ${report.title} - Seninki kaç? kozmoteo.vercel.app`
   );
 };
 
@@ -603,14 +603,14 @@ export const downloadConfessionCard = async (confession: ConfessionItem): Promis
   ctx.fillText('Senin zihninde hangi fısıltı yankılanıyor?', 540, 1715);
 
   ctx.fillStyle = '#FFE699';
-  ctx.font = 'bold 30px Georgia, serif';
-  ctx.fillText('✦  kozmoteo.netlify.app  ✦', 540, 1765);
+  ctx.font = 'bold 26px Georgia, serif';
+  ctx.fillText('kozmoteo.vercel.app  ·  kozmoteo.netlify.app', 540, 1765);
 
   await saveOrShareCanvas(
     canvas,
     `KozmoTeo_Fisilti_${confession.id}.png`,
     `Kozmo-Teo Gece Fısıltısı`,
-    `"${confession.text}" - Kozmik fısıltıları dinle: kozmoteo.netlify.app`
+    `"${confession.text}" - Kozmik fısıltıları dinle: kozmoteo.vercel.app`
   );
 };
 
@@ -739,13 +739,13 @@ export const downloadHumanizedStoryCard = async (result: MatchResult): Promise<v
   ctx.fillText('Senin bilinçaltı arketipin ne?', 540, 1715);
 
   ctx.fillStyle = '#FFE699';
-  ctx.font = 'bold 30px Georgia, serif';
-  ctx.fillText('✦  kozmoteo.netlify.app  ✦', 540, 1765);
+  ctx.font = 'bold 26px Georgia, serif';
+  ctx.fillText('kozmoteo.vercel.app  ·  kozmoteo.netlify.app', 540, 1765);
 
   await saveOrShareCanvas(
     canvas,
     `KozmoTeo_Kimlik_${result.archetype.replace(/\s+/g, '_')}.png`,
     `Kozmo-Teo Kimlik Kartım: ${result.archetype}`,
-    `Benim Kozmo-Teo kimliğim: ${persona.title} - ${result.archetype}! Seninki ne? Çöz: kozmoteo.netlify.app`
+    `Benim Kozmo-Teo kimliğim: ${persona.title} - ${result.archetype}! Seninki ne? Çöz: kozmoteo.vercel.app`
   );
 };

@@ -8,45 +8,51 @@ export const CosmicBackground: React.FC = () => {
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext('2d', { alpha: true });
     if (!ctx) return;
 
     let animationFrameId: number;
     let width = (canvas.width = window.innerWidth);
     let height = (canvas.height = window.innerHeight);
 
+    let resizeTimer: NodeJS.Timeout;
     const handleResize = () => {
-      if (!canvas) return;
-      width = canvas.width = window.innerWidth;
-      height = canvas.height = window.innerHeight;
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        if (!canvas) return;
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+      }, 150);
     };
     window.addEventListener('resize', handleResize);
 
-    // Parçacıklar (Yıldız Tozu)
-    const particleCount = Math.min(65, Math.floor((width * height) / 18000));
+    // Hafif, sakin, kasma yapmayan yıldız parçacıkları (Sadece 28 adet)
+    const particleCount = 28;
     const particles = Array.from({ length: particleCount }, () => ({
       x: Math.random() * width,
       y: Math.random() * height,
-      vx: (Math.random() - 0.5) * 0.35,
-      vy: (Math.random() - 0.5) * 0.35,
-      radius: Math.random() * 1.8 + 0.6,
-      alpha: Math.random() * 0.6 + 0.2,
-      color: Math.random() > 0.4 ? '#D4AF37' : '#9d72ff',
+      vx: (Math.random() - 0.5) * 0.15,
+      vy: (Math.random() - 0.5) * 0.15,
+      radius: Math.random() * 1.2 + 0.5,
+      alpha: Math.random() * 0.4 + 0.15,
+      baseAlpha: Math.random() * 0.4 + 0.15,
+      pulseSpeed: Math.random() * 0.02 + 0.008,
+      pulsePhase: Math.random() * Math.PI * 2,
     }));
 
-    let mouseX = -1000;
-    let mouseY = -1000;
+    let lastTime = performance.now();
 
-    const handleMouseMove = (e: MouseEvent) => {
-      mouseX = e.clientX;
-      mouseY = e.clientY;
-    };
-    window.addEventListener('mousemove', handleMouseMove);
+    const render = (time: number) => {
+      // 30fps veya zaman delta kontrolü ile pürüzsüz akış
+      if (time - lastTime < 32) {
+        animationFrameId = requestAnimationFrame(render);
+        return;
+      }
+      lastTime = time;
 
-    const render = () => {
       ctx.clearRect(0, 0, width, height);
 
-      // Parçacıkları Çiz ve Güncelle
+      // Yalnızca zarif yıldız parıltıları (N^2 çizgi hesabı yok, 0 kasma)
       for (let i = 0; i < particles.length; i++) {
         const p = particles[i];
         p.x += p.vx;
@@ -57,61 +63,30 @@ export const CosmicBackground: React.FC = () => {
         if (p.y < 0) p.y = height;
         if (p.y > height) p.y = 0;
 
-        ctx.fillStyle = p.color;
-        ctx.globalAlpha = p.alpha;
+        p.pulsePhase += p.pulseSpeed;
+        const currentAlpha = p.baseAlpha + Math.sin(p.pulsePhase) * 0.12;
+
+        ctx.fillStyle = '#c5a059';
+        ctx.globalAlpha = Math.max(0.05, Math.min(0.6, currentAlpha));
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
         ctx.fill();
-
-        // Yakın Parçacıklar Arası Takımyıldız Çizgileri
-        for (let j = i + 1; j < particles.length; j++) {
-          const p2 = particles[j];
-          const dx = p.x - p2.x;
-          const dy = p.y - p2.y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-
-          if (dist < 110) {
-            ctx.strokeStyle = '#D4AF37';
-            ctx.globalAlpha = (1 - dist / 110) * 0.15;
-            ctx.lineWidth = 0.75;
-            ctx.beginPath();
-            ctx.moveTo(p.x, p.y);
-            ctx.lineTo(p2.x, p2.y);
-            ctx.stroke();
-          }
-        }
-
-        // Fare Etrafında Mistik Çekim/Işık Halkası
-        const mdx = p.x - mouseX;
-        const mdy = p.y - mouseY;
-        const mdist = Math.sqrt(mdx * mdx + mdy * mdy);
-        if (mdist < 140) {
-          ctx.strokeStyle = '#FFE699';
-          ctx.globalAlpha = (1 - mdist / 140) * 0.25;
-          ctx.lineWidth = 1;
-          ctx.beginPath();
-          ctx.moveTo(p.x, p.y);
-          ctx.lineTo(mouseX, mouseY);
-          ctx.stroke();
-        }
       }
 
       ctx.globalAlpha = 1.0;
       animationFrameId = requestAnimationFrame(render);
     };
 
-    render();
+    animationFrameId = requestAnimationFrame(render);
 
     return () => {
       window.removeEventListener('resize', handleResize);
-      window.removeEventListener('mousemove', handleMouseMove);
       cancelAnimationFrame(animationFrameId);
     };
   }, []);
 
   return (
-    <canvas
-      ref={canvasRef}
+    <div
       style={{
         position: 'fixed',
         top: 0,
@@ -120,7 +95,17 @@ export const CosmicBackground: React.FC = () => {
         height: '100%',
         pointerEvents: 'none',
         zIndex: 0,
+        background: 'radial-gradient(ellipse at 50% 0%, #15131a 0%, #0c0b10 55%, #070609 100%)',
       }}
-    />
+    >
+      <canvas
+        ref={canvasRef}
+        style={{
+          width: '100%',
+          height: '100%',
+          display: 'block',
+        }}
+      />
+    </div>
   );
 };

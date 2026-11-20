@@ -11,6 +11,16 @@ interface ConfessionWallModalProps {
   onClose: () => void;
 }
 
+const ARCHETYPES_LIST = [
+  'ALL',
+  'HİÇLİK YOLCUSU',
+  'GELENEK MUHAFIZI',
+  'AKIŞIN USTASI',
+  'KOZMİK RUH',
+  'SARSILMAZ İRADE',
+  'ABSÜRT İSYANKAR'
+];
+
 export const ConfessionWallModal: React.FC<ConfessionWallModalProps> = ({
   userArchetype,
   soundEnabled,
@@ -97,106 +107,160 @@ export const ConfessionWallModal: React.FC<ConfessionWallModalProps> = ({
       position: 'fixed',
       top: 0,
       left: 0,
-      width: '100%',
-      height: '100%',
-      backgroundColor: '#07060b',
+      width: '100vw',
+      height: '100vh',
+      backgroundColor: 'rgba(5, 5, 8, 0.85)',
+      backdropFilter: 'blur(10px)',
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
       zIndex: 99999,
-      padding: '20px',
-      overflowY: 'auto'
+      padding: '16px',
+      boxSizing: 'border-box'
     }}>
       <div style={{
         width: '100%',
-        maxWidth: '580px',
-        maxHeight: '90vh',
-        backgroundColor: '#110f1c',
-        border: '1.5px solid #c084fc',
-        borderRadius: '18px',
-        padding: '30px 22px',
-        boxShadow: '0 0 60px rgba(192, 132, 252, 0.25)',
+        maxWidth: '620px',
+        maxHeight: 'min(90vh, 760px)',
+        backgroundColor: '#0d0d12',
+        border: '1px solid rgba(255, 230, 153, 0.2)',
+        borderRadius: '16px',
+        padding: '24px',
+        boxShadow: '0 25px 60px rgba(0, 0, 0, 0.85), 0 0 1px rgba(255, 230, 153, 0.25)',
         position: 'relative',
         display: 'flex',
-        flexDirection: 'column'
+        flexDirection: 'column',
+        boxSizing: 'border-box',
+        overflow: 'hidden'
       }}>
         {/* Kapat Butonu */}
         <button
           onClick={onClose}
+          aria-label="Kapat"
           style={{
             position: 'absolute',
             top: '18px',
             right: '20px',
             background: 'transparent',
             border: 'none',
-            color: '#9ca3af',
+            color: '#94a3b8',
             fontSize: '20px',
-            cursor: 'pointer'
+            cursor: 'pointer',
+            padding: '4px 8px',
+            lineHeight: 1,
+            zIndex: 10
           }}
         >
           ✕
         </button>
 
-        {/* Üst Başlık */}
-        <div style={{ textAlign: 'center', marginBottom: '16px' }}>
-          <span style={{ fontSize: '11px', color: '#c084fc', letterSpacing: '4px', textTransform: 'uppercase', fontWeight: 'bold' }}>
-            ✦ KOZMİK GECE FISILTILARI ✦
+        {/* Üst Başlık - flexShrink 0 */}
+        <div style={{ textAlign: 'center', marginBottom: '18px', flexShrink: 0 }}>
+          <span style={{
+            fontSize: '11px',
+            color: '#d4af37',
+            letterSpacing: '3px',
+            textTransform: 'uppercase',
+            fontWeight: 600,
+            display: 'block',
+            marginBottom: '4px'
+          }}>
+            ✦ KOZMİK GECE FISILTILARI
           </span>
-          <h3 style={{ color: '#FFE699', fontSize: '22px', margin: '4px 0 2px 0', fontFamily: 'Georgia, serif' }}>
+          <h3 style={{
+            color: '#f8fafc',
+            fontSize: '22px',
+            margin: '0 0 6px 0',
+            fontFamily: 'Georgia, serif',
+            fontWeight: 400,
+            letterSpacing: '0.5px'
+          }}>
             Anonim Zihinlerin İtirafları
           </h3>
-          <p style={{ color: '#94a3b8', fontSize: '12px', margin: 0 }}>
-            Gece yalnız kaldığında evrenle paylaştığın en derin, filtresiz sırlar.
+          <p style={{ color: '#94a3b8', fontSize: '13px', margin: 0, lineHeight: 1.4 }}>
+            Gece yalnız kaldığında evrenle paylaştığın filtresiz düşünceler.
           </p>
         </div>
 
-        {/* Filtre Rozetleri */}
+        {/* Filtre Rozetleri - flexShrink 0 ve düzgün gap */}
         <div style={{
           display: 'flex',
           flexWrap: 'wrap',
           gap: '8px',
-          marginBottom: '18px',
-          justifyContent: 'center'
+          marginBottom: '16px',
+          justifyContent: 'center',
+          flexShrink: 0
         }}>
-          {['ALL', 'HİÇLİK YOLCUSU', 'GELENEK MUHAFIZI', 'AKIŞIN USTASI', 'KOZMİK RUH', 'SARSILMAZ İRADE'].map((f) => (
-            <button
-              key={f}
-              onClick={() => {
-                setFilter(f);
-                playTone(560, 'sine', 0.15, soundEnabled);
-              }}
-              style={{
-                padding: '6px 14px',
-                borderRadius: '20px',
-                border: filter === f ? '1.5px solid #c084fc' : '1px solid #2d2645',
-                backgroundColor: filter === f ? 'rgba(192, 132, 252, 0.25)' : '#120f1e',
-                color: filter === f ? '#f3e8ff' : '#94a3b8',
-                fontSize: '11px',
-                fontWeight: filter === f ? 'bold' : 'normal',
-                cursor: 'pointer',
-                transition: 'all 0.2s'
-              }}
-            >
-              {f === 'ALL' ? '✦ Tüm Zihinler' : f}
-            </button>
-          ))}
+          {ARCHETYPES_LIST.map((f) => {
+            const isSelected = filter === f;
+            const label = f === 'ALL' ? '✦ Tüm Zihinler' : f;
+            return (
+              <button
+                key={f}
+                type="button"
+                onClick={() => {
+                  setFilter(f);
+                  playTone(560, 'sine', 0.15, soundEnabled);
+                }}
+                style={{
+                  padding: '7px 14px',
+                  borderRadius: '999px',
+                  border: isSelected
+                    ? '1px solid rgba(255, 230, 153, 0.7)'
+                    : '1px solid rgba(255, 255, 255, 0.08)',
+                  backgroundColor: isSelected
+                    ? 'rgba(255, 230, 153, 0.12)'
+                    : 'rgba(255, 255, 255, 0.03)',
+                  color: isSelected ? '#FFE699' : '#cbd5e1',
+                  fontSize: '11px',
+                  fontWeight: isSelected ? 600 : 400,
+                  letterSpacing: '0.4px',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                  whiteSpace: 'nowrap',
+                  lineHeight: '1.2'
+                }}
+              >
+                {label}
+              </button>
+            );
+          })}
         </div>
 
-        {/* İtiraflar Listesi */}
-        <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '16px', paddingRight: '4px' }}>
+        {/* İtiraflar Listesi - flex: 1, minHeight: 0, taşmayı önler */}
+        <div style={{
+          flex: '1 1 auto',
+          minHeight: 0,
+          overflowY: 'auto',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '12px',
+          marginBottom: '16px',
+          paddingRight: '6px'
+        }}>
           {filteredConfessions.map((conf) => (
             <div
               key={conf.id}
               style={{
-                backgroundColor: '#0a0912',
-                border: '1px solid #231c38',
+                backgroundColor: 'rgba(255, 255, 255, 0.025)',
+                border: '1px solid rgba(255, 255, 255, 0.07)',
                 borderRadius: '12px',
                 padding: '14px 16px',
-                transition: 'border-color 0.2s'
+                transition: 'border-color 0.2s ease'
               }}
             >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
-                <span style={{ color: '#c084fc', fontSize: '11px', fontWeight: 'bold' }}>
+              <div style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginBottom: '8px'
+              }}>
+                <span style={{
+                  color: '#FFE699',
+                  fontSize: '11px',
+                  fontWeight: 600,
+                  letterSpacing: '0.5px'
+                }}>
                   ✦ {conf.archetype}
                 </span>
                 <span style={{ color: '#64748b', fontSize: '11px' }}>
@@ -204,62 +268,83 @@ export const ConfessionWallModal: React.FC<ConfessionWallModalProps> = ({
                 </span>
               </div>
 
-              <p style={{ color: '#f1f5f9', fontSize: '13px', fontStyle: 'italic', margin: '0 0 12px 0', lineHeight: '1.5' }}>
-                "{conf.text}"
+              <p style={{
+                color: '#e2e8f0',
+                fontSize: '13.5px',
+                fontStyle: 'italic',
+                fontFamily: 'Georgia, serif',
+                margin: '0 0 12px 0',
+                lineHeight: '1.55'
+              }}>
+                &ldquo;{conf.text}&rdquo;
               </p>
 
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <button
+                  type="button"
                   onClick={() => handleEcho(conf.id)}
                   style={{
-                    background: conf.isUserEchoed ? 'rgba(192, 132, 252, 0.2)' : 'transparent',
-                    border: '1px solid #3d3558',
-                    color: conf.isUserEchoed ? '#e9d5ff' : '#cbd5e1',
-                    borderRadius: '14px',
-                    padding: '4px 12px',
+                    background: conf.isUserEchoed ? 'rgba(255, 230, 153, 0.15)' : 'transparent',
+                    border: conf.isUserEchoed ? '1px solid rgba(255, 230, 153, 0.4)' : '1px solid rgba(255, 255, 255, 0.1)',
+                    color: conf.isUserEchoed ? '#FFE699' : '#94a3b8',
+                    borderRadius: '999px',
+                    padding: '5px 12px',
                     fontSize: '11px',
                     cursor: 'pointer',
                     display: 'flex',
                     alignItems: 'center',
-                    gap: '4px'
+                    gap: '6px',
+                    transition: 'all 0.2s ease'
                   }}
                 >
-                  🌌 Yankıla • {conf.echoCount}
+                  <span>✦</span>
+                  <span>Yankıla · {conf.echoCount}</span>
                 </button>
 
                 <button
+                  type="button"
                   onClick={() => handleDownloadCard(conf)}
                   disabled={isExporting === conf.id}
                   style={{
                     background: 'transparent',
                     border: 'none',
-                    color: '#FFE699',
+                    color: '#d4af37',
                     fontSize: '11px',
                     cursor: 'pointer',
-                    textDecoration: 'underline'
+                    textDecoration: 'none',
+                    letterSpacing: '0.3px',
+                    fontWeight: 500
                   }}
                 >
-                  {isExporting === conf.id ? 'İndiriliyor...' : '📸 Story Kartı İndir'}
+                  {isExporting === conf.id ? 'Hazırlanıyor...' : 'Story Kartı İndir ↗'}
                 </button>
               </div>
             </div>
           ))}
         </div>
 
-        {/* Yeni Fısıltı Gönder Formu */}
-        <form onSubmit={handleAddConfession} style={{ borderTop: '1px solid #231c38', paddingTop: '12px' }}>
+        {/* Yeni Fısıltı Gönder Formu - flexShrink 0 */}
+        <form
+          onSubmit={handleAddConfession}
+          style={{
+            borderTop: '1px solid rgba(255, 255, 255, 0.08)',
+            paddingTop: '14px',
+            flexShrink: 0
+          }}
+        >
           <div style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
             <select
               value={selectedArch}
               onChange={(e) => setSelectedArch(e.target.value)}
               style={{
-                backgroundColor: '#0a0912',
-                border: '1px solid #3d3558',
+                backgroundColor: '#14141c',
+                border: '1px solid rgba(255, 230, 153, 0.25)',
                 color: '#FFE699',
                 borderRadius: '8px',
                 padding: '6px 10px',
                 fontSize: '11px',
-                cursor: 'pointer'
+                cursor: 'pointer',
+                outline: 'none'
               }}
             >
               <option value="HİÇLİK YOLCUSU">Hiçlik Yolcusu</option>
@@ -269,8 +354,8 @@ export const ConfessionWallModal: React.FC<ConfessionWallModalProps> = ({
               <option value="SARSILMAZ İRADE">Sarsılmaz İrade</option>
               <option value="ABSÜRT İSYANKAR">Absürt İsyankar</option>
             </select>
-            <span style={{ fontSize: '11px', color: '#64748b', alignSelf: 'center' }}>
-              %100 Anonim
+            <span style={{ fontSize: '11px', color: '#64748b', alignSelf: 'center', letterSpacing: '0.3px' }}>
+              %100 Anonim · Kayıt Tutulmaz
             </span>
           </div>
 
@@ -279,15 +364,16 @@ export const ConfessionWallModal: React.FC<ConfessionWallModalProps> = ({
               type="text"
               value={newText}
               onChange={(e) => setNewText(e.target.value)}
-              placeholder="Gece evrene fısıldamak istediğin bir itiraf yaz..."
+              placeholder="Gece evrene fısıldamak istediğin bir düşünce yaz..."
               style={{
                 flex: 1,
-                backgroundColor: '#0a0912',
-                border: '1px solid #3d3558',
+                backgroundColor: 'rgba(255, 255, 255, 0.03)',
+                border: '1px solid rgba(255, 255, 255, 0.12)',
                 borderRadius: '8px',
                 padding: '10px 14px',
                 color: '#f8fafc',
-                fontSize: '12px'
+                fontSize: '12px',
+                outline: 'none'
               }}
               maxLength={250}
             />
@@ -296,13 +382,17 @@ export const ConfessionWallModal: React.FC<ConfessionWallModalProps> = ({
               disabled={!newText.trim()}
               style={{
                 padding: '10px 18px',
-                background: newText.trim() ? 'linear-gradient(135deg, #c084fc 0%, #9333ea 100%)' : '#231c38',
-                color: '#ffffff',
+                background: newText.trim()
+                  ? '#FFE699'
+                  : 'rgba(255, 255, 255, 0.06)',
+                color: newText.trim() ? '#0a0a0c' : '#64748b',
                 border: 'none',
                 borderRadius: '8px',
                 fontSize: '12px',
-                fontWeight: 'bold',
-                cursor: newText.trim() ? 'pointer' : 'default'
+                fontWeight: 600,
+                cursor: newText.trim() ? 'pointer' : 'default',
+                transition: 'all 0.2s ease',
+                whiteSpace: 'nowrap'
               }}
             >
               Fısılda

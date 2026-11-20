@@ -68,7 +68,12 @@ let activeAmbient: AmbientNodes | null = null;
 
 export const startCosmicAmbient = (targetVolume = 0.018): void => {
   if (typeof window === 'undefined') return;
-  if (activeAmbient) return; // Zaten çalıyor
+  if (activeAmbient) {
+    if (activeAmbient.ctx.state === 'suspended') {
+      activeAmbient.ctx.resume().catch(() => {});
+    }
+    return;
+  }
 
   const ctx = getAudioContext();
   if (!ctx) return;
@@ -135,9 +140,9 @@ export const stopCosmicAmbient = (): void => {
   if (!activeAmbient) return;
   try {
     const { ctx, masterGain, oscillators, lfo } = activeAmbient;
-    // 2 saniyelik yumuşak çıkış (fade-out)
+    // Anında kesilme: Gecikmesiz sıfıra çek ve derhal durdur
     masterGain.gain.setValueAtTime(masterGain.gain.value, ctx.currentTime);
-    masterGain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 1.8);
+    masterGain.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.015);
 
     setTimeout(() => {
       oscillators.forEach(osc => {
@@ -146,7 +151,7 @@ export const stopCosmicAmbient = (): void => {
       try { lfo.stop(); lfo.disconnect(); } catch (e) {}
       try { masterGain.disconnect(); } catch (e) {}
       activeAmbient = null;
-    }, 2000);
+    }, 20);
   } catch (e) {
     activeAmbient = null;
   }

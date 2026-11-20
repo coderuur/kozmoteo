@@ -51,6 +51,8 @@ export default function Home() {
   // Günün İkilemi & Canlı Zihinler Gökyüzü Modalları
   const [showOracle, setShowOracle] = useState(false);
   const [showConstellation, setShowConstellation] = useState(false);
+  const [showDiscoveryModal, setShowDiscoveryModal] = useState(false);
+  const [showDeepLab, setShowDeepLab] = useState(false);
 
   // Viral & Organik Büyüme Modalları
   const [showDuoReport, setShowDuoReport] = useState(false);
@@ -161,14 +163,17 @@ export default function Home() {
       // sessiz geç
     }
 
-    // 5. İlk etkileşimde 432 Hz Kozmik Tınıyı başlat (Web Audio API)
-    const handleFirstInteraction = () => {
+    // 5. 432 Hz Kozmik Tınıyı anında başlat (Doğrudan Mount + Mikro Etkileşim Serbest Bırakıcı)
+    toggleCosmicAmbient(true);
+
+    const unlockAudio = () => {
       toggleCosmicAmbient(true);
-      window.removeEventListener('click', handleFirstInteraction);
-      window.removeEventListener('keydown', handleFirstInteraction);
+      const events = ['pointerdown', 'pointermove', 'touchstart', 'scroll', 'wheel', 'keydown', 'focus'];
+      events.forEach(ev => window.removeEventListener(ev, unlockAudio));
     };
-    window.addEventListener('click', handleFirstInteraction, { once: true });
-    window.addEventListener('keydown', handleFirstInteraction, { once: true });
+
+    const audioUnlockEvents = ['pointerdown', 'pointermove', 'touchstart', 'scroll', 'wheel', 'keydown', 'focus'];
+    audioUnlockEvents.forEach(ev => window.addEventListener(ev, unlockAudio, { passive: true, once: true }));
   }, []);
 
   // Yarıda Kalan Testi Geri Yükle
@@ -218,7 +223,8 @@ export default function Home() {
     const isAnyModalOpen = Boolean(
       showArchetype || showModal || showAuth || showProfile || showPolicy ||
       showOracle || showConstellation || showDuoReport || showDuelModal || activeDuel || showConfessionWall ||
-      showEvolution || showShadowSelf || showBlindSpot || showDreamArchive || showCosmicCourt || showPulse
+      showEvolution || showShadowSelf || showBlindSpot || showDreamArchive || showCosmicCourt || showPulse ||
+      showDiscoveryModal
     );
     if (isAnyModalOpen) {
       document.body.style.overflow = 'hidden';
@@ -231,7 +237,8 @@ export default function Home() {
   }, [
     showArchetype, showModal, showAuth, showProfile, showPolicy,
     showOracle, showConstellation, showDuoReport, showDuelModal, activeDuel, showConfessionWall,
-    showEvolution, showShadowSelf, showBlindSpot, showDreamArchive, showCosmicCourt, showPulse
+    showEvolution, showShadowSelf, showBlindSpot, showDreamArchive, showCosmicCourt, showPulse,
+    showDiscoveryModal
   ]);
 
   // Test Seçimi ve Soru Üretimi (Tekrarsız Fisher-Yates)
@@ -525,93 +532,117 @@ export default function Home() {
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
       `}} />
 
-      {/* Üst Çubuk - Kozmik Pasaport, Araçlar & Mistik Ses Kontrolü */}
-      <div style={{ maxWidth: '720px', margin: '0 auto 20px auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative', flexWrap: 'wrap', gap: '10px' }}>
-        {/* Sol: Kozmik Pasaport Giriş / Profil Butonu */}
-        {currentUser ? (
-          <button
-            onClick={() => setShowProfile(true)}
-            style={{
-              background: 'rgba(212, 175, 55, 0.12)',
-              border: '1px solid #D4AF37',
-              color: '#FFE699',
-              padding: '6px 14px',
-              borderRadius: '20px',
-              fontSize: '12px',
-              fontWeight: 'bold',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
-              boxShadow: '0 0 15px rgba(212, 175, 55, 0.2)'
-            }}
-          >
-            🪪 @{currentUser.username} {currentUser.archetype ? `• ${currentUser.archetype}` : ''}
-          </button>
-        ) : (
-          <button
-            onClick={() => setShowAuth(true)}
-            style={{
-              background: 'rgba(21, 18, 32, 0.8)',
-              border: '1px solid #3d3558',
-              color: '#d1d5db',
-              padding: '6px 14px',
-              borderRadius: '20px',
-              fontSize: '12px',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px'
-            }}
-          >
-            🔑 Kozmik Pasaport / Giriş
-          </button>
-        )}
+      {/* Üst Bar - Sade, İnsan Yapımı & Editoryal Tasarım */}
+      <header style={{
+        maxWidth: '740px',
+        margin: '0 auto 28px auto',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        padding: '10px 18px',
+        backgroundColor: 'rgba(15, 13, 22, 0.75)',
+        backdropFilter: 'blur(12px)',
+        border: '1px solid rgba(255, 230, 153, 0.15)',
+        borderRadius: '999px',
+        boxShadow: '0 8px 30px rgba(0, 0, 0, 0.4)'
+      }}>
+        {/* Sol: Logo & Başlık */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <span style={{
+            fontSize: '14px',
+            fontFamily: 'Georgia, serif',
+            letterSpacing: '2.5px',
+            color: '#FFE699',
+            fontWeight: 600,
+            textTransform: 'uppercase'
+          }}>
+            KOZMO-TEO
+          </span>
+          <span style={{ fontSize: '11px', color: '#64748b', letterSpacing: '0.5px' }}>
+            · Felsefi Pusula
+          </span>
+        </div>
 
-        {/* Sağ: Günün İkilemi + Canlı Gökyüzü + Mistik Ses */}
-        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+        {/* Sağ: Pasaport + Keşfet + Ses Açık/Kapalı */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          {currentUser ? (
+            <button
+              type="button"
+              onClick={() => setShowProfile(true)}
+              style={{
+                background: 'rgba(255, 230, 153, 0.1)',
+                border: '1px solid rgba(255, 230, 153, 0.35)',
+                color: '#FFE699',
+                padding: '6px 14px',
+                borderRadius: '999px',
+                fontSize: '11px',
+                fontWeight: 600,
+                letterSpacing: '0.3px',
+                cursor: 'pointer'
+              }}
+            >
+              @{currentUser.username}
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={() => setShowAuth(true)}
+              style={{
+                background: 'rgba(255, 255, 255, 0.04)',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+                color: '#cbd5e1',
+                padding: '6px 14px',
+                borderRadius: '999px',
+                fontSize: '11px',
+                cursor: 'pointer'
+              }}
+            >
+              Pasaport
+            </button>
+          )}
+
+          {/* Keşfet Menü Butonu */}
           <button
-            onClick={() => setShowOracle(true)}
-            style={{ background: 'rgba(21, 18, 32, 0.8)', border: '1px solid #3d3558', color: '#FFE699', padding: '6px 12px', borderRadius: '20px', fontSize: '12px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
+            type="button"
+            onClick={() => setShowDiscoveryModal(true)}
+            style={{
+              background: 'rgba(255, 255, 255, 0.04)',
+              border: '1px solid rgba(255, 255, 255, 0.12)',
+              color: '#f8fafc',
+              padding: '6px 14px',
+              borderRadius: '999px',
+              fontSize: '11px',
+              fontWeight: 500,
+              cursor: 'pointer',
+              letterSpacing: '0.4px'
+            }}
           >
-            🕯️ Günün İkilemi
+            ✦ Keşfet
           </button>
+
+          {/* Mistik Tını Açık / Kapalı */}
           <button
-            onClick={() => setShowConstellation(true)}
-            style={{ background: 'rgba(21, 18, 32, 0.8)', border: '1px solid #3d3558', color: '#67e8f9', padding: '6px 12px', borderRadius: '20px', fontSize: '12px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
-          >
-            🌌 Canlı Zihinler
-          </button>
-          <button
-            onClick={() => setShowConfessionWall(true)}
-            style={{ background: 'rgba(21, 18, 32, 0.8)', border: '1px solid #7c3aed', color: '#c084fc', padding: '6px 12px', borderRadius: '20px', fontSize: '12px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
-          >
-            🌙 Fısıltı Duvarı
-          </button>
-          <button
-            onClick={() => setShowEvolution(true)}
-            style={{ background: 'rgba(21, 18, 32, 0.8)', border: '1px solid #D4AF37', color: '#FFE699', padding: '6px 12px', borderRadius: '20px', fontSize: '12px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
-          >
-            📈 Evrim
-          </button>
-          <button
-            onClick={() => setShowPulse(true)}
-            style={{ background: 'rgba(21, 18, 32, 0.8)', border: '1px solid #10b981', color: '#34d399', padding: '6px 12px', borderRadius: '20px', fontSize: '12px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
-          >
-            🗺️ Nabız
-          </button>
-          <button
+            type="button"
             onClick={() => {
               const next = !soundEnabled;
               setSoundEnabled(next);
               toggleCosmicAmbient(next);
             }}
-            style={{ background: 'rgba(21, 18, 32, 0.7)', border: '1px solid #332d4a', color: soundEnabled ? '#FFE699' : '#6b7280', padding: '6px 12px', borderRadius: '20px', fontSize: '12px', cursor: 'pointer', backdropFilter: 'blur(4px)' }}
+            style={{
+              background: soundEnabled ? 'rgba(255, 230, 153, 0.12)' : 'rgba(255, 255, 255, 0.03)',
+              border: soundEnabled ? '1px solid rgba(255, 230, 153, 0.35)' : '1px solid rgba(255, 255, 255, 0.08)',
+              color: soundEnabled ? '#FFE699' : '#64748b',
+              padding: '6px 12px',
+              borderRadius: '999px',
+              fontSize: '11px',
+              cursor: 'pointer',
+              whiteSpace: 'nowrap'
+            }}
           >
-            {soundEnabled ? '🔊 432Hz Mistik Tını: Açık' : '🔇 Mistik Ses: Kapalı'}
+            {soundEnabled ? 'Tını: Açık' : 'Tını: Kapalı'}
           </button>
         </div>
-      </div>
+      </header>
 
       {/* KAYDEDILDI TOAST BILDIRIMI */}
       {saveToast && (
@@ -690,22 +721,22 @@ export default function Home() {
 
       <div style={{ maxWidth: '720px', margin: '0 auto', position: 'relative' }}>
         {/* Popülerlik / Canlı Sosyal Kanıt Rozeti */}
-        <div style={{ textAlign: 'center', marginBottom: '14px' }}>
+        <div style={{ textAlign: 'center', marginBottom: '16px' }}>
           <span style={{
             display: 'inline-flex',
             alignItems: 'center',
             gap: '8px',
-            backgroundColor: 'rgba(212, 175, 55, 0.1)',
-            border: '1px solid rgba(212, 175, 55, 0.35)',
+            backgroundColor: 'rgba(255, 230, 153, 0.08)',
+            border: '1px solid rgba(255, 230, 153, 0.25)',
             color: '#FFE699',
-            padding: '6px 16px',
-            borderRadius: '30px',
+            padding: '6px 18px',
+            borderRadius: '999px',
             fontSize: '12px',
-            fontWeight: 'bold',
-            boxShadow: '0 0 20px rgba(212, 175, 55, 0.15)'
+            fontWeight: 500,
+            letterSpacing: '0.4px'
           }}>
-            <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#10b981', display: 'inline-block' }} className="pulse" />
-            🔥 64.200+ kişi içindeki gerçek sesle yüzleşti
+            <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#10b981', display: 'inline-block' }} className="pulse" />
+            64.000'den fazla zihin kendi içsel sesini aradı
           </span>
         </div>
 
@@ -793,51 +824,195 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Butonlar: Keşfet + Hikaye + Pasaporta Kaydet + Meydan Oku + İlişki Raporu */}
-            <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', marginBottom: '30px', flexWrap: 'wrap' }}>
-              <button onClick={() => setShowModal(true)} style={{ padding: '12px 18px', backgroundColor: 'transparent', border: '1px solid #D4AF37', color: '#D4AF37', cursor: 'pointer', borderRadius: '24px', fontSize: '13px', fontWeight: 'bold' }}>
-                ✦ İnancı İncele
+            {/* Birincil Eylemler: Odaklanmış, İnsan Vari ve Net 3 Seçenek */}
+            <div style={{ display: 'flex', justifyContent: 'center', gap: '12px', marginBottom: '28px', flexWrap: 'wrap' }}>
+              <button
+                type="button"
+                onClick={() => setShowArchetype(true)}
+                style={{
+                  padding: '14px 28px',
+                  backgroundColor: '#FFE699',
+                  border: 'none',
+                  color: '#07060c',
+                  cursor: 'pointer',
+                  borderRadius: '999px',
+                  fontSize: '13px',
+                  fontWeight: 600,
+                  letterSpacing: '0.4px',
+                  boxShadow: '0 10px 25px rgba(255, 230, 153, 0.25)',
+                  transition: 'all 0.2s ease'
+                }}
+              >
+                ✦ Hikaye Kartını İndir
               </button>
-              <button onClick={() => setShowArchetype(true)} style={{ padding: '12px 22px', background: 'linear-gradient(135deg, #FFE699 0%, #D4AF37 100%)', border: 'none', color: '#07060c', cursor: 'pointer', borderRadius: '24px', fontSize: '13px', fontWeight: 'bold', boxShadow: '0 0 20px rgba(212, 175, 55, 0.4)' }}>
-                ✨ 3'lü Hikaye Kartı
+              <button
+                type="button"
+                onClick={() => setShowDuelModal(true)}
+                style={{
+                  padding: '14px 22px',
+                  backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                  border: '1px solid rgba(255, 255, 255, 0.15)',
+                  color: '#f8fafc',
+                  cursor: 'pointer',
+                  borderRadius: '999px',
+                  fontSize: '13px',
+                  fontWeight: 500,
+                  transition: 'all 0.2s ease'
+                }}
+              >
+                Arkadaşına Meydan Oku
               </button>
-              <button onClick={() => setShowDuelModal(true)} style={{ padding: '12px 20px', background: 'linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%)', border: 'none', color: '#ffffff', cursor: 'pointer', borderRadius: '24px', fontSize: '13px', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '6px', boxShadow: '0 0 20px rgba(139, 92, 246, 0.35)' }}>
-                ⚔️ Arkadaşlarına Meydan Oku
-              </button>
-              <button onClick={() => setShowDuoReport(true)} style={{ padding: '12px 20px', backgroundColor: '#1d1830', border: '1px solid #67e8f9', color: '#a5f3fc', cursor: 'pointer', borderRadius: '24px', fontSize: '13px', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                💞 İlişki & Çatışma Raporu
-              </button>
-              <button onClick={() => handleSaveResultToPassport()} style={{ padding: '12px 20px', background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)', border: 'none', color: '#ffffff', cursor: 'pointer', borderRadius: '24px', fontSize: '13px', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '6px', boxShadow: '0 0 18px rgba(16, 185, 129, 0.35)' }}>
-                💾 Pasaportuma Kaydet
-              </button>
-              <button onClick={handleCopyDuoLink} style={{ padding: '12px 18px', backgroundColor: '#13111f', border: '1px solid #3d3558', color: '#9ca3af', cursor: 'pointer', borderRadius: '24px', fontSize: '12px' }}>
-                🔗 İkili Linki Kopyala
+              <button
+                type="button"
+                onClick={() => handleSaveResultToPassport()}
+                style={{
+                  padding: '14px 22px',
+                  backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                  border: '1px solid rgba(255, 255, 255, 0.15)',
+                  color: '#f8fafc',
+                  cursor: 'pointer',
+                  borderRadius: '999px',
+                  fontSize: '13px',
+                  fontWeight: 500,
+                  transition: 'all 0.2s ease'
+                }}
+              >
+                Pasaportuma Kaydet
               </button>
             </div>
 
-            {/* v2.0 — YENİ KOMPLEKS ÖZELLİK BUTONLARI */}
-            <div style={{ backgroundColor: '#0d0a17', border: '1px solid #2d2645', borderRadius: '12px', padding: '16px', marginBottom: '25px' }}>
-              <div style={{ fontSize: '11px', color: '#D4AF37', letterSpacing: '3px', textTransform: 'uppercase', textAlign: 'center', marginBottom: '14px' }}>✦ KOZMİK DERINLIK v2.0 ✦</div>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', justifyContent: 'center' }}>
-                <button onClick={() => setShowShadowSelf(true)} style={{ padding: '10px 16px', background: 'linear-gradient(135deg, #130f24 0%, #1a0d2e 100%)', border: '1px solid #8A2BE2', color: '#c084fc', cursor: 'pointer', borderRadius: '20px', fontSize: '12px', fontWeight: 'bold' }}>
-                  🌑 Gölge Benlik
-                </button>
-                <button onClick={() => setShowEvolution(true)} style={{ padding: '10px 16px', background: 'linear-gradient(135deg, #0a0f1e 0%, #0d1829 100%)', border: '1px solid #D4AF37', color: '#FFE699', cursor: 'pointer', borderRadius: '20px', fontSize: '12px', fontWeight: 'bold' }}>
-                  📈 Felsefi Evrim
-                </button>
-                <button onClick={() => setShowDreamArchive(true)} style={{ padding: '10px 16px', background: 'linear-gradient(135deg, #0a0712 0%, #0f0a1a 100%)', border: '1px solid #7c3aed', color: '#a78bfa', cursor: 'pointer', borderRadius: '20px', fontSize: '12px', fontWeight: 'bold' }}>
-                  🌙 Rüya Arşivi
-                </button>
-                <button onClick={() => setShowCosmicCourt(true)} style={{ padding: '10px 16px', background: 'linear-gradient(135deg, #0a0a0a 0%, #1a1000 100%)', border: `1px solid #D4AF37`, color: '#FFE699', cursor: 'pointer', borderRadius: '20px', fontSize: '12px', fontWeight: 'bold' }}>
-                  ⚖️ Kozmik Mahkeme
-                </button>
-                <button onClick={() => setShowBlindSpot(true)} style={{ padding: '10px 16px', background: 'linear-gradient(135deg, #0a0912 0%, #0f0d20 100%)', border: '1px solid #3b82f6', color: '#60a5fa', cursor: 'pointer', borderRadius: '20px', fontSize: '12px', fontWeight: 'bold' }}>
-                  🔵 Kör Nokta Skoru
-                </button>
-                <button onClick={() => setShowPulse(true)} style={{ padding: '10px 16px', background: 'linear-gradient(135deg, #071a07 0%, #0a0f0a 100%)', border: '1px solid #10b981', color: '#34d399', cursor: 'pointer', borderRadius: '20px', fontSize: '12px', fontWeight: 'bold' }}>
-                  🗺️ Toplumsal Nabız
-                </button>
+            {/* İçsel Laboratuvar: Zarif, İsteğe Bağlı Derinleşme */}
+            <div style={{
+              backgroundColor: '#0c0c11',
+              border: '1px solid rgba(255, 230, 153, 0.15)',
+              borderRadius: '14px',
+              padding: '18px 20px',
+              marginBottom: '26px',
+              textAlign: 'left'
+            }}>
+              <div
+                onClick={() => setShowDeepLab(!showDeepLab)}
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  cursor: 'pointer',
+                  userSelect: 'none'
+                }}
+              >
+                <div>
+                  <span style={{ fontSize: '11px', color: '#d4af37', letterSpacing: '2.5px', textTransform: 'uppercase', fontWeight: 600 }}>
+                    ✦ İÇSEL LABORATUVAR
+                  </span>
+                  <h4 style={{ margin: '4px 0 0 0', color: '#f8fafc', fontSize: '15px', fontFamily: 'Georgia, serif', fontWeight: 400 }}>
+                    Derin Felsefi Analizler ve Özel Araçlar
+                  </h4>
+                </div>
+                <span style={{ fontSize: '12px', color: '#FFE699', border: '1px solid rgba(255, 230, 153, 0.3)', padding: '5px 14px', borderRadius: '999px', whiteSpace: 'nowrap' }}>
+                  {showDeepLab ? 'Gizle ▴' : 'İncele ▾'}
+                </span>
               </div>
+
+              {showDeepLab && (
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '10px', marginTop: '16px' }}>
+                  <button
+                    type="button"
+                    onClick={() => setShowShadowSelf(true)}
+                    style={{
+                      padding: '14px',
+                      backgroundColor: 'rgba(255, 255, 255, 0.025)',
+                      border: '1px solid rgba(255, 255, 255, 0.08)',
+                      borderRadius: '10px',
+                      textAlign: 'left',
+                      cursor: 'pointer',
+                      color: '#e2e8f0'
+                    }}
+                  >
+                    <div style={{ color: '#FFE699', fontSize: '13px', fontWeight: 600, marginBottom: '3px' }}>Gölge Benlik</div>
+                    <div style={{ color: '#94a3b8', fontSize: '11px', lineHeight: 1.4 }}>Bilinçaltının bastırılmış karanlık kutbu.</div>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setShowBlindSpot(true)}
+                    style={{
+                      padding: '14px',
+                      backgroundColor: 'rgba(255, 255, 255, 0.025)',
+                      border: '1px solid rgba(255, 255, 255, 0.08)',
+                      borderRadius: '10px',
+                      textAlign: 'left',
+                      cursor: 'pointer',
+                      color: '#e2e8f0'
+                    }}
+                  >
+                    <div style={{ color: '#93c5fd', fontSize: '13px', fontWeight: 600, marginBottom: '3px' }}>Kör Nokta Analizi</div>
+                    <div style={{ color: '#94a3b8', fontSize: '11px', lineHeight: 1.4 }}>5D boyutundaki en zayıf halkanın testi.</div>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setShowCosmicCourt(true)}
+                    style={{
+                      padding: '14px',
+                      backgroundColor: 'rgba(255, 255, 255, 0.025)',
+                      border: '1px solid rgba(255, 255, 255, 0.08)',
+                      borderRadius: '10px',
+                      textAlign: 'left',
+                      cursor: 'pointer',
+                      color: '#e2e8f0'
+                    }}
+                  >
+                    <div style={{ color: '#FFE699', fontSize: '13px', fontWeight: 600, marginBottom: '3px' }}>Kozmik Mahkeme</div>
+                    <div style={{ color: '#94a3b8', fontSize: '11px', lineHeight: 1.4 }}>Filozofların huzurunda inancını savun.</div>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setShowDreamArchive(true)}
+                    style={{
+                      padding: '14px',
+                      backgroundColor: 'rgba(255, 255, 255, 0.025)',
+                      border: '1px solid rgba(255, 255, 255, 0.08)',
+                      borderRadius: '10px',
+                      textAlign: 'left',
+                      cursor: 'pointer',
+                      color: '#e2e8f0'
+                    }}
+                  >
+                    <div style={{ color: '#c084fc', fontSize: '13px', fontWeight: 600, marginBottom: '3px' }}>Rüya Arşivi</div>
+                    <div style={{ color: '#94a3b8', fontSize: '11px', lineHeight: 1.4 }}>Rüyalarının felsefi ve sembolik çözümü.</div>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setShowEvolution(true)}
+                    style={{
+                      padding: '14px',
+                      backgroundColor: 'rgba(255, 255, 255, 0.025)',
+                      border: '1px solid rgba(255, 255, 255, 0.08)',
+                      borderRadius: '10px',
+                      textAlign: 'left',
+                      cursor: 'pointer',
+                      color: '#e2e8f0'
+                    }}
+                  >
+                    <div style={{ color: '#FFE699', fontSize: '13px', fontWeight: 600, marginBottom: '3px' }}>Felsefi Evrim</div>
+                    <div style={{ color: '#94a3b8', fontSize: '11px', lineHeight: 1.4 }}>Zaman içindeki düşünsel seyrin.</div>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setShowDuoReport(true)}
+                    style={{
+                      padding: '14px',
+                      backgroundColor: 'rgba(255, 255, 255, 0.025)',
+                      border: '1px solid rgba(255, 255, 255, 0.08)',
+                      borderRadius: '10px',
+                      textAlign: 'left',
+                      cursor: 'pointer',
+                      color: '#e2e8f0'
+                    }}
+                  >
+                    <div style={{ color: '#67e8f9', fontSize: '13px', fontWeight: 600, marginBottom: '3px' }}>İlişki & Çatışma Raporu</div>
+                    <div style={{ color: '#94a3b8', fontSize: '11px', lineHeight: 1.4 }}>Zıt ve benzer kutupların ayrıntılı raporu.</div>
+                  </button>
+                </div>
+              )}
             </div>
 
             {/* Yapay Zeka Kozmik Okuması */}
@@ -1102,88 +1277,94 @@ export default function Home() {
         {/* TEST SEÇİM EKRANI */}
         {!testType && !result ? (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', alignItems: 'center', marginTop: '30px' }}>
-            {/* Kısa Test - En Popüler */}
+            {/* Hızlı Keşif */}
             <button
               onClick={() => handleTestSelection('short')}
               style={{
                 width: '92%',
                 maxWidth: '540px',
-                padding: '24px 22px',
-                background: 'linear-gradient(135deg, #161324 0%, #110f1c 100%)',
-                border: '1.5px solid #D4AF37',
+                padding: '22px 24px',
+                backgroundColor: 'rgba(255, 230, 153, 0.04)',
+                border: '1px solid rgba(255, 230, 153, 0.35)',
                 color: '#FFE699',
                 cursor: 'pointer',
-                borderRadius: '12px',
-                boxShadow: '0 8px 30px rgba(212, 175, 55, 0.18)',
+                borderRadius: '14px',
+                boxShadow: '0 8px 30px rgba(0, 0, 0, 0.4)',
                 textAlign: 'left',
-                transition: 'transform 0.2s, box-shadow 0.2s',
+                transition: 'all 0.2s ease',
                 position: 'relative'
               }}
             >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
-                <span style={{ fontSize: '20px', fontWeight: 'bold', fontFamily: 'Georgia, serif' }}>⚡ 3 Dakikalık Hızlı Keşif</span>
-                <span style={{ fontSize: '11px', backgroundColor: 'rgba(212, 175, 55, 0.2)', border: '1px solid #D4AF37', color: '#FFE699', padding: '3px 10px', borderRadius: '14px', fontWeight: 'bold' }}>
-                  EN POPÜLER 🔥
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                <span style={{ fontSize: '18px', fontWeight: 600, fontFamily: 'Georgia, serif', color: '#f8fafc' }}>
+                  Hızlı Keşif · 3 Dakika
+                </span>
+                <span style={{ fontSize: '11px', backgroundColor: 'rgba(255, 230, 153, 0.15)', border: '1px solid rgba(255, 230, 153, 0.4)', color: '#FFE699', padding: '3px 12px', borderRadius: '999px', fontWeight: 600 }}>
+                  Önerilen
                 </span>
               </div>
-              <p style={{ margin: 0, fontSize: '13px', color: '#cbd5e1', lineHeight: '1.5' }}>
-                Kahve molasında ruhunun röntgenini çek • 20 Soru + 1 Hayati İkilem
+              <p style={{ margin: 0, fontSize: '13px', color: '#94a3b8', lineHeight: '1.5' }}>
+                Kısa ve odaklanmış profil analizi · 20 Soru ve 1 Hayati İkilem
               </p>
             </button>
 
-            {/* Orta Test */}
+            {/* Derinleşme Modu */}
             <button
               onClick={() => handleTestSelection('medium')}
               style={{
                 width: '92%',
                 maxWidth: '540px',
-                padding: '22px',
-                background: 'linear-gradient(135deg, #131020 0%, #0d0b17 100%)',
-                border: '1px solid #8b7322',
+                padding: '22px 24px',
+                backgroundColor: 'rgba(255, 255, 255, 0.02)',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
                 color: '#e2e8f0',
                 cursor: 'pointer',
-                borderRadius: '12px',
+                borderRadius: '14px',
                 textAlign: 'left',
-                transition: 'transform 0.2s',
+                transition: 'all 0.2s ease',
                 boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)'
               }}
             >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
-                <span style={{ fontSize: '18px', fontWeight: 'bold', fontFamily: 'Georgia, serif' }}>☕ Derin Sohbet Modu</span>
-                <span style={{ fontSize: '11px', backgroundColor: 'rgba(138, 43, 226, 0.15)', border: '1px solid #8A2BE2', color: '#c084fc', padding: '3px 10px', borderRadius: '14px' }}>
-                  DERİNLEŞ ⚡
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                <span style={{ fontSize: '18px', fontWeight: 600, fontFamily: 'Georgia, serif', color: '#f8fafc' }}>
+                  Derinleşme · 60 Soru
+                </span>
+                <span style={{ fontSize: '11px', backgroundColor: 'rgba(255, 255, 255, 0.05)', border: '1px solid rgba(255, 255, 255, 0.15)', color: '#cbd5e1', padding: '3px 12px', borderRadius: '999px' }}>
+                  Dengeli
                 </span>
               </div>
               <p style={{ margin: 0, fontSize: '13px', color: '#94a3b8', lineHeight: '1.5' }}>
-                Yüzeysel cevapları arkanda bırak • 60 Soru + 1 Hayati İkilem
+                Çok boyutlu felsefi haritalama · 60 Soru ve 1 Hayati İkilem
               </p>
             </button>
 
-            {/* Uzun Test */}
+            {/* Kapsamlı Analiz */}
             <button
               onClick={() => handleTestSelection('long')}
               style={{
                 width: '92%',
                 maxWidth: '540px',
-                padding: '22px',
-                background: 'linear-gradient(135deg, #0f0d1a 0%, #090812 100%)',
-                border: '1px solid #3d3558',
+                padding: '22px 24px',
+                backgroundColor: 'rgba(255, 255, 255, 0.015)',
+                border: '1px solid rgba(255, 255, 255, 0.07)',
                 color: '#cbd5e1',
                 cursor: 'pointer',
-                borderRadius: '12px',
+                borderRadius: '14px',
                 textAlign: 'left',
-                transition: 'transform 0.2s',
+                transition: 'all 0.2s ease',
                 boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)'
               }}
             >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
-                <span style={{ fontSize: '18px', fontWeight: 'bold', fontFamily: 'Georgia, serif' }}>🔮 Kozmik Hipnoz</span>
-                <span style={{ fontSize: '11px', backgroundColor: 'rgba(59, 130, 246, 0.15)', border: '1px solid #3b82f6', color: '#93c5fd', padding: '3px 10px', borderRadius: '14px' }}>
-                  TAM AYNA 🧠
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                <span style={{ fontSize: '18px', fontWeight: 600, fontFamily: 'Georgia, serif', color: '#f8fafc' }}>
+                  Kapsamlı Analiz · 100 Soru
+                </span>
+                <span style={{ fontSize: '11px', backgroundColor: 'rgba(255, 255, 255, 0.05)', border: '1px solid rgba(255, 255, 255, 0.15)', color: '#cbd5e1', padding: '3px 12px', borderRadius: '999px' }}>
+                  Tam Profil
                 </span>
               </div>
               <p style={{ margin: 0, fontSize: '13px', color: '#94a3b8', lineHeight: '1.5' }}>
-                Bilinçaltının en gizli odalarına in • 100 Soru + 1 Hayati İkilem
+                Bilinçaltının tüm nüanslarını kapsayan tam envanter · 100 Soru ve 1 Hayati İkilem
               </p>
             </button>
           </div>
@@ -1203,10 +1384,10 @@ export default function Home() {
 
                 {/* Sıcak & Samimi İlerleme Fısıltısı */}
                 <div style={{ fontSize: '12px', color: '#cbd5e1', marginBottom: '20px', fontStyle: 'italic', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  {currentStep < 5 && "☕ İlk adımlar... İçinden gelen ilk hisse güven."}
-                  {currentStep >= 5 && currentStep < 12 && "✨ Isınıyoruz... Bilinçaltın kapılarını aralıyor."}
-                  {currentStep >= 12 && currentStep < 18 && "🌊 Derin sulardayız... Cevapların harika bir desen çiziyor."}
-                  {currentStep >= 18 && "🎯 Ve son virajdasın... Bakalım ruh ikizin kim çıkacak?"}
+                  {currentStep < 5 && "İlk adımlar: Aklına gelen ilk içgüdüsel hisse güven."}
+                  {currentStep >= 5 && currentStep < 12 && "Derinleşiyoruz: Zihinsel desenlerin belirginleşmeye başlıyor."}
+                  {currentStep >= 12 && currentStep < 18 && "Derin sulardayız: Yanıtların dengeli bir felsefi portre çiziyor."}
+                  {currentStep >= 18 && "Son aşama: Arketipini ortaya çıkarmaya çok az kaldı."}
                 </div>
 
                 {/* Normal Soru */}
@@ -1419,18 +1600,164 @@ export default function Home() {
         ) : null}
 
         {/* ALT BİLGİ (FOOTER) */}
-        <footer style={{ marginTop: '70px', padding: '30px 10px', textAlign: 'center', borderTop: '1px solid #1a162b' }}>
+        <footer style={{ marginTop: '70px', padding: '30px 10px', textAlign: 'center', borderTop: '1px solid rgba(255, 230, 153, 0.1)' }}>
           <p style={{ fontSize: '12px', color: '#64748b', margin: '0 0 8px 0', letterSpacing: '1px' }}>
-            ✦ KOZMO-TEO • Bilinçaltı Teolojik & Ontolojik Harita Platformu ✦
+            ✦ KOZMO-TEO · Bilinçaltı Felsefi Harita Platformu
           </p>
+          <div style={{ display: 'flex', justifyContent: 'center', gap: '16px', fontSize: '11px', color: '#94a3b8', marginBottom: '10px' }}>
+            <a href="https://kozmoteo.vercel.app" target="_blank" rel="noopener noreferrer" style={{ color: '#FFE699', textDecoration: 'none' }}>
+              kozmoteo.vercel.app
+            </a>
+            <span>·</span>
+            <a href="https://kozmoteo.netlify.app" target="_blank" rel="noopener noreferrer" style={{ color: '#FFE699', textDecoration: 'none' }}>
+              kozmoteo.netlify.app
+            </a>
+          </div>
           <button
+            type="button"
             onClick={() => setShowPolicy(true)}
-            style={{ background: 'transparent', border: 'none', color: '#9ca3af', fontSize: '11px', textDecoration: 'underline', cursor: 'pointer' }}
+            style={{ background: 'transparent', border: 'none', color: '#64748b', fontSize: '11px', textDecoration: 'underline', cursor: 'pointer' }}
           >
-            Felsefi Gizlilik & Güvenlik İlkeleri • KVKK
+            Felsefi Gizlilik ve Güvenlik İlkeleri · KVKK
           </button>
         </footer>
       </div>
+
+      {/* KEŞFET MENÜ MODALI */}
+      {showDiscoveryModal && (
+        <div style={{
+          position: 'fixed',
+          inset: 0,
+          backgroundColor: 'rgba(5, 5, 8, 0.85)',
+          backdropFilter: 'blur(10px)',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          zIndex: 99999,
+          padding: '16px'
+        }}>
+          <div style={{
+            width: '100%',
+            maxWidth: '560px',
+            backgroundColor: '#0d0d12',
+            border: '1px solid rgba(255, 230, 153, 0.2)',
+            borderRadius: '16px',
+            padding: '26px 24px',
+            boxShadow: '0 25px 60px rgba(0, 0, 0, 0.85)',
+            position: 'relative'
+          }}>
+            <button
+              type="button"
+              onClick={() => setShowDiscoveryModal(false)}
+              aria-label="Kapat"
+              style={{
+                position: 'absolute',
+                top: '16px',
+                right: '18px',
+                background: 'transparent',
+                border: 'none',
+                color: '#94a3b8',
+                fontSize: '20px',
+                cursor: 'pointer',
+                lineHeight: 1
+              }}
+            >
+              ✕
+            </button>
+            <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+              <span style={{ fontSize: '11px', color: '#d4af37', letterSpacing: '3px', textTransform: 'uppercase', fontWeight: 600 }}>
+                ✦ KOZMİK KEŞİF
+              </span>
+              <h3 style={{ color: '#f8fafc', fontSize: '20px', margin: '4px 0 0 0', fontFamily: 'Georgia, serif', fontWeight: 400 }}>
+                Felsefi Keşif Odaları
+              </h3>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(230px, 1fr))', gap: '10px' }}>
+              <button
+                type="button"
+                onClick={() => { setShowDiscoveryModal(false); setShowOracle(true); }}
+                style={{
+                  padding: '14px 16px',
+                  backgroundColor: 'rgba(255, 255, 255, 0.025)',
+                  border: '1px solid rgba(255, 255, 255, 0.08)',
+                  borderRadius: '10px',
+                  textAlign: 'left',
+                  cursor: 'pointer',
+                  color: '#e2e8f0'
+                }}
+              >
+                <div style={{ color: '#FFE699', fontSize: '13px', fontWeight: 600, marginBottom: '4px' }}>Günün İkilemi</div>
+                <div style={{ color: '#94a3b8', fontSize: '11px', lineHeight: 1.4 }}>Kadim ahlaki açmazlar ve toplumsal seçimler.</div>
+              </button>
+              <button
+                type="button"
+                onClick={() => { setShowDiscoveryModal(false); setShowConstellation(true); }}
+                style={{
+                  padding: '14px 16px',
+                  backgroundColor: 'rgba(255, 255, 255, 0.025)',
+                  border: '1px solid rgba(255, 255, 255, 0.08)',
+                  borderRadius: '10px',
+                  textAlign: 'left',
+                  cursor: 'pointer',
+                  color: '#e2e8f0'
+                }}
+              >
+                <div style={{ color: '#67e8f9', fontSize: '13px', fontWeight: 600, marginBottom: '4px' }}>Canlı Zihinler Gökyüzü</div>
+                <div style={{ color: '#94a3b8', fontSize: '11px', lineHeight: 1.4 }}>Anlık evren haritasında diğer bilinçler.</div>
+              </button>
+              <button
+                type="button"
+                onClick={() => { setShowDiscoveryModal(false); setShowConfessionWall(true); }}
+                style={{
+                  padding: '14px 16px',
+                  backgroundColor: 'rgba(255, 255, 255, 0.025)',
+                  border: '1px solid rgba(255, 255, 255, 0.08)',
+                  borderRadius: '10px',
+                  textAlign: 'left',
+                  cursor: 'pointer',
+                  color: '#e2e8f0'
+                }}
+              >
+                <div style={{ color: '#c084fc', fontSize: '13px', fontWeight: 600, marginBottom: '4px' }}>Gece Fısıltıları</div>
+                <div style={{ color: '#94a3b8', fontSize: '11px', lineHeight: 1.4 }}>Anonim itiraflar ve gece düşünceleri.</div>
+              </button>
+              <button
+                type="button"
+                onClick={() => { setShowDiscoveryModal(false); setShowPulse(true); }}
+                style={{
+                  padding: '14px 16px',
+                  backgroundColor: 'rgba(255, 255, 255, 0.025)',
+                  border: '1px solid rgba(255, 255, 255, 0.08)',
+                  borderRadius: '10px',
+                  textAlign: 'left',
+                  cursor: 'pointer',
+                  color: '#e2e8f0'
+                }}
+              >
+                <div style={{ color: '#34d399', fontSize: '13px', fontWeight: 600, marginBottom: '4px' }}>Toplumsal Nabız</div>
+                <div style={{ color: '#94a3b8', fontSize: '11px', lineHeight: 1.4 }}>Türkiye genelinde inanç eğilimleri ve harita.</div>
+              </button>
+              <button
+                type="button"
+                onClick={() => { setShowDiscoveryModal(false); setShowEvolution(true); }}
+                style={{
+                  padding: '14px 16px',
+                  backgroundColor: 'rgba(255, 255, 255, 0.025)',
+                  border: '1px solid rgba(255, 255, 255, 0.08)',
+                  borderRadius: '10px',
+                  textAlign: 'left',
+                  cursor: 'pointer',
+                  color: '#e2e8f0',
+                  gridColumn: '1 / -1'
+                }}
+              >
+                <div style={{ color: '#FFE699', fontSize: '13px', fontWeight: 600, marginBottom: '4px' }}>Felsefi Evrim Haritası</div>
+                <div style={{ color: '#94a3b8', fontSize: '11px', lineHeight: 1.4 }}>Zaman içindeki düşünsel dönüşümün ve test geçmişin.</div>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* EVRENSEL MODALLAR (Stacking context bağımsız - Z-Index 99999) */}
       {showArchetype && result && (

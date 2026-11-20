@@ -365,8 +365,8 @@ export const ArchetypeModal: React.FC<ArchetypeModalProps> = ({ result, onClose,
           <p style={{ fontSize: '9px', color: '#94a3b8', margin: '0 0 2px 0' }}>
             Senin inanç pusulan ne söylüyor?
           </p>
-          <p style={{ fontSize: '10px', color: '#FFE699', fontFamily: 'Georgia, serif', fontWeight: 'bold', letterSpacing: '2px', margin: 0 }}>
-            ✦ kozmoteo.netlify.app ✦
+          <p style={{ fontSize: '9px', color: '#FFE699', fontFamily: 'Georgia, serif', fontWeight: 'bold', letterSpacing: '1px', margin: 0 }}>
+            kozmoteo.vercel.app  ·  kozmoteo.netlify.app
           </p>
         </div>
       </div>
