@@ -1,5 +1,5 @@
 import { MatchResult } from './types';
-import { BrutalTruth, DuoRelationshipReport, ConfessionItem } from './viral';
+import { BrutalTruth, DuoRelationshipReport, ConfessionItem, getHumanizedPersona } from './viral';
 
 // Ortak Kozmik Nebula & Yıldız Arka Planı
 const drawSharedBackground = (ctx: CanvasRenderingContext2D) => {
@@ -611,5 +611,141 @@ export const downloadConfessionCard = async (confession: ConfessionItem): Promis
     `KozmoTeo_Fisilti_${confession.id}.png`,
     `Kozmo-Teo Gece Fısıltısı`,
     `"${confession.text}" - Kozmik fısıltıları dinle: kozmoteo.netlify.app`
+  );
+};
+
+// -------------------------------------------------------------
+// 5. HALK DİLİYLE SEN • KOZMİK KİMLİK KARTI (STORY)
+// -------------------------------------------------------------
+export const downloadHumanizedStoryCard = async (result: MatchResult): Promise<void> => {
+  if (typeof window === 'undefined') return;
+
+  const persona = getHumanizedPersona(result.archetype);
+  const canvas = document.createElement('canvas');
+  canvas.width = 1080;
+  canvas.height = 1920;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return;
+
+  drawSharedBackground(ctx);
+
+  ctx.textAlign = 'center';
+
+  // Üst Başlık
+  ctx.fillStyle = '#FFE58F';
+  ctx.font = 'bold 36px Georgia, serif';
+  ctx.fillText('✦   K O Z M O - T E O   ✦', 540, 220);
+
+  ctx.fillStyle = '#c084fc';
+  ctx.font = 'bold 22px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+  ctx.fillText('H A L K   D İ L İ Y L E   S E N   •   K İ M L İ K   K A R T I', 540, 265);
+
+  // Arketip & Yüzde
+  ctx.fillStyle = '#FFE699';
+  ctx.font = 'bold 48px Georgia, serif';
+  ctx.fillText(result.archetype, 540, 370);
+
+  ctx.fillStyle = '#f8fafc';
+  ctx.font = 'bold 26px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+  ctx.fillText(`Uyum: %${result.similarity_percentage}`, 540, 420);
+
+  // Pop-Kültür İkizi Rozeti
+  const twinText = `🎭 Pop-Kültür Ruh İkizin: ${persona.popCultureTwin}`;
+  ctx.font = 'bold 24px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+  const twinW = ctx.measureText(twinText).width + 60;
+  ctx.fillStyle = 'rgba(138, 43, 226, 0.2)';
+  ctx.strokeStyle = '#8A2BE2';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.roundRect((1080 - twinW) / 2, 460, twinW, 56, 28);
+  ctx.fill();
+  ctx.stroke();
+
+  ctx.fillStyle = '#e9d5ff';
+  ctx.fillText(twinText, 540, 497);
+
+  // Popüler Başlık & Alıntı
+  ctx.fillStyle = '#FFE699';
+  ctx.font = 'bold 40px Georgia, serif';
+  ctx.fillText(persona.title, 540, 600);
+
+  ctx.fillStyle = '#f1f5f9';
+  ctx.font = 'italic 34px Georgia, serif';
+  wrapCanvasText(ctx, `"${persona.everydayYou}"`, 540, 670, 840, 52, 4);
+
+  // Hashtagler
+  const tagsStr = persona.threeWords.map(w => `#${w}`).join('   ');
+  ctx.fillStyle = '#FFE699';
+  ctx.font = 'bold 28px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+  ctx.fillText(tagsStr, 540, 930);
+
+  // Kutu 1: Kırmızı Bayrak (Zayıf Yön)
+  const redBoxY = 1010;
+  ctx.fillStyle = 'rgba(244, 63, 94, 0.12)';
+  ctx.strokeStyle = 'rgba(244, 63, 94, 0.5)';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.roundRect(120, redBoxY, 840, 190, 16);
+  ctx.fill();
+  ctx.stroke();
+
+  ctx.fillStyle = '#f43f5e';
+  ctx.font = 'bold 22px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+  ctx.fillText('🚩  K I R M I Z I   B A Y R A Ğ I N', 540, redBoxY + 50);
+
+  ctx.fillStyle = '#fda4af';
+  ctx.font = '28px Georgia, serif';
+  wrapCanvasText(ctx, persona.redFlag, 540, redBoxY + 110, 760, 42, 2);
+
+  // Kutu 2: Yeşil Bayrak (Süper Güç)
+  const greenBoxY = 1240;
+  ctx.fillStyle = 'rgba(16, 185, 129, 0.12)';
+  ctx.strokeStyle = 'rgba(16, 185, 129, 0.5)';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.roundRect(120, greenBoxY, 840, 190, 16);
+  ctx.fill();
+  ctx.stroke();
+
+  ctx.fillStyle = '#10b981';
+  ctx.font = 'bold 22px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+  ctx.fillText('💚  Y E Ş İ L   B A Y R A Ğ I N', 540, greenBoxY + 50);
+
+  ctx.fillStyle = '#a7f3d0';
+  ctx.font = '28px Georgia, serif';
+  wrapCanvasText(ctx, persona.greenFlag, 540, greenBoxY + 110, 760, 42, 2);
+
+  // Seni Ne Çıldırtır
+  const triggerY = 1490;
+  ctx.fillStyle = 'rgba(18, 15, 30, 0.85)';
+  ctx.strokeStyle = 'rgba(212, 175, 55, 0.35)';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.roundRect(120, triggerY, 840, 140, 16);
+  ctx.fill();
+  ctx.stroke();
+
+  ctx.fillStyle = '#FFE699';
+  ctx.font = 'bold 20px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+  ctx.fillText('⚡  S E N İ   N E   Ç I L D I R T I R', 540, triggerY + 45);
+
+  ctx.fillStyle = '#cbd5e1';
+  ctx.font = '26px Georgia, serif';
+  wrapCanvasText(ctx, persona.triggersYou, 540, triggerY + 95, 760, 38, 2);
+
+  // Footer
+  ctx.fillStyle = '#94a3b8';
+  ctx.font = '26px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+  ctx.fillText('Senin bilinçaltı arketipin ne?', 540, 1715);
+
+  ctx.fillStyle = '#FFE699';
+  ctx.font = 'bold 30px Georgia, serif';
+  ctx.fillText('✦  kozmoteo.netlify.app  ✦', 540, 1765);
+
+  await saveOrShareCanvas(
+    canvas,
+    `KozmoTeo_Kimlik_${result.archetype.replace(/\s+/g, '_')}.png`,
+    `Kozmo-Teo Kimlik Kartım: ${result.archetype}`,
+    `Benim Kozmo-Teo kimliğim: ${persona.title} - ${result.archetype}! Seninki ne? Çöz: kozmoteo.netlify.app`
   );
 };

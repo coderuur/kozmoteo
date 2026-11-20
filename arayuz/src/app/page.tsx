@@ -29,7 +29,7 @@ import { BlindSpotModal } from '../components/BlindSpotModal';
 import { DreamArchiveModal } from '../components/DreamArchiveModal';
 import { CosmicCourtModal } from '../components/CosmicCourtModal';
 import { PulseDashboard } from '../components/PulseDashboard';
-import { getBrutalTruth, decodeSoulDuel, SoulDuelData } from '../lib/viral';
+import { getBrutalTruth, decodeSoulDuel, SoulDuelData, getHumanizedPersona } from '../lib/viral';
 
 export default function Home() {
   const [testType, setTestType] = useState<'short' | 'medium' | 'long' | null>(null);
@@ -689,11 +689,31 @@ export default function Home() {
       )}
 
       <div style={{ maxWidth: '720px', margin: '0 auto', position: 'relative' }}>
-        <h1 style={{ textAlign: 'center', color: '#FFE699', fontSize: '2.6rem', marginBottom: '8px', letterSpacing: '3px', textShadow: '0 0 25px rgba(212, 175, 55, 0.3)' }}>
-          KOZMO-TEO KEŞFİ
+        {/* Popülerlik / Canlı Sosyal Kanıt Rozeti */}
+        <div style={{ textAlign: 'center', marginBottom: '14px' }}>
+          <span style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '8px',
+            backgroundColor: 'rgba(212, 175, 55, 0.1)',
+            border: '1px solid rgba(212, 175, 55, 0.35)',
+            color: '#FFE699',
+            padding: '6px 16px',
+            borderRadius: '30px',
+            fontSize: '12px',
+            fontWeight: 'bold',
+            boxShadow: '0 0 20px rgba(212, 175, 55, 0.15)'
+          }}>
+            <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#10b981', display: 'inline-block' }} className="pulse" />
+            🔥 64.200+ kişi içindeki gerçek sesle yüzleşti
+          </span>
+        </div>
+
+        <h1 style={{ textAlign: 'center', color: '#FFE699', fontSize: '2.5rem', marginBottom: '10px', letterSpacing: '2px', textShadow: '0 0 25px rgba(212, 175, 55, 0.3)' }}>
+          Aslında Neye İnanıyorsun?
         </h1>
-        <p style={{ textAlign: 'center', color: '#94a3b8', fontSize: '14px', letterSpacing: '1px', marginBottom: '35px' }}>
-          Bilinçaltı Teolojik & Ontolojik Haritalandırma Motoru
+        <p style={{ textAlign: 'center', color: '#cbd5e1', fontSize: '15px', letterSpacing: '0.5px', marginBottom: '35px', maxWidth: '580px', margin: '0 auto 35px auto', lineHeight: '1.6' }}>
+          Geceleri tek başına kaldığında evrenle fısıldaşan zihnin... 20 kadim felsefeden hangisinin frekansında titreşiyor?
         </p>
 
         {/* SONUÇ EKRANI */}
@@ -703,6 +723,75 @@ export default function Home() {
             <h3 style={{ margin: '10px 0', color: '#f8fafc', fontSize: '2.2rem', fontFamily: 'Georgia, serif' }}>{result.belief_name.replace(/\s*\([^)]*\)/g, '').trim()}</h3>
             <h2 style={{ margin: '0 0 10px 0', color: '#FFE699', fontSize: '3.4rem', textShadow: '0 0 25px rgba(212, 175, 55, 0.4)' }}>%{result.similarity_percentage}</h2>
             <p style={{ color: '#d1d5db', fontSize: '16px', fontStyle: 'italic', marginBottom: '25px', maxWidth: '580px', margin: '0 auto 25px auto' }}>"{result.description}"</p>
+
+            {/* HALK DİLİYLE SEN • KOZMİK KİMLİK KARTI (VIRAL & HUMANIZE) */}
+            <div style={{
+              background: 'linear-gradient(135deg, rgba(212, 175, 55, 0.08) 0%, rgba(13, 11, 20, 0.95) 100%)',
+              border: '1.5px solid #D4AF37',
+              borderRadius: '14px',
+              padding: '24px 20px',
+              marginBottom: '30px',
+              textAlign: 'left',
+              boxShadow: '0 0 35px rgba(212, 175, 55, 0.2)'
+            }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px', flexWrap: 'wrap', gap: '8px' }}>
+                <span style={{ fontSize: '11px', color: '#FFE699', letterSpacing: '3px', textTransform: 'uppercase', fontWeight: 'bold' }}>
+                  ✦ HALK DİLİYLE SEN • KİMLİK KARTI ✦
+                </span>
+                <span style={{ fontSize: '12px', color: '#c084fc', backgroundColor: 'rgba(138, 43, 226, 0.2)', padding: '3px 10px', borderRadius: '12px', border: '1px solid #8A2BE2' }}>
+                  🎭 Ruh İkizin: {getHumanizedPersona(result.archetype).popCultureTwin}
+                </span>
+              </div>
+
+              <h3 style={{ color: '#FFE699', fontSize: '22px', margin: '0 0 10px 0', fontFamily: 'Georgia, serif' }}>
+                {getHumanizedPersona(result.archetype).title}
+              </h3>
+
+              <p style={{ color: '#f1f5f9', fontSize: '15px', lineHeight: '1.7', margin: '0 0 16px 0', fontStyle: 'italic' }}>
+                "{getHumanizedPersona(result.archetype).everydayYou}"
+              </p>
+
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '18px' }}>
+                {getHumanizedPersona(result.archetype).threeWords.map((word, idx) => (
+                  <span key={idx} style={{ backgroundColor: 'rgba(212, 175, 55, 0.15)', color: '#FFE699', border: '1px solid rgba(212, 175, 55, 0.4)', padding: '4px 12px', borderRadius: '14px', fontSize: '12px', fontWeight: 'bold' }}>
+                    #{word}
+                  </span>
+                ))}
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '12px', marginBottom: '16px' }}>
+                <div style={{ backgroundColor: 'rgba(244, 63, 94, 0.1)', border: '1px solid rgba(244, 63, 94, 0.3)', borderRadius: '10px', padding: '12px 14px' }}>
+                  <div style={{ fontSize: '11px', color: '#f43f5e', fontWeight: 'bold', marginBottom: '4px' }}>🚩 Kırmızı Bayrağın — Zayıf Yönün</div>
+                  <p style={{ color: '#fda4af', fontSize: '13px', margin: 0, lineHeight: '1.5' }}>{getHumanizedPersona(result.archetype).redFlag}</p>
+                </div>
+                <div style={{ backgroundColor: 'rgba(16, 185, 129, 0.1)', border: '1px solid rgba(16, 185, 129, 0.3)', borderRadius: '10px', padding: '12px 14px' }}>
+                  <div style={{ fontSize: '11px', color: '#10b981', fontWeight: 'bold', marginBottom: '4px' }}>💚 Yeşil Bayrağın — Süper Gücün</div>
+                  <p style={{ color: '#a7f3d0', fontSize: '13px', margin: 0, lineHeight: '1.5' }}>{getHumanizedPersona(result.archetype).greenFlag}</p>
+                </div>
+              </div>
+
+              <div style={{ backgroundColor: '#13111f', border: '1px solid #2d2645', borderRadius: '10px', padding: '12px 14px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
+                <div style={{ fontSize: '12px', color: '#9ca3af' }}>
+                  ⚡ <strong style={{ color: '#e2e8f0' }}>Seni Ne Çıldırtır:</strong> {getHumanizedPersona(result.archetype).triggersYou}
+                </div>
+                <button
+                  onClick={() => setShowArchetype(true)}
+                  style={{
+                    background: 'linear-gradient(135deg, #FFE699 0%, #D4AF37 100%)',
+                    border: 'none',
+                    color: '#07060c',
+                    borderRadius: '16px',
+                    padding: '6px 14px',
+                    fontSize: '11px',
+                    fontWeight: 'bold',
+                    cursor: 'pointer',
+                    boxShadow: '0 0 15px rgba(212, 175, 55, 0.3)'
+                  }}
+                >
+                  📸 Hikayede Paylaş
+                </button>
+              </div>
+            </div>
 
             {/* Butonlar: Keşfet + Hikaye + Pasaporta Kaydet + Meydan Oku + İlişki Raporu */}
             <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', marginBottom: '30px', flexWrap: 'wrap' }}>
@@ -1012,15 +1101,90 @@ export default function Home() {
 
         {/* TEST SEÇİM EKRANI */}
         {!testType && !result ? (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', alignItems: 'center', marginTop: '40px' }}>
-            <button onClick={() => handleTestSelection('short')} style={{ width: '88%', maxWidth: '520px', padding: '22px', backgroundColor: '#110f1c', border: '1px solid #D4AF37', color: '#FFE699', fontSize: '18px', cursor: 'pointer', borderRadius: '8px', boxShadow: '0 4px 20px rgba(212, 175, 55, 0.1)', transition: 'transform 0.2s' }}>
-              Kısa Analiz <br /><span style={{ fontSize: '13px', color: '#9ca3af' }}>20 Soru + 1 İkilem</span>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', alignItems: 'center', marginTop: '30px' }}>
+            {/* Kısa Test - En Popüler */}
+            <button
+              onClick={() => handleTestSelection('short')}
+              style={{
+                width: '92%',
+                maxWidth: '540px',
+                padding: '24px 22px',
+                background: 'linear-gradient(135deg, #161324 0%, #110f1c 100%)',
+                border: '1.5px solid #D4AF37',
+                color: '#FFE699',
+                cursor: 'pointer',
+                borderRadius: '12px',
+                boxShadow: '0 8px 30px rgba(212, 175, 55, 0.18)',
+                textAlign: 'left',
+                transition: 'transform 0.2s, box-shadow 0.2s',
+                position: 'relative'
+              }}
+            >
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                <span style={{ fontSize: '20px', fontWeight: 'bold', fontFamily: 'Georgia, serif' }}>⚡ 3 Dakikalık Hızlı Keşif</span>
+                <span style={{ fontSize: '11px', backgroundColor: 'rgba(212, 175, 55, 0.2)', border: '1px solid #D4AF37', color: '#FFE699', padding: '3px 10px', borderRadius: '14px', fontWeight: 'bold' }}>
+                  EN POPÜLER 🔥
+                </span>
+              </div>
+              <p style={{ margin: 0, fontSize: '13px', color: '#cbd5e1', lineHeight: '1.5' }}>
+                Kahve molasında ruhunun röntgenini çek • 20 Soru + 1 Hayati İkilem
+              </p>
             </button>
-            <button onClick={() => handleTestSelection('medium')} style={{ width: '88%', maxWidth: '520px', padding: '22px', backgroundColor: '#110f1c', border: '1px solid #8b7322', color: '#e2e8f0', fontSize: '18px', cursor: 'pointer', borderRadius: '8px', transition: 'transform 0.2s' }}>
-              Orta Keşif <br /><span style={{ fontSize: '13px', color: '#9ca3af' }}>60 Soru + 1 İkilem</span>
+
+            {/* Orta Test */}
+            <button
+              onClick={() => handleTestSelection('medium')}
+              style={{
+                width: '92%',
+                maxWidth: '540px',
+                padding: '22px',
+                background: 'linear-gradient(135deg, #131020 0%, #0d0b17 100%)',
+                border: '1px solid #8b7322',
+                color: '#e2e8f0',
+                cursor: 'pointer',
+                borderRadius: '12px',
+                textAlign: 'left',
+                transition: 'transform 0.2s',
+                boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)'
+              }}
+            >
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                <span style={{ fontSize: '18px', fontWeight: 'bold', fontFamily: 'Georgia, serif' }}>☕ Derin Sohbet Modu</span>
+                <span style={{ fontSize: '11px', backgroundColor: 'rgba(138, 43, 226, 0.15)', border: '1px solid #8A2BE2', color: '#c084fc', padding: '3px 10px', borderRadius: '14px' }}>
+                  DERİNLEŞ ⚡
+                </span>
+              </div>
+              <p style={{ margin: 0, fontSize: '13px', color: '#94a3b8', lineHeight: '1.5' }}>
+                Yüzeysel cevapları arkanda bırak • 60 Soru + 1 Hayati İkilem
+              </p>
             </button>
-            <button onClick={() => handleTestSelection('long')} style={{ width: '88%', maxWidth: '520px', padding: '22px', backgroundColor: '#110f1c', border: '1px solid #332d4a', color: '#e2e8f0', fontSize: '18px', cursor: 'pointer', borderRadius: '8px', transition: 'transform 0.2s' }}>
-              Derin Çözümleme <br /><span style={{ fontSize: '13px', color: '#9ca3af' }}>100 Soru + 1 İkilem</span>
+
+            {/* Uzun Test */}
+            <button
+              onClick={() => handleTestSelection('long')}
+              style={{
+                width: '92%',
+                maxWidth: '540px',
+                padding: '22px',
+                background: 'linear-gradient(135deg, #0f0d1a 0%, #090812 100%)',
+                border: '1px solid #3d3558',
+                color: '#cbd5e1',
+                cursor: 'pointer',
+                borderRadius: '12px',
+                textAlign: 'left',
+                transition: 'transform 0.2s',
+                boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)'
+              }}
+            >
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                <span style={{ fontSize: '18px', fontWeight: 'bold', fontFamily: 'Georgia, serif' }}>🔮 Kozmik Hipnoz</span>
+                <span style={{ fontSize: '11px', backgroundColor: 'rgba(59, 130, 246, 0.15)', border: '1px solid #3b82f6', color: '#93c5fd', padding: '3px 10px', borderRadius: '14px' }}>
+                  TAM AYNA 🧠
+                </span>
+              </div>
+              <p style={{ margin: 0, fontSize: '13px', color: '#94a3b8', lineHeight: '1.5' }}>
+                Bilinçaltının en gizli odalarına in • 100 Soru + 1 Hayati İkilem
+              </p>
             </button>
           </div>
         ) : null}
@@ -1032,9 +1196,17 @@ export default function Home() {
             {viewMode === 'stepper' ? (
               <div style={{ backgroundColor: 'rgba(17, 15, 28, 0.92)', backdropFilter: 'blur(8px)', padding: '35px 25px', borderRadius: '12px', border: '1px solid rgba(212, 175, 55, 0.4)', boxShadow: '0 10px 40px rgba(0,0,0,0.6)' }}>
                 {/* Soru Sayacı */}
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px', fontSize: '13px', color: '#FFE699', letterSpacing: '1px' }}>
-                  <span>✦ {currentStep < currentQuestions.length ? `SORU ${currentStep + 1} / ${currentQuestions.length}` : 'ONTOLOJİK İKİLEM'}</span>
-                  <span style={{ color: '#94a3b8' }}>{testType.toUpperCase()} TEST</span>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '14px', fontSize: '13px', color: '#FFE699', letterSpacing: '1px' }}>
+                  <span>✦ {currentStep < currentQuestions.length ? `SORU ${currentStep + 1} / ${currentQuestions.length}` : 'HAYATİ İKİLEM'}</span>
+                  <span style={{ color: '#94a3b8' }}>{testType.toUpperCase()} KEŞİF</span>
+                </div>
+
+                {/* Sıcak & Samimi İlerleme Fısıltısı */}
+                <div style={{ fontSize: '12px', color: '#cbd5e1', marginBottom: '20px', fontStyle: 'italic', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  {currentStep < 5 && "☕ İlk adımlar... İçinden gelen ilk hisse güven."}
+                  {currentStep >= 5 && currentStep < 12 && "✨ Isınıyoruz... Bilinçaltın kapılarını aralıyor."}
+                  {currentStep >= 12 && currentStep < 18 && "🌊 Derin sulardayız... Cevapların harika bir desen çiziyor."}
+                  {currentStep >= 18 && "🎯 Ve son virajdasın... Bakalım ruh ikizin kim çıkacak?"}
                 </div>
 
                 {/* Normal Soru */}
@@ -1047,11 +1219,11 @@ export default function Home() {
                     {/* Hızlı Seçim Butonları (0.0, 0.25, 0.50, 0.75, 1.0) */}
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '6px', marginBottom: '25px' }}>
                       {[
-                        { label: 'Hiç', val: 0.0 },
-                        { label: 'Az', val: 0.25 },
-                        { label: 'Nötr', val: 0.5 },
-                        { label: 'Çok', val: 0.75 },
-                        { label: 'Tam', val: 1.0 },
+                        { label: 'Asla', icon: '✕', val: 0.0 },
+                        { label: 'Pek Değil', icon: '—', val: 0.25 },
+                        { label: 'Nötr', icon: '•', val: 0.5 },
+                        { label: 'Bana Yakın', icon: '✓', val: 0.75 },
+                        { label: 'Kesinlikle', icon: '★', val: 1.0 },
                       ].map((btn) => (
                         <button
                           key={btn.val}
@@ -1063,7 +1235,7 @@ export default function Home() {
                             padding: '10px 4px',
                             backgroundColor: vector[currentStep] === btn.val ? 'rgba(212, 175, 55, 0.25)' : '#0e0c18',
                             border: `1px solid ${vector[currentStep] === btn.val ? '#D4AF37' : '#2d2645'}`,
-                            borderRadius: '6px',
+                            borderRadius: '8px',
                             color: vector[currentStep] === btn.val ? '#FFE699' : '#94a3b8',
                             fontSize: '12px',
                             cursor: 'pointer',
@@ -1071,7 +1243,8 @@ export default function Home() {
                             transition: 'all 0.15s'
                           }}
                         >
-                          {btn.label}<br /><span style={{ fontSize: '10px', opacity: 0.7 }}>{btn.val}</span>
+                          <span style={{ fontSize: '11px', display: 'block', opacity: 0.7, marginBottom: '2px' }}>{btn.icon}</span>
+                          {btn.label}
                         </button>
                       ))}
                     </div>

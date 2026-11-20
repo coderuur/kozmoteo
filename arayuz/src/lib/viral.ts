@@ -377,3 +377,240 @@ export const INITIAL_CONFESSIONS: ConfessionItem[] = [
     timestamp: "Gece 02:03"
   }
 ];
+
+// -------------------------------------------------------------
+// 5. HALK DİLİYLE SEN • KOZMİK KİMLİK KARTI (VIRAL & HUMANIZE)
+// -------------------------------------------------------------
+export interface HumanizedPersona {
+  title: string;
+  everydayYou: string;
+  redFlag: string;
+  greenFlag: string;
+  triggersYou: string;
+  popCultureTwin: string;
+  threeWords: string[];
+  vibeQuote: string;
+}
+
+const HUMANIZED_PERSONAS: Record<string, HumanizedPersona> = {
+  "GELENEK MUHAFIZI": {
+    title: "Kadim Çınar & Güvenli Liman",
+    everydayYou: "Kaotik bir dünyada sağlam bir zemin arayan, sözünün eri insan. Sevdiklerin dara düştüğünde sığınacağı ilk kalesin.",
+    redFlag: "Düzenin veya planın bozulduğunda aşırı gerilip herkesi kendi kurallarına sokmaya çalışman.",
+    greenFlag: "Sadakatin sarsılmaz; dostunu ya da sevdiğini asla yarı yolda bırakmazsın.",
+    triggersYou: "Sorumsuzluk, vefasızlık ve köksüz samimiyetsizlik.",
+    popCultureTwin: "Ned Stark & Aragorn",
+    threeWords: ["Sadık", "Disiplinli", "Sarsılmaz"],
+    vibeQuote: "Söz verildiyse dünya yıkılsa tutulur."
+  },
+  "MERHAMET ELÇİSİ": {
+    title: "Şefkat Dolu Empati Ustası",
+    everydayYou: "Bir odaya girdiğinde havadaki enerjiyi 3 saniyede anlayan, herkesin yarasını sarmak isterken kendi kalbini unutan fedakar ruh.",
+    redFlag: "Hayır diyemediğin için sınırlarını çiğnetip sonra sessizce kırılman.",
+    greenFlag: "Karşılık beklemeden affedebilme ve insanları olduğu gibi kabul etme yeteneğin.",
+    triggersYou: "Soğuk duygusuzluk, acımasızlık ve nankörlük.",
+    popCultureTwin: "Gandalf & Amélie Poulain",
+    threeWords: ["Şefkatli", "Fedakar", "Sezgisel"],
+    vibeQuote: "Yara neredeyse ışık oradan girer."
+  },
+  "KADİM YASA KORUYUCU": {
+    title: "Adalet Terazisi & Ahlak Mimarı",
+    everydayYou: "İlkelerinden milim sapmayan, dürüstlüğü her şeyin üstünde tutan zihin. Yanlışa yanlış demekten asla çekinmezsin.",
+    redFlag: "Kendi yüksek ahlak standardını herkese zorla uygulatmak istemen.",
+    greenFlag: "Adalet söz konusu olduğunda babanı bile tanımazsın; tam bir doğruluk abidesi.",
+    triggersYou: "Çifte standart, kayırmacılık ve adaletsizlik.",
+    popCultureTwin: "Atticus Finch & Hermione Granger",
+    threeWords: ["İlkeli", "Dürüst", "Net"],
+    vibeQuote: "Doğru olanı yapmak kolay olandan her zaman üstündür."
+  },
+  "İÇSEL GEZGİN": {
+    title: "Zen Ustası & Dingin Gözlemci",
+    everydayYou: "Kaosun ortasında kulaklığını takıp kendi dünyasına çekilebilen, gereksiz dramalardan arkasına bakmadan uzaklaşan dingin yolcu.",
+    redFlag: "Sorunlardan kaçmak için kendini aşırı bilge pozisyonuna sokup dünyadan kopman.",
+    greenFlag: "Kimseyle yarışmazsın; varlığın bile ortama sakinlik aşılar.",
+    triggersYou: "Sürekli bağırıp çağıran ve gereksiz drama yaratan insanlar.",
+    popCultureTwin: "Usta Yoda & Dalai Lama",
+    threeWords: ["Dingin", "Bilge", "Özgür"],
+    vibeQuote: "Huzur dışarıda aranmaz; içeride inşa edilir."
+  },
+  "DÖNGÜNÜN BİLGESİ": {
+    title: "Karma Dedektifi & Kozmik Sabırlı",
+    everydayYou: "Herkes ektiğini biçer diyerek sakince kahvesini yudumlayan, hayatta hiçbir şeyin tesadüf olmadığına inanan bilge zihin.",
+    redFlag: "Zorlukları karmam böyleymiş diyerek aşırı pasif kabullenmen.",
+    greenFlag: "İntikam peşinde koşmazsın; evrenin ilahi zamanlamasına güvenin tamdır.",
+    triggersYou: "Kısa vadeli kurnazlıklar ve insanların ahını alanlar.",
+    popCultureTwin: "Rafiki & Uncle Iroh",
+    threeWords: ["Sabırlı", "Derin", "Dengeli"],
+    vibeQuote: "Zaman her şeyin en adil yargıcıdır."
+  },
+  "AKIŞIN USTASI": {
+    title: "Su Gibi Yaşayan & Rahat Karizma",
+    everydayYou: "Bir yolunu buluruz hallederiz cümlesinin yaşayan hali. Engellerle savaşmak yerine etrafından dolaşıp hedefine varırsın.",
+    redFlag: "Akışa güveniyorum derken erteleme krizine girip mühim kararları askıda bırakman.",
+    greenFlag: "Kriz anlarında asla paniklemezsin; herkes delirirken en soğukkanlı çözüm senden çıkar.",
+    triggersYou: "Aşırı kontrol bağımlıları ve her dakikayı planlamaya kalkanlar.",
+    popCultureTwin: "The Dude & Kung Fu Panda Po",
+    threeWords: ["Esnek", "Sakin", "Çözümcü"],
+    vibeQuote: "Su gibi ol; engelle dövüşme, etrafından ak."
+  },
+  "KADİM ŞAMAN": {
+    title: "Doğa Büyücüsü & Sezgi Radarı",
+    everydayYou: "Şehirde bile olsa toprağa basmaya bayılan, birinin gözünden yalan söylediğini anında çakan altıncı his insanı.",
+    redFlag: "Fazla sezgisellikten ötürü bazen alınganlaşıp insanlardan aniden bağını koparman.",
+    greenFlag: "Doğayla ve bilinçaltıyla kurduğun bağ sayesinde etrafındakilere ruhsal bir şifa kaynağısın.",
+    triggersYou: "Yapaylık, beton soğukluğu ve doğaya saygısızlık.",
+    popCultureTwin: "Prenses Mononoke & Geralt of Rivia",
+    threeWords: ["Mistik", "Sezgisel", "Doğal"],
+    vibeQuote: "Doğanın fısıltısını duyan, evrenin sesini anlar."
+  },
+  "IŞIĞIN SAVAŞÇISI": {
+    title: "İdealist Şövalye & Haksızlık Savaşçısı",
+    everydayYou: "Ortamda bir haksızlık gördüğünde susamayan, doğru bildiği yolda tek başına kalsa bile dimdik yürüyen cesur kalp.",
+    redFlag: "Dünyayı sadece siyah-beyaz görüp gri tonları ve insan zaaflarını unutman.",
+    greenFlag: "İnandığın dava ve sevdiklerin uğruna gözünü kırpmadan fedakarlık yaparsın.",
+    triggersYou: "Pısırıklık ve bana dokunmayan yılan bin yaşasın bencilliği.",
+    popCultureTwin: "Kaptan Amerika & Jon Snow",
+    threeWords: ["Cesur", "İdealist", "Tutkulu"],
+    vibeQuote: "Karanlığı lanetlemek yerine bir mum da sen yak."
+  },
+  "AKILCI MİMAR": {
+    title: "Kozmik Mühendis & Mantık Gurusu",
+    everydayYou: "Her olayın arkasında bir formül arayan, duygusal fırtınalara mantık süzgeciyle yaklaşan analitik deha.",
+    redFlag: "Karşındakinin duygusal desteğe ihtiyacı varken soğuk mantık dersi vermeye kalkman.",
+    greenFlag: "Kaotik bir kriz ortamını dakikalar içinde tıkır tıkır işleyen bir sisteme dönüştürürsün.",
+    triggersYou: "Mantıksız safsatalar ve duygusal ajitasyon.",
+    popCultureTwin: "Sherlock Holmes & Spock",
+    threeWords: ["Analitik", "Zeki", "Rasyonel"],
+    vibeQuote: "Duygular geçicidir, evrenin matematiği ise baki."
+  },
+  "KOZMİK RUH": {
+    title: "Yıldız Tozu & Evren Aşığı",
+    everydayYou: "Geceleri balkondan yıldızlara bakıp biz aslında neyiz diye dalan, tüm varoluşla gizli bir akrabalık hisseden modern Spinoza.",
+    redFlag: "Büyük kozmik resmi düşünürken günlük hayatın küçük ama gerekli işlerini ihmal etmen.",
+    greenFlag: "Kibrin sıfırdır; bir karıncaya da bir insana da aynı evrensel saygıyla yaklaşırsın.",
+    triggersYou: "İnsanların egoları ve dünyayı sadece kendi etraflarında dönüyor sanmaları.",
+    popCultureTwin: "Carl Sagan & Cooper Interstellar",
+    threeWords: ["Bütüncül", "Hümanist", "Aşkın"],
+    vibeQuote: "Bizler evrenin kendi kendini düşünen bir parçasıyız."
+  },
+  "SARSILMAZ İRADE": {
+    title: "Modern Stoacı & Çelik İrade",
+    everydayYou: "Kontrol edemediği şeylere üzülmeyen, hayat tokat attığında bu da geçer deyip yoluna devam eden kaya gibi karakter.",
+    redFlag: "Kırılganlığını kimse görmesin diye duygularını derin bir mezara gömüp robotlaşman.",
+    greenFlag: "Kriz anında arkasına saklanılacak en güvenli sığınaksın; seni hiçbir fırtına deviremez.",
+    triggersYou: "Sürekli sızlanan, mağdur edebiyatı yapan ve bahane üretenler.",
+    popCultureTwin: "Marcus Aurelius & Batman",
+    threeWords: ["Metanetli", "Dayanıklı", "Bağımsız"],
+    vibeQuote: "Seni olaylar değil, olaylara verdiğin anlam incitir."
+  },
+  "DÜNYEVİ AYDIN": {
+    title: "Bilim Şövalyesi & Aydınlanma Aşığı",
+    everydayYou: "Hurafelere savaş açmış, kanıtsız hiçbir iddiaya pabuç bırakmayan, bilimin ve aklın ışığında yürüyen çağdaş zihin.",
+    redFlag: "Açıklayamadığın sezgisel veya soyut durumları doğrudan boş lakırdı diye kestirip atman.",
+    greenFlag: "Gerçeğe aşıksın; fikrinin çürütüldüğünü gördüğünde inat etmez, dürüstçe fikrini güncellersin.",
+    triggersYou: "Burç takıntıları, komplo teorileri ve cehaletin erdem sayılması.",
+    popCultureTwin: "Oppenheimer & Tony Stark",
+    threeWords: ["Aydın", "Sorgulayıcı", "Gerçekçi"],
+    vibeQuote: "Karanlıktan korkan çocuğu affedebiliriz; asıl trajedi ışıktan korkan yetişkinlerdir."
+  },
+  "GİZEMLİ BİLGE": {
+    title: "Perde Arkasını Gören Ezoterik Zihin",
+    everydayYou: "Yüzeydekiyle asla yetinmeyen, her sözün ve olayın alt metnini okuyan, gizli bilgilere meraklı derin araştırmacı.",
+    redFlag: "Herkesin uyuduğunu ve sadece senin uyandığını sanarak entelektüel kibre kapılman.",
+    greenFlag: "Kimsenin göremediği detayları ve derin anlamları bir dedektif gibi ortaya çıkarırsın.",
+    triggersYou: "Sığ dedikodular ve magazinel boş muhabbetler.",
+    popCultureTwin: "Morpheus Matrix & Walter Bishop",
+    threeWords: ["Derin", "Gizemli", "Sıradışı"],
+    vibeQuote: "Hakikat yüzeyde yüzmez, derinliklerde saklıdır."
+  },
+  "HİÇLİK YOLCUSU": {
+    title: "Varoluşsal Gerçekçi & Karizmatik Filozof",
+    everydayYou: "Evrende hiçbir şeyin nesnel bir anlamı olmadığını bilen ama yine de hayata mizahla ve soğukkanlılıkla devam eden zihin.",
+    redFlag: "Nasılsa her şey anlamsız diyerek sevdiklerinin hevesini istemeden kursağında bırakman.",
+    greenFlag: "Sahte beklentilerin ve toplumsal illüzyonların kölesi değilsin; samimiyetin en çıplak halisin.",
+    triggersYou: "Aşırı yapay heyecanlar ve boş motivasyon konuşmaları.",
+    popCultureTwin: "Rust Cohle True Detective & BoJack Horseman",
+    threeWords: ["Gerçekçi", "Filtresiz", "Derin"],
+    vibeQuote: "Uçuruma bakmaktan korkmayan, rüzgarından da ürkmez."
+  },
+  "ABSÜRT İSYANKAR": {
+    title: "Kaosa Gülen Asi & Tutkulu Yaşayan",
+    everydayYou: "Hayat anlamsızsa en çılgın parti bizimdir diyerek inadına coşkuyla yaşayan, Sisifos gibi kayasını gülerek taşıyan asi.",
+    redFlag: "Ciddiye alınması gereken durumları bile dalgaya alıp karşındakini çileden çıkarabilmen.",
+    greenFlag: "Yaşam enerjin ve mizahın bulaşıcıdır; en karanlık odaları bile tek bir kahkahanla aydınlatırsın.",
+    triggersYou: "Hayatı aşırı ciddiye alan, asık suratlı kuralcılar.",
+    popCultureTwin: "Tyler Durden & Deadpool",
+    threeWords: ["Özgür", "Asi", "Tutkulu"],
+    vibeQuote: "Anlamsız bir dünyada yapılacak en soylu eylem gülümsemektir."
+  },
+  "TEKNO-MİMAR": {
+    title: "Geleceğin Kodlayıcısı & Sınır Tanımaz",
+    everydayYou: "İnsan biyolojisinin sınırlarını aşmak isteyen, yapay zekaya ve geleceğin teknolojisine tutkuyla bağlı vizyoner.",
+    redFlag: "Bugünü ve organik anı yaşamak yerine sürekli gelecekteki simülasyonlarda kaybolman.",
+    greenFlag: "Asla çağın gerisinde kalmazsın; vizyonun insanları 50 yıl sonrasına taşır.",
+    triggersYou: "Eskiden her şey daha güzeldi nostaljisi ve teknoloji korkaklığı.",
+    popCultureTwin: "Elon Musk & Roy Batty Blade Runner",
+    threeWords: ["Vizyoner", "İnovatif", "Gelecekçi"],
+    vibeQuote: "Geleceği tahmin etmenin en iyi yolu onu bizzat inşa etmektir."
+  },
+  "BİREYSEL ASİ": {
+    title: "Kendi Kurallarını Yazan Güçlü İrade",
+    everydayYou: "Başkalarının onayına zerre ihtiyaç duymayan, kendi doğrularıyla yaşayan, özgüveni yüksek bağımsız kurt.",
+    redFlag: "Bazen aşırı gururlu davranıp haklı olsan bile sevdiklerinin kalbini kırman.",
+    greenFlag: "İkiyüzlülükten nefret edersin; neysen o'sun, asla rol kesmezsin.",
+    triggersYou: "Sahte ahlak bekçileri ve arkadan iş çevirenler.",
+    popCultureTwin: "Thomas Shelby Peaky Blinders & Lucifer",
+    threeWords: ["Bağımsız", "Karizmatik", "Özgüvenli"],
+    vibeQuote: "Kendi cehennemimin efendisi olmak, başkasının cennetinde köle olmaktan yeğdir."
+  },
+  "DOĞANIN BÜYÜCÜSÜ": {
+    title: "Ay Döngüsü & Enerji Ustası",
+    everydayYou: "Mevsim geçişlerinde ruh hali değişen, tütsüler ve doğal taşlarla ortamı arındıran, doğanın kalbini dinleyen büyüleyici ruh.",
+    redFlag: "Kötü giden her şeyi gezegen gerilemelerine bağlayıp kendi sorumluluğunu unutman.",
+    greenFlag: "Evin ve ortamın her zaman huzur doludur; yanında olan herkes negatif enerjisinden arınır.",
+    triggersYou: "Negatif enerji yayan, toksik ve kaba insanlar.",
+    popCultureTwin: "Stevie Nicks & Luna Lovegood",
+    threeWords: ["Enerjik", "Şifacı", "Mistik"],
+    vibeQuote: "Doğa acele etmez ama hiçbir şey de yarım kalmaz."
+  },
+  "ŞÜPHECİ GÖZLEMCİ": {
+    title: "Dürüst Hakikat Arayıcısı & Tarafsız Hakem",
+    everydayYou: "Kimse hakkında peşin hüküm vermeyen, kanıtları görmeden konuşamam diyen, tarafsızlığıyla güven veren objektif zihin.",
+    redFlag: "Karar verememekten ötürü bazen hayatı tribünden izleyen bir seyirci gibi kalman.",
+    greenFlag: "Önyargısız ve entelektüel olarak tamamen dürüstsün; kimseyi körü körüne etiketlemezsin.",
+    triggersYou: "Fanatizm ve kendi doğrusunu mutlak sanan kör inançlılar.",
+    popCultureTwin: "Fox Mulder X Files & Bertrand Russell",
+    threeWords: ["Tarafsız", "Dürüst", "Meraklı"],
+    vibeQuote: "Kesin konuşmak kolaydır; dürüstçe bilmiyorum diyebilmek ise cesaret ister."
+  },
+  "AŞKIN DERVİŞ": {
+    title: "Gönül İnsanı & Kozmik Aşık",
+    everydayYou: "Kalbini pusula yapmış, sevgiyi her türlü şekilci kuraldan üstün tutan, baktığı her yüzde bir güzellik gören zarif ruh.",
+    redFlag: "Fazla duygusal ve romantik olduğun için bu sert dünyada çabuk kırılıp içine kapanman.",
+    greenFlag: "Sevgin karşılıksızdır; etrafındaki insanlara ilham ve yaşama sevinci aşılarsın.",
+    triggersYou: "Kalpsizlik, kibir ve insanları kutuplaştıran önyargılar.",
+    popCultureTwin: "Mevlânâ & Küçük Prens",
+    threeWords: ["Aşık", "Gönlü Zengin", "İlham Verici"],
+    vibeQuote: "Aşk bir yolculuktur, menzil ise bizzat kalbin kendisidir."
+  }
+};
+
+export const getHumanizedPersona = (archetype: string): HumanizedPersona => {
+  const norm = archetype.toUpperCase();
+  for (const key of Object.keys(HUMANIZED_PERSONAS)) {
+    if (norm.includes(key) || key.includes(norm)) {
+      return HUMANIZED_PERSONAS[key];
+    }
+  }
+  return {
+    title: "Kozmik Bilinç Arayıcısı",
+    everydayYou: "Tek bir kalıba sığmayı reddeden, hem rasyonel mantığı hem de kalbinin derin sezgilerini aynı anda dinleyen özgür ruh.",
+    redFlag: "Aşırı düşünmekten bazen anı yaşamayı kaçırman.",
+    greenFlag: "Açık fikirliliğin ve empati yeteneğin sınır tanımaz.",
+    triggersYou: "Kalıplaşmış dar kafalar ve samimiyetsizlik.",
+    popCultureTwin: "Neo Matrix & Carl Sagan",
+    threeWords: ["Sorgulayan", "Özgür", "Derin"],
+    vibeQuote: "Bilinmeyenden korkma; asıl macera orada başlar."
+  };
+};
+

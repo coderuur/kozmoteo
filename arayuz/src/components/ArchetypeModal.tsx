@@ -2,8 +2,8 @@
 
 import React, { useState } from 'react';
 import { MatchResult } from '../lib/types';
-import { downloadStoryCard, downloadSocraticStoryCard } from '../lib/canvas';
-import { getBrutalTruth, BrutalTruth } from '../lib/viral';
+import { downloadStoryCard, downloadSocraticStoryCard, downloadHumanizedStoryCard } from '../lib/canvas';
+import { getBrutalTruth, BrutalTruth, getHumanizedPersona, HumanizedPersona } from '../lib/viral';
 import { playTone, playCosmicChime } from '../lib/audio';
 
 interface ArchetypeModalProps {
@@ -13,10 +13,11 @@ interface ArchetypeModalProps {
 }
 
 export const ArchetypeModal: React.FC<ArchetypeModalProps> = ({ result, onClose, soundEnabled }) => {
-  const [activeSlide, setActiveSlide] = useState<0 | 1 | 2>(0);
+  const [activeSlide, setActiveSlide] = useState<0 | 1 | 2 | 3>(1);
   const [isExporting, setIsExporting] = useState(false);
 
   const brutal: BrutalTruth = getBrutalTruth(result.archetype);
+  const persona: HumanizedPersona = getHumanizedPersona(result.archetype);
 
   const handleDownloadActive = async () => {
     setIsExporting(true);
@@ -25,6 +26,8 @@ export const ArchetypeModal: React.FC<ArchetypeModalProps> = ({ result, onClose,
       if (activeSlide === 0) {
         await downloadStoryCard(result);
       } else if (activeSlide === 1) {
+        await downloadHumanizedStoryCard(result);
+      } else if (activeSlide === 2) {
         await downloadSocraticStoryCard(result, brutal);
       } else {
         await downloadStoryCard(result);
@@ -38,6 +41,8 @@ export const ArchetypeModal: React.FC<ArchetypeModalProps> = ({ result, onClose,
     setIsExporting(true);
     playCosmicChime(soundEnabled);
     try {
+      await downloadHumanizedStoryCard(result);
+      await new Promise((r) => setTimeout(r, 600));
       await downloadStoryCard(result);
       await new Promise((r) => setTimeout(r, 600));
       await downloadSocraticStoryCard(result, brutal);
@@ -84,35 +89,51 @@ export const ArchetypeModal: React.FC<ArchetypeModalProps> = ({ result, onClose,
         </button>
 
         <button
-          onClick={() => { setActiveSlide(1); playTone(580, 'sine', 0.15, soundEnabled); }}
+          onClick={() => { setActiveSlide(1); playTone(560, 'sine', 0.15, soundEnabled); }}
           style={{
             padding: '6px 14px',
             borderRadius: '20px',
-            border: activeSlide === 1 ? '1px solid #f43f5e' : '1px solid #2d2645',
-            backgroundColor: activeSlide === 1 ? 'rgba(244, 63, 94, 0.2)' : '#110f1c',
-            color: activeSlide === 1 ? '#fda4af' : '#9ca3af',
+            border: activeSlide === 1 ? '1px solid #c084fc' : '1px solid #2d2645',
+            backgroundColor: activeSlide === 1 ? 'rgba(192, 132, 252, 0.2)' : '#110f1c',
+            color: activeSlide === 1 ? '#e9d5ff' : '#9ca3af',
             fontSize: '11px',
             fontWeight: 'bold',
             cursor: 'pointer'
           }}
         >
-          ⚡ 2. Sokrates'in Aynası
+          🎭 2. Halk Diliyle Sen
         </button>
 
         <button
-          onClick={() => { setActiveSlide(2); playTone(620, 'sine', 0.15, soundEnabled); }}
+          onClick={() => { setActiveSlide(2); playTone(580, 'sine', 0.15, soundEnabled); }}
           style={{
             padding: '6px 14px',
             borderRadius: '20px',
-            border: activeSlide === 2 ? '1px solid #c084fc' : '1px solid #2d2645',
-            backgroundColor: activeSlide === 2 ? 'rgba(192, 132, 252, 0.2)' : '#110f1c',
-            color: activeSlide === 2 ? '#e9d5ff' : '#9ca3af',
+            border: activeSlide === 2 ? '1px solid #f43f5e' : '1px solid #2d2645',
+            backgroundColor: activeSlide === 2 ? 'rgba(244, 63, 94, 0.2)' : '#110f1c',
+            color: activeSlide === 2 ? '#fda4af' : '#9ca3af',
             fontSize: '11px',
             fontWeight: 'bold',
             cursor: 'pointer'
           }}
         >
-          🌌 3. Tarihteki Ruh İkizin
+          ⚡ 3. Sokrates'in Aynası
+        </button>
+
+        <button
+          onClick={() => { setActiveSlide(3); playTone(620, 'sine', 0.15, soundEnabled); }}
+          style={{
+            padding: '6px 14px',
+            borderRadius: '20px',
+            border: activeSlide === 3 ? '1px solid #67e8f9' : '1px solid #2d2645',
+            backgroundColor: activeSlide === 3 ? 'rgba(103, 232, 249, 0.2)' : '#110f1c',
+            color: activeSlide === 3 ? '#a5f3fc' : '#9ca3af',
+            fontSize: '11px',
+            fontWeight: 'bold',
+            cursor: 'pointer'
+          }}
+        >
+          🌌 4. Tarihteki Ruh İkizin
         </button>
       </div>
 
@@ -120,13 +141,15 @@ export const ArchetypeModal: React.FC<ArchetypeModalProps> = ({ result, onClose,
       <div style={{
         width: '340px',
         height: '604px',
-        background: activeSlide === 1
+        background: activeSlide === 2
           ? 'linear-gradient(180deg, #09050b 0%, #1a0814 40%, #12050f 80%, #060205 100%)'
+          : activeSlide === 1
+          ? 'linear-gradient(180deg, #080512 0%, #180d28 40%, #10081c 80%, #06030c 100%)'
           : 'linear-gradient(180deg, #07060c 0%, #130f26 40%, #0e0a1c 80%, #06050a 100%)',
-        border: activeSlide === 1 ? '2px solid #f43f5e' : '2px solid #D4AF37',
+        border: activeSlide === 2 ? '2px solid #f43f5e' : activeSlide === 1 ? '2px solid #c084fc' : '2px solid #D4AF37',
         borderRadius: '20px',
         position: 'relative',
-        boxShadow: activeSlide === 1 ? '0 0 60px rgba(244, 63, 94, 0.28)' : '0 0 60px rgba(212, 175, 55, 0.28)',
+        boxShadow: activeSlide === 2 ? '0 0 60px rgba(244, 63, 94, 0.28)' : activeSlide === 1 ? '0 0 60px rgba(192, 132, 252, 0.28)' : '0 0 60px rgba(212, 175, 55, 0.28)',
         marginBottom: '16px',
         display: 'flex',
         flexDirection: 'column',
@@ -197,9 +220,60 @@ export const ArchetypeModal: React.FC<ArchetypeModalProps> = ({ result, onClose,
         )}
 
         {/* -------------------------------------------------------- */}
-        {/* SLIDE 1: SOKRATES'İN AYNASI (RUH TOKADI) */}
+        {/* SLIDE 1: HALK DİLİYLE SEN (KOZMİK KİMLİK KARTI) */}
         {/* -------------------------------------------------------- */}
         {activeSlide === 1 && (
+          <>
+            <div>
+              <h4 style={{ color: '#FFE699', letterSpacing: '4px', fontSize: '10px', margin: '0 0 2px 0', fontFamily: 'Georgia, serif', fontWeight: 'bold' }}>
+                ✦ KOZMO-TEO ✦
+              </h4>
+              <p style={{ color: '#c084fc', letterSpacing: '2px', fontSize: '8px', margin: 0, textTransform: 'uppercase', fontWeight: 'bold' }}>
+                Halk Diliyle Sen • Kimlik Kartı
+              </p>
+            </div>
+
+            <div>
+              <span style={{ color: '#FFE699', fontSize: '10px', border: '1px solid rgba(212, 175, 55, 0.4)', borderRadius: '12px', padding: '2px 10px', display: 'inline-block', marginBottom: '6px' }}>
+                ✦ {result.archetype} • %{result.similarity_percentage} ✦
+              </span>
+              <h3 style={{ color: '#FFE699', fontSize: '16px', margin: '0 0 6px 0', fontFamily: 'Georgia, serif' }}>
+                {persona.title}
+              </h3>
+              <p style={{ color: '#e2e8f0', fontSize: '11px', fontStyle: 'italic', lineHeight: '1.4', margin: '0 auto 8px auto', maxWidth: '270px' }}>
+                "{persona.everydayYou}"
+              </p>
+              <div style={{ display: 'flex', gap: '4px', justifyContent: 'center', flexWrap: 'wrap', marginBottom: '8px' }}>
+                {persona.threeWords.map((w, i) => (
+                  <span key={i} style={{ backgroundColor: 'rgba(212, 175, 55, 0.15)', color: '#FFE699', border: '1px solid rgba(212, 175, 55, 0.3)', padding: '2px 8px', borderRadius: '10px', fontSize: '9px', fontWeight: 'bold' }}>
+                    #{w}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
+              <div style={{ backgroundColor: 'rgba(244, 63, 94, 0.1)', border: '1px solid rgba(244, 63, 94, 0.3)', borderRadius: '8px', padding: '5px 8px', textAlign: 'left' }}>
+                <span style={{ color: '#f43f5e', fontSize: '9px', fontWeight: 'bold', display: 'block' }}>🚩 Kırmızı Bayrağın:</span>
+                <span style={{ color: '#fda4af', fontSize: '9px', lineHeight: '1.3' }}>{persona.redFlag}</span>
+              </div>
+              <div style={{ backgroundColor: 'rgba(16, 185, 129, 0.1)', border: '1px solid rgba(16, 185, 129, 0.3)', borderRadius: '8px', padding: '5px 8px', textAlign: 'left' }}>
+                <span style={{ color: '#10b981', fontSize: '9px', fontWeight: 'bold', display: 'block' }}>💚 Yeşil Bayrağın:</span>
+                <span style={{ color: '#a7f3d0', fontSize: '9px', lineHeight: '1.3' }}>{persona.greenFlag}</span>
+              </div>
+            </div>
+
+            <div style={{ backgroundColor: 'rgba(138, 43, 226, 0.15)', border: '1px solid rgba(138, 43, 226, 0.35)', borderRadius: '8px', padding: '5px 8px' }}>
+              <span style={{ color: '#c084fc', fontSize: '9px', fontWeight: 'bold' }}>🎭 Pop-Kültür İkizin: </span>
+              <span style={{ color: '#FFE699', fontSize: '10px', fontWeight: 'bold' }}>{persona.popCultureTwin}</span>
+            </div>
+          </>
+        )}
+
+        {/* -------------------------------------------------------- */}
+        {/* SLIDE 2: SOKRATES'İN AYNASI (RUH TOKADI) */}
+        {/* -------------------------------------------------------- */}
+        {activeSlide === 2 && (
           <>
             <div>
               <h4 style={{ color: '#FFE699', letterSpacing: '4px', fontSize: '10px', margin: '0 0 2px 0', fontFamily: 'Georgia, serif', fontWeight: 'bold' }}>
@@ -240,9 +314,9 @@ export const ArchetypeModal: React.FC<ArchetypeModalProps> = ({ result, onClose,
         )}
 
         {/* -------------------------------------------------------- */}
-        {/* SLIDE 2: TARİHTEKİ RUH İKİZİ & DERİN FELSEFE */}
+        {/* SLIDE 3: TARİHTEKİ RUH İKİZİ & DERİN FELSEFE */}
         {/* -------------------------------------------------------- */}
-        {activeSlide === 2 && (
+        {activeSlide === 3 && (
           <>
             <div>
               <h4 style={{ color: '#FFE699', letterSpacing: '4px', fontSize: '10px', margin: '0 0 2px 0', fontFamily: 'Georgia, serif', fontWeight: 'bold' }}>
@@ -334,7 +408,7 @@ export const ArchetypeModal: React.FC<ArchetypeModalProps> = ({ result, onClose,
             fontSize: '12px'
           }}
         >
-          ✨ 2'li Seriyi İndir
+          ✨ Tüm Seriyi İndir — Story Paketi
         </button>
 
         <button
