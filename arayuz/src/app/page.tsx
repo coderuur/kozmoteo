@@ -15,13 +15,20 @@ import { ChatRoom } from '../components/ChatRoom';
 import { AuthModal } from '../components/AuthModal';
 import { ProfileModal } from '../components/ProfileModal';
 import { FooterPolicyModal } from '../components/FooterPolicyModal';
-import { analyzeShadowParadox } from '../lib/shadow';
+import { analyzeShadowParadox, computeShadowSelf, computeBlindSpot } from '../lib/shadow';
+import { saveEvolutionEntry } from '../lib/evolution';
 import { DailyOracle } from '../components/DailyOracle';
 import { ConstellationModal } from '../components/ConstellationModal';
 import { SocraticTrial } from '../components/SocraticTrial';
 import { DuoReportModal } from '../components/DuoReportModal';
 import { SoulDuelModal } from '../components/SoulDuelModal';
 import { ConfessionWallModal } from '../components/ConfessionWallModal';
+import { EvolutionModal } from '../components/EvolutionModal';
+import { ShadowSelfModal } from '../components/ShadowSelfModal';
+import { BlindSpotModal } from '../components/BlindSpotModal';
+import { DreamArchiveModal } from '../components/DreamArchiveModal';
+import { CosmicCourtModal } from '../components/CosmicCourtModal';
+import { PulseDashboard } from '../components/PulseDashboard';
 import { getBrutalTruth, decodeSoulDuel, SoulDuelData } from '../lib/viral';
 
 export default function Home() {
@@ -50,6 +57,14 @@ export default function Home() {
   const [showDuelModal, setShowDuelModal] = useState(false);
   const [activeDuel, setActiveDuel] = useState<SoulDuelData | null>(null);
   const [showConfessionWall, setShowConfessionWall] = useState(false);
+
+  // v2.0 Yeni Kompleks Katmanlar
+  const [showEvolution, setShowEvolution] = useState(false);
+  const [showShadowSelf, setShowShadowSelf] = useState(false);
+  const [showBlindSpot, setShowBlindSpot] = useState(false);
+  const [showDreamArchive, setShowDreamArchive] = useState(false);
+  const [showCosmicCourt, setShowCosmicCourt] = useState(false);
+  const [showPulse, setShowPulse] = useState(false);
 
   // Stepper / Kart Modu
   const [viewMode, setViewMode] = useState<'stepper' | 'list'>('stepper');
@@ -202,7 +217,8 @@ export default function Home() {
   useEffect(() => {
     const isAnyModalOpen = Boolean(
       showArchetype || showModal || showAuth || showProfile || showPolicy ||
-      showOracle || showConstellation || showDuoReport || showDuelModal || activeDuel || showConfessionWall
+      showOracle || showConstellation || showDuoReport || showDuelModal || activeDuel || showConfessionWall ||
+      showEvolution || showShadowSelf || showBlindSpot || showDreamArchive || showCosmicCourt || showPulse
     );
     if (isAnyModalOpen) {
       document.body.style.overflow = 'hidden';
@@ -214,7 +230,8 @@ export default function Home() {
     };
   }, [
     showArchetype, showModal, showAuth, showProfile, showPolicy,
-    showOracle, showConstellation, showDuoReport, showDuelModal, activeDuel, showConfessionWall
+    showOracle, showConstellation, showDuoReport, showDuelModal, activeDuel, showConfessionWall,
+    showEvolution, showShadowSelf, showBlindSpot, showDreamArchive, showCosmicCourt, showPulse
   ]);
 
   // Test Seçimi ve Soru Üretimi (Tekrarsız Fisher-Yates)
@@ -277,6 +294,24 @@ export default function Home() {
       playCosmicChime(soundEnabled);
       localStorage.setItem('kozmo_past_vector', JSON.stringify(vector));
       localStorage.removeItem('kozmo_active_draft');
+
+      // v2.0: Felsefi Evrim Haritasına kaydet
+      saveEvolutionEntry({
+        archetype: data.archetype,
+        belief_name: data.belief_name,
+        similarity_percentage: data.similarity_percentage,
+        vector_5d: compressVectorTo5D(vector),
+        test_type: testType || 'short'
+      });
+
+      // v2.0: Toplumsal Nabız'a anonim kayıt
+      try {
+        fetch(`${getApiUrl()}/api/pulse/record`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ archetype: data.archetype })
+        }).catch(() => {});
+      } catch {}
 
       // Eğer bir arkadaş davetiyle geldiyse doğrudan otomatik eşleştir
       if (partnerCode && partnerCode.length === 10) {
@@ -554,6 +589,18 @@ export default function Home() {
             🌙 Fısıltı Duvarı
           </button>
           <button
+            onClick={() => setShowEvolution(true)}
+            style={{ background: 'rgba(21, 18, 32, 0.8)', border: '1px solid #D4AF37', color: '#FFE699', padding: '6px 12px', borderRadius: '20px', fontSize: '12px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
+          >
+            📈 Evrim
+          </button>
+          <button
+            onClick={() => setShowPulse(true)}
+            style={{ background: 'rgba(21, 18, 32, 0.8)', border: '1px solid #10b981', color: '#34d399', padding: '6px 12px', borderRadius: '20px', fontSize: '12px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
+          >
+            🗺️ Nabız
+          </button>
+          <button
             onClick={() => {
               const next = !soundEnabled;
               setSoundEnabled(next);
@@ -677,6 +724,31 @@ export default function Home() {
               <button onClick={handleCopyDuoLink} style={{ padding: '12px 18px', backgroundColor: '#13111f', border: '1px solid #3d3558', color: '#9ca3af', cursor: 'pointer', borderRadius: '24px', fontSize: '12px' }}>
                 🔗 İkili Linki Kopyala
               </button>
+            </div>
+
+            {/* v2.0 — YENİ KOMPLEKS ÖZELLİK BUTONLARI */}
+            <div style={{ backgroundColor: '#0d0a17', border: '1px solid #2d2645', borderRadius: '12px', padding: '16px', marginBottom: '25px' }}>
+              <div style={{ fontSize: '11px', color: '#D4AF37', letterSpacing: '3px', textTransform: 'uppercase', textAlign: 'center', marginBottom: '14px' }}>✦ KOZMİK DERINLIK v2.0 ✦</div>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', justifyContent: 'center' }}>
+                <button onClick={() => setShowShadowSelf(true)} style={{ padding: '10px 16px', background: 'linear-gradient(135deg, #130f24 0%, #1a0d2e 100%)', border: '1px solid #8A2BE2', color: '#c084fc', cursor: 'pointer', borderRadius: '20px', fontSize: '12px', fontWeight: 'bold' }}>
+                  🌑 Gölge Benlik
+                </button>
+                <button onClick={() => setShowEvolution(true)} style={{ padding: '10px 16px', background: 'linear-gradient(135deg, #0a0f1e 0%, #0d1829 100%)', border: '1px solid #D4AF37', color: '#FFE699', cursor: 'pointer', borderRadius: '20px', fontSize: '12px', fontWeight: 'bold' }}>
+                  📈 Felsefi Evrim
+                </button>
+                <button onClick={() => setShowDreamArchive(true)} style={{ padding: '10px 16px', background: 'linear-gradient(135deg, #0a0712 0%, #0f0a1a 100%)', border: '1px solid #7c3aed', color: '#a78bfa', cursor: 'pointer', borderRadius: '20px', fontSize: '12px', fontWeight: 'bold' }}>
+                  🌙 Rüya Arşivi
+                </button>
+                <button onClick={() => setShowCosmicCourt(true)} style={{ padding: '10px 16px', background: 'linear-gradient(135deg, #0a0a0a 0%, #1a1000 100%)', border: `1px solid #D4AF37`, color: '#FFE699', cursor: 'pointer', borderRadius: '20px', fontSize: '12px', fontWeight: 'bold' }}>
+                  ⚖️ Kozmik Mahkeme
+                </button>
+                <button onClick={() => setShowBlindSpot(true)} style={{ padding: '10px 16px', background: 'linear-gradient(135deg, #0a0912 0%, #0f0d20 100%)', border: '1px solid #3b82f6', color: '#60a5fa', cursor: 'pointer', borderRadius: '20px', fontSize: '12px', fontWeight: 'bold' }}>
+                  🔵 Kör Nokta Skoru
+                </button>
+                <button onClick={() => setShowPulse(true)} style={{ padding: '10px 16px', background: 'linear-gradient(135deg, #071a07 0%, #0a0f0a 100%)', border: '1px solid #10b981', color: '#34d399', cursor: 'pointer', borderRadius: '20px', fontSize: '12px', fontWeight: 'bold' }}>
+                  🗺️ Toplumsal Nabız
+                </button>
+              </div>
             </div>
 
             {/* Yapay Zeka Kozmik Okuması */}
@@ -1288,6 +1360,67 @@ export default function Home() {
           userArchetype={result?.archetype}
           soundEnabled={soundEnabled}
           onClose={() => setShowConfessionWall(false)}
+        />
+      )}
+
+      {/* ===== v2.0 YENİ KOMPLEKS KATMANLAR ===== */}
+
+      {/* 12. FELSEFİ EVRİM HARİTASI */}
+      {showEvolution && (
+        <EvolutionModal onClose={() => setShowEvolution(false)} />
+      )}
+
+      {/* 13. GÖLGE BENLİK ANALİZİ */}
+      {showShadowSelf && result && (
+        <ShadowSelfModal
+          vector5d={compressVectorTo5D(vector)}
+          primaryBelief={result.belief_name}
+          primaryArchetype={result.archetype}
+          soundEnabled={soundEnabled}
+          onClose={() => setShowShadowSelf(false)}
+        />
+      )}
+
+      {/* 14. KÖR NOKTA SKORU */}
+      {showBlindSpot && result && (
+        <BlindSpotModal
+          vector5d={compressVectorTo5D(vector)}
+          archetype={result.archetype}
+          soundEnabled={soundEnabled}
+          onRefinedVector={(newVec) => {
+            // Yeni rafine vektörü kaydet
+            localStorage.setItem('kozmo_past_vector', JSON.stringify(newVec));
+          }}
+          onClose={() => setShowBlindSpot(false)}
+        />
+      )}
+
+      {/* 15. RÜYA ARŞİVİ */}
+      {showDreamArchive && result && (
+        <DreamArchiveModal
+          archetype={result.archetype}
+          vector5d={compressVectorTo5D(vector)}
+          soundEnabled={soundEnabled}
+          onClose={() => setShowDreamArchive(false)}
+        />
+      )}
+
+      {/* 16. KOZMİK MAHKEME */}
+      {showCosmicCourt && result && (
+        <CosmicCourtModal
+          archetype={result.archetype}
+          vector5d={compressVectorTo5D(vector)}
+          soundEnabled={soundEnabled}
+          onClose={() => setShowCosmicCourt(false)}
+        />
+      )}
+
+      {/* 17. TOPLUMSAL NABIZ */}
+      {showPulse && result && (
+        <PulseDashboard
+          userArchetype={result.archetype}
+          userVector={compressVectorTo5D(vector)}
+          onClose={() => setShowPulse(false)}
         />
       )}
     </div>

@@ -25,8 +25,17 @@ models.Base.metadata.create_all(bind=engine)
 app = FastAPI(
     title="Kozmo-Teo API",
     description="Bilinçaltı İnanç Eşleştirme ve Anonim Teolojik Ağ Motoru",
-    version="1.0.0"
+    version="2.0.0"
 )
+
+# ============================================================
+# v2.0 — Toplumsal Nabız için in-memory sayaç
+# (Production'da Redis/DB kullanılabilir)
+# ============================================================
+import collections
+PULSE_COUNTER: dict = collections.defaultdict(int)   # archetype → count
+DREAM_COUNTER: int = 0
+
 
 # CORS Yapılandırması (Üretim ve Geliştirme Uyumlu)
 allowed_origins_env = os.environ.get("ALLOWED_ORIGINS", "*")
@@ -1061,3 +1070,160 @@ async def get_ai_reading(data: AIRequest):
 
     reading = generate_offline_ai_reading(data.archetype, data.similarity, data.vector)
     return {"reading": reading}
+
+
+# ============================================================
+# v2.0 — RÜYA YORUMLAMA ENDPOİNT
+# ============================================================
+class DreamRequest(BaseModel):
+    dream_text: str
+    archetype: str
+    vector: list[float] = []
+
+@app.post("/api/dream-interpret")
+async def interpret_dream(data: DreamRequest):
+    global DREAM_COUNTER
+    DREAM_COUNTER += 1
+
+    prompt = f"""
+Sen mistik, derinlikli bir rüya yorumcusu ve felsefi analistsin.
+Kullanıcının arketipi: {data.archetype}
+Bilinçaltı vektörü (Tektanrıcılık, Ritüelizm, Ölüm Sonrası, Dogmatizm, Doğa): {data.vector}
+Rüya metni: "{data.dream_text}"
+
+Bu rüyayı felsefi ve Jungian psikoloji perspektifinden yorumla. 
+2-3 cümleyle kısa ama derin bir analiz yaz. Türkçe kullan, 'sen' diliyle konuş.
+Aynı zamanda tek cümleyle bu rüyanın kullanıcının hangi bilinçaltı boyutuyla (Tektanrıcılık, Ritüelizm, Ölüm Sonrası, Dogmatizm, Doğa) rezonans kurduğunu söyle.
+JSON formatında yanıt ver: {{"interpretation": "...", "resonance": "..."}}
+"""
+
+    if genai and GEMINI_API_KEY and not GEMINI_API_KEY.startswith("AIzaSy_BURAYA"):
+        try:
+            model = genai.GenerativeModel('gemini-1.5-flash')
+            response = model.generate_content(prompt)
+            if response and response.text:
+                raw = response.text.strip()
+                # JSON parse dene
+                start = raw.find('{')
+                end = raw.rfind('}') + 1
+                if start >= 0 and end > start:
+                    parsed = json.loads(raw[start:end])
+                    return parsed
+        except Exception as e:
+            print(f"Dream interpret API hatası: {e}")
+
+    # Offline fallback
+    return {
+        "interpretation": f"Bu rüya, {data.archetype} arketipinin derinliklerinde saklı olan bastırılmış bir özgürlük arzusunu yansıtıyor. Semboller bilinçaltının çözülmeye çalıştığı bir gerilimi simgeliyor. Acele yorum yapma; bırak anlam zamanla açılsın.",
+        "resonance": f"Rüyan, bilinçaltı vektörünün {['Tektanrıcılık', 'Ritüelizm', 'Ölüm Sonrası', 'Dogmatizm', 'Doğa/Panteizm'][data.vector.index(max(data.vector)) if data.vector else 0]} boyutuyla güçlü bir rezonans kuruyor."
+    }
+
+
+# ============================================================
+# v2.0 — KOZMİK MAHKEME ENDPOİNT
+# ============================================================
+class CosmicCourtRequest(BaseModel):
+    topic: str
+    user_archetype: str
+    partner_archetype: str
+    user_arguments: list[str]
+    partner_arguments: list[str]
+    vector: list[float] = []
+
+@app.post("/api/cosmic-court")
+async def cosmic_court(data: CosmicCourtRequest):
+    prompt = f"""
+Sen tarafsız bir felsefi hakemsin. Bir tartışmayı değerlendiriyorsun.
+
+Konu: "{data.topic}"
+
+{data.user_archetype} arketipinin argümanları:
+{chr(10).join(f'{i+1}. {arg}' for i, arg in enumerate(data.user_arguments))}
+
+{data.partner_archetype} arketipinin argümanları:
+{chr(10).join(f'{i+1}. {arg}' for i, arg in enumerate(data.partner_arguments))}
+
+Bu tartışmayı felsefi derinlik, özgünlük ve tutarlılık açısından değerlendir.
+JSON formatında yanıt ver: {{"verdict": "...", "winner": "user/partner/draw", "philosophical_depth": 0-100}}
+Türkçe ve 2-3 cümle gerekçe yaz.
+"""
+    if genai and GEMINI_API_KEY and not GEMINI_API_KEY.startswith("AIzaSy_BURAYA"):
+        try:
+            model = genai.GenerativeModel('gemini-1.5-flash')
+            response = model.generate_content(prompt)
+            if response and response.text:
+                raw = response.text.strip()
+                start = raw.find('{')
+                end = raw.rfind('}') + 1
+                if start >= 0 and end > start:
+                    parsed = json.loads(raw[start:end])
+                    return parsed
+        except Exception as e:
+            print(f"Cosmic court API hatası: {e}")
+
+    # Offline fallback
+    u_len = sum(len(a) for a in data.user_arguments)
+    p_len = sum(len(a) for a in data.partner_arguments)
+    if abs(u_len - p_len) < 50:
+        winner = "draw"
+        verdict = "Her iki taraf da güçlü ve kırılgan yanlarıyla bu tartışmayı renklendirdi. Mahkeme berabere ilan ediyor."
+    elif u_len > p_len:
+        winner = "user"
+        verdict = f"{data.user_archetype} argümanları bu tartışmada daha derin bir felsefi zemine yaslandı."
+    else:
+        winner = "partner"
+        verdict = f"{data.partner_archetype} perspektifi bu tartışmada daha tutarlı bir çizgi izledi."
+
+    return {"verdict": verdict, "winner": winner, "philosophical_depth": min(100, (u_len + p_len) // 10)}
+
+
+# ============================================================
+# v2.0 — TOPLUMSAL NABIZ ENDPOİNT
+# ============================================================
+@app.get("/api/pulse")
+async def get_pulse():
+    """Anonim arketip dağılımı istatistikleri"""
+    global PULSE_COUNTER
+    total = sum(PULSE_COUNTER.values()) or 1
+
+    archetype_colors = {
+        'GELENEK MUHAFIZI': '#10b981', 'MERHAMET ELÇİSİ': '#f472b6',
+        'KADİM YASA KORUYUCU': '#f59e0b', 'İÇSEL GEZGİN': '#60a5fa',
+        'DÖNGÜNÜN BİLGESİ': '#a78bfa', 'AKIŞIN USTASI': '#34d399',
+        'KADİM ŞAMAN': '#fbbf24', 'IŞIĞIN SAVAŞÇISI': '#fb923c',
+        'AKILCI MİMAR': '#38bdf8', 'KOZMİK RUH': '#818cf8',
+        'SARSILMAZ İRADE': '#94a3b8', 'DÜNYEVİ AYDIN': '#6ee7b7',
+        'GİZEMLİ BİLGE': '#c084fc', 'HİÇLİK YOLCUSU': '#6b7280',
+        'ABSÜRT İSYANKAR': '#f43f5e', 'TEKNO-MİMAR': '#22d3ee',
+        'BİREYSEL ASİ': '#ef4444', 'DOĞANIN BÜYÜCÜSÜ': '#86efac',
+        'ŞÜPHECİ GÖZLEMCİ': '#d1d5db', 'AŞKIN DERVİŞ': '#e879f9',
+    }
+
+    if total < 10:
+        # Yeterli veri yok, mock döndür
+        return {"error": "insufficient_data", "total_users": total}
+
+    global_data = sorted([
+        {
+            "archetype": arch,
+            "count": cnt,
+            "percentage": round(cnt / total * 100),
+            "color": archetype_colors.get(arch, '#6b7280')
+        }
+        for arch, cnt in PULSE_COUNTER.items()
+    ], key=lambda x: x["count"], reverse=True)
+
+    return {
+        "global": global_data[:10],
+        "total_users": total,
+        "dream_count": DREAM_COUNTER
+    }
+
+@app.post("/api/pulse/record")
+async def record_pulse(data: dict):
+    """Anonim arketip kaydı"""
+    archetype = data.get("archetype", "")
+    if archetype:
+        PULSE_COUNTER[archetype] += 1
+    return {"ok": True}
+
