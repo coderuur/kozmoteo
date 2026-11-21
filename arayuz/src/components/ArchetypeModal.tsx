@@ -243,29 +243,29 @@ export const ArchetypeModal: React.FC<ArchetypeModalProps> = ({ result, onClose,
               <p style={{ color: '#e2e8f0', fontSize: '11px', fontStyle: 'italic', lineHeight: '1.4', margin: '0 auto 8px auto', maxWidth: '270px' }}>
                 "{persona.everydayYou}"
               </p>
-              <div style={{ display: 'flex', gap: '4px', justifyContent: 'center', flexWrap: 'wrap', marginBottom: '8px' }}>
+              <div style={{ display: 'flex', gap: '6px', justifyContent: 'center', flexWrap: 'wrap', marginBottom: '10px' }}>
                 {persona.threeWords.map((w, i) => (
-                  <span key={i} style={{ backgroundColor: 'rgba(212, 175, 55, 0.15)', color: '#FFE699', border: '1px solid rgba(212, 175, 55, 0.3)', padding: '2px 8px', borderRadius: '10px', fontSize: '9px', fontWeight: 'bold' }}>
-                    #{w}
+                  <span key={i} style={{ backgroundColor: 'rgba(255, 230, 153, 0.12)', color: '#FFE699', border: '1px solid rgba(255, 230, 153, 0.35)', padding: '3px 10px', borderRadius: '999px', fontSize: '10px', fontWeight: 600 }}>
+                    {w}
                   </span>
                 ))}
               </div>
             </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
-              <div style={{ backgroundColor: 'rgba(244, 63, 94, 0.1)', border: '1px solid rgba(244, 63, 94, 0.3)', borderRadius: '8px', padding: '5px 8px', textAlign: 'left' }}>
-                <span style={{ color: '#f43f5e', fontSize: '9px', fontWeight: 'bold', display: 'block' }}>🚩 Kırmızı Bayrağın:</span>
-                <span style={{ color: '#fda4af', fontSize: '9px', lineHeight: '1.3' }}>{persona.redFlag}</span>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+              <div style={{ backgroundColor: 'rgba(244, 63, 94, 0.08)', border: '1px solid rgba(244, 63, 94, 0.3)', borderRadius: '8px', padding: '6px 10px', textAlign: 'left' }}>
+                <span style={{ color: '#f43f5e', fontSize: '10px', fontWeight: 600, display: 'block', letterSpacing: '0.5px' }}>Red Flag:</span>
+                <span style={{ color: '#fda4af', fontSize: '9.5px', lineHeight: '1.35' }}>{persona.redFlag}</span>
               </div>
-              <div style={{ backgroundColor: 'rgba(16, 185, 129, 0.1)', border: '1px solid rgba(16, 185, 129, 0.3)', borderRadius: '8px', padding: '5px 8px', textAlign: 'left' }}>
-                <span style={{ color: '#10b981', fontSize: '9px', fontWeight: 'bold', display: 'block' }}>💚 Yeşil Bayrağın:</span>
-                <span style={{ color: '#a7f3d0', fontSize: '9px', lineHeight: '1.3' }}>{persona.greenFlag}</span>
+              <div style={{ backgroundColor: 'rgba(16, 185, 129, 0.08)', border: '1px solid rgba(16, 185, 129, 0.3)', borderRadius: '8px', padding: '6px 10px', textAlign: 'left' }}>
+                <span style={{ color: '#10b981', fontSize: '10px', fontWeight: 600, display: 'block', letterSpacing: '0.5px' }}>Green Flag:</span>
+                <span style={{ color: '#a7f3d0', fontSize: '9.5px', lineHeight: '1.35' }}>{persona.greenFlag}</span>
               </div>
             </div>
 
-            <div style={{ backgroundColor: 'rgba(138, 43, 226, 0.15)', border: '1px solid rgba(138, 43, 226, 0.35)', borderRadius: '8px', padding: '5px 8px' }}>
-              <span style={{ color: '#c084fc', fontSize: '9px', fontWeight: 'bold' }}>🎭 Pop-Kültür İkizin: </span>
-              <span style={{ color: '#FFE699', fontSize: '10px', fontWeight: 'bold' }}>{persona.popCultureTwin}</span>
+            <div style={{ backgroundColor: 'rgba(255, 230, 153, 0.08)', border: '1px solid rgba(255, 230, 153, 0.25)', borderRadius: '8px', padding: '6px 10px' }}>
+              <span style={{ color: '#FFE699', fontSize: '10px', fontWeight: 600 }}>Ruh İkizin: </span>
+              <span style={{ color: '#f8fafc', fontSize: '10px', fontWeight: 600 }}>{persona.popCultureTwin}</span>
             </div>
           </>
         )}

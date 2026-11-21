@@ -650,18 +650,18 @@ export const downloadHumanizedStoryCard = async (result: MatchResult): Promise<v
   ctx.fillText(`Uyum: %${result.similarity_percentage}`, 540, 420);
 
   // Pop-Kültür İkizi Rozeti
-  const twinText = `🎭 Pop-Kültür Ruh İkizin: ${persona.popCultureTwin}`;
+  const twinText = `Ruh İkizin: ${persona.popCultureTwin}`;
   ctx.font = 'bold 24px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
   const twinW = ctx.measureText(twinText).width + 60;
-  ctx.fillStyle = 'rgba(138, 43, 226, 0.2)';
-  ctx.strokeStyle = '#8A2BE2';
+  ctx.fillStyle = 'rgba(212, 175, 55, 0.12)';
+  ctx.strokeStyle = 'rgba(212, 175, 55, 0.4)';
   ctx.lineWidth = 1.5;
   ctx.beginPath();
   ctx.roundRect((1080 - twinW) / 2, 460, twinW, 56, 28);
   ctx.fill();
   ctx.stroke();
 
-  ctx.fillStyle = '#e9d5ff';
+  ctx.fillStyle = '#FFE699';
   ctx.fillText(twinText, 540, 497);
 
   // Popüler Başlık & Alıntı
@@ -673,13 +673,13 @@ export const downloadHumanizedStoryCard = async (result: MatchResult): Promise<v
   ctx.font = 'italic 34px Georgia, serif';
   wrapCanvasText(ctx, `"${persona.everydayYou}"`, 540, 670, 840, 52, 4);
 
-  // Hashtagler
-  const tagsStr = persona.threeWords.map(w => `#${w}`).join('   ');
+  // Özellikler (Hashtagsiz, Nokta Ayraçlı)
+  const tagsStr = persona.threeWords.join('   ·   ');
   ctx.fillStyle = '#FFE699';
   ctx.font = 'bold 28px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
   ctx.fillText(tagsStr, 540, 930);
 
-  // Kutu 1: Kırmızı Bayrak (Zayıf Yön)
+  // Kutu 1: Red Flag
   const redBoxY = 1010;
   ctx.fillStyle = 'rgba(244, 63, 94, 0.12)';
   ctx.strokeStyle = 'rgba(244, 63, 94, 0.5)';
@@ -690,14 +690,14 @@ export const downloadHumanizedStoryCard = async (result: MatchResult): Promise<v
   ctx.stroke();
 
   ctx.fillStyle = '#f43f5e';
-  ctx.font = 'bold 22px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-  ctx.fillText('🚩  K I R M I Z I   B A Y R A Ğ I N', 540, redBoxY + 50);
+  ctx.font = 'bold 24px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+  ctx.fillText('R E D   F L A G', 540, redBoxY + 50);
 
   ctx.fillStyle = '#fda4af';
   ctx.font = '28px Georgia, serif';
   wrapCanvasText(ctx, persona.redFlag, 540, redBoxY + 110, 760, 42, 2);
 
-  // Kutu 2: Yeşil Bayrak (Süper Güç)
+  // Kutu 2: Green Flag
   const greenBoxY = 1240;
   ctx.fillStyle = 'rgba(16, 185, 129, 0.12)';
   ctx.strokeStyle = 'rgba(16, 185, 129, 0.5)';
@@ -708,14 +708,14 @@ export const downloadHumanizedStoryCard = async (result: MatchResult): Promise<v
   ctx.stroke();
 
   ctx.fillStyle = '#10b981';
-  ctx.font = 'bold 22px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-  ctx.fillText('💚  Y E Ş İ L   B A Y R A Ğ I N', 540, greenBoxY + 50);
+  ctx.font = 'bold 24px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+  ctx.fillText('G R E E N   F L A G', 540, greenBoxY + 50);
 
   ctx.fillStyle = '#a7f3d0';
   ctx.font = '28px Georgia, serif';
   wrapCanvasText(ctx, persona.greenFlag, 540, greenBoxY + 110, 760, 42, 2);
 
-  // Seni Ne Çıldırtır
+  // Hassas Noktan
   const triggerY = 1490;
   ctx.fillStyle = 'rgba(18, 15, 30, 0.85)';
   ctx.strokeStyle = 'rgba(212, 175, 55, 0.35)';
@@ -727,7 +727,7 @@ export const downloadHumanizedStoryCard = async (result: MatchResult): Promise<v
 
   ctx.fillStyle = '#FFE699';
   ctx.font = 'bold 20px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-  ctx.fillText('⚡  S E N İ   N E   Ç I L D I R T I R', 540, triggerY + 45);
+  ctx.fillText('✦   H A S S A S   N O K T A N   ✦', 540, triggerY + 45);
 
   ctx.fillStyle = '#cbd5e1';
   ctx.font = '26px Georgia, serif';

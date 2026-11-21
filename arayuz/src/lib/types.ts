@@ -3,6 +3,19 @@ export interface BeliefScore {
   percentage: number;
 }
 
+export interface BookRecommendation {
+  title: string;
+  author: string;
+  note: string;
+}
+
+export interface MovieRecommendation {
+  title: string;
+  year: number;
+  director: string;
+  note: string;
+}
+
 export interface MatchResult {
   similarity_percentage: number;
   belief_name: string;
@@ -14,6 +27,9 @@ export interface MatchResult {
   quotes: string[];
   daily_reflection: string;
   archetype: string;
+  books?: BookRecommendation[];
+  movies?: MovieRecommendation[];
+  extended_essay?: string[];
 }
 
 export interface ChatMessageItem {

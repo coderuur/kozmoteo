@@ -109,6 +109,9 @@ class MatchResult(BaseModel):
     quotes: list[str]
     daily_reflection: str
     archetype: str
+    books: list[dict] = []
+    movies: list[dict] = []
+    extended_essay: list[str] = []
 
 class AIRequest(BaseModel):
     archetype: str
@@ -308,6 +311,96 @@ MOCK_RELIGIONS = {
         "quotes": ["Ben hakikatim. (Ene'l-Hakk)"],
         "daily_reflection": "Etrafındaki her şeyin aslında tek bir ilahi güzelliğin yansıması olduğunu gör.",
         "archetype": "AŞKIN DERVİŞ"
+    },
+    "Varoluşçuluk / Radikal Özgürlük": {
+        "base_vector": [0.1, 0.1, 0.1, 0.2, 0.3],
+        "desc": "Varoluş özden önce gelir; insan kendi eylemleriyle kendini var eder.",
+        "details": "İnsan hazır bir kalıpla doğmaz; yaptığı seçimler ve üstlendiği sorumluluklarla kendi özünü bizzat inşa eder.",
+        "figures": ["Jean-Paul Sartre", "Simone de Beauvoir", "Søren Kierkegaard"],
+        "quotes": ["İnsan özgürlüğe mahkûmdur.", "Varoluş özden önce gelir."],
+        "daily_reflection": "Bugün bir karar alırken başkalarının beklentilerini değil, kendi özgür vicdanını dinle.",
+        "archetype": "ÖZGÜR VAROLUŞÇU"
+    },
+    "Sinik Felsefe / Yalın Doğallık": {
+        "base_vector": [0.2, 0.1, 0.2, 0.1, 0.8],
+        "desc": "Toplumsal yapaylığı, mülkiyet hırsını reddeden yalın ve pervasız doğallık.",
+        "details": "En az şeye muhtaç olan tanrılara en yakın olandır. Şöhret ve zenginlik insanı köleleştirir.",
+        "figures": ["Sinoplu Diyojen", "Antisthenes"],
+        "quotes": ["Gölge etme, başka ihsan istemem."],
+        "daily_reflection": "Bugün hayatından kesinlikle gereksiz bir eşyayı veya yapay bir unvan kaygısını çıkar.",
+        "archetype": "KİNİK BOHEM"
+    },
+    "Epikürizm / Bahçe Felsefesi": {
+        "base_vector": [0.3, 0.2, 0.1, 0.1, 0.5],
+        "desc": "Acıdan uzak durma, dinginlik ve dostlarla sade zevklerin paylaşıldığı huzurlu yaşam.",
+        "details": "En büyük haz ruhsal dinginliktir (Ataraxia). Ölümlülük korkusundan ve boş hırslardan arınmayı öğütler.",
+        "figures": ["Epikuros", "Lucretius"],
+        "quotes": ["Ölüm varken biz yokuz, biz varken ölüm yok."],
+        "daily_reflection": "Bugün sevdiğin bir dostunla sade bir bardak çayı dünyevi tüm koşturmacaların üstünde tut.",
+        "archetype": "HUZUR BAHÇIVANI"
+    },
+    "Hermetizm / Zihinsel Simya": {
+        "base_vector": [0.7, 0.6, 0.8, 0.3, 0.8],
+        "desc": "Kozmik yasalar, titreşim ve zihnin evrensel dokuyla olan gizemli simyası.",
+        "details": "Yukarıda ne varsa aşağıda da o vardır. Evren zihinseldir; zihnini dönüştüren dünyasını dönüştürür.",
+        "figures": ["Hermes Trismegistus", "Paracelsus"],
+        "quotes": ["Yukarıda olan neyse, aşağıda olan da odur."],
+        "daily_reflection": "Zihnindeki karanlık bir düşünceyi simyacının kurşunu altına dönüştürmesi gibi şükran duygusuna çevir.",
+        "archetype": "EZOTERİK SİMYACI"
+    },
+    "Şintoizm / Doğa Ruhlarının Uyumu": {
+        "base_vector": [0.3, 0.9, 0.7, 0.3, 1.0],
+        "desc": "Her nehirde, ağaçta ve rüzgarda yaşayan kutsal canlılığa (Kami) hürmet ve arınma.",
+        "details": "Doğa insan için sömürülecek bir meta değil, içinde tanrısal canlılığın titreştiği kutsal bir mabettir.",
+        "figures": ["Motoori Norinaga", "Kannushi Bilgeleri"],
+        "quotes": ["Doğaya saygı duymak, kendi özüne hürmet etmektir."],
+        "daily_reflection": "Bugün bir ağaca veya akan suya bakarken onun da yaşayan bir ruhu olduğunu hisset.",
+        "archetype": "KUTSAL HARMONİ"
+    },
+    "İşrakilik / Nur Felsefesi": {
+        "base_vector": [0.85, 0.6, 0.85, 0.4, 0.7],
+        "desc": "Akıl ile sezginin birleştiği, varoluşun nurani bir ışık olduğunu savunan Doğu felsefesi.",
+        "details": "Tanrı Nurlar Nuru'dur. Varlık ışıktan pay aldığı ölçüde var olur; karanlık sadece ışığın yokluğudur.",
+        "figures": ["Şehabeddin Sühreverdi", "Molla Sadra"],
+        "quotes": ["Işık hem kendi başına apaçıktır hem de her şeyi açığa çıkarır."],
+        "daily_reflection": "Karanlık bir duruma kızmak yerine, oraya anlayış ve bilgelik ışığı taşımayı dene.",
+        "archetype": "IŞIK İŞRAKİSİ"
+    },
+    "Alevi-Bektaşi Geleneği / İnsan-ı Kâmil": {
+        "base_vector": [0.8, 0.5, 0.7, 0.3, 0.9],
+        "desc": "Her ne ararsan kendinde ara; yetmiş iki milleti bir gören kucaklayıcı aşk ve insan sevgisi.",
+        "details": "Asıl kıble insanın kalbidir. Eline, beline, diline sahip çıkarak hoşgörüyle yaşamak esastır.",
+        "figures": ["Hacı Bektaş Veli", "Yunus Emre", "Pir Sultan Abdal"],
+        "quotes": ["Hararet nardadır sacda değildir, keramet baştadır tacda değildir. Her ne ararsan kendinde ara."],
+        "daily_reflection": "Bugün bir insanla konuşurken onun içindeki kutsal emaneti gözeterek davran.",
+        "archetype": "GÖNÜL İNSANI"
+    },
+    "Pragmatizm / Yaşamsal Eylem": {
+        "base_vector": [0.4, 0.2, 0.2, 0.2, 0.4],
+        "desc": "Bir düşüncenin doğruluğu, hayatta yarattığı somut fayda ve çözüm gücüyle ölçülür.",
+        "details": "Soyut kütüphane spekülasyonları değil; insanın hayat krizlerini çözen pratik bilgelik esastır.",
+        "figures": ["William James", "John Dewey"],
+        "quotes": ["Felsefe, insanların hayat problemlerini çözmek içindir."],
+        "daily_reflection": "Bugün soyut endişelere kafa yormak yerine, somut bir sorunu fiilen çözmeye odaklan.",
+        "archetype": "PRAGMATİK EYLEMCİ"
+    },
+    "Panenteizm / Diyalektik Kozmik Akıl": {
+        "base_vector": [0.75, 0.3, 0.6, 0.2, 0.85],
+        "desc": "Her şey Tanrı'dadır ancak Tanrı evrenden büyüktür ve evrenle birlikte tecelli edip evrilir.",
+        "details": "Tanrı durağan bir heykel değil; tarihin ve bilincin canlı serüveninde kendini açan sonsuz akıldır.",
+        "figures": ["G.W.F. Hegel", "A.N. Whitehead"],
+        "quotes": ["Tarih, aklın kendi özgürlüğünün bilincine varma sürecidir."],
+        "daily_reflection": "Hayatındaki zorlukların seni daha yüksek bir bilinç basamağına evrilten bir süreç olduğunu düşün.",
+        "archetype": "EVRİLEN ZİHİN"
+    },
+    "Solipsizm / Bilinç Aynası": {
+        "base_vector": [0.2, 0.1, 0.3, 0.1, 0.2],
+        "desc": "Yalnızca kendi bilincinin varlığından emin olabilirsin; dış dünya zihninin bir yansımasıdır.",
+        "details": "Descartes'ın şüphesi: Dış dünyanın gerçek olup olmadığını kimse kanıtlayamaz; kesin olan tek şey düşünen zihindir.",
+        "figures": ["René Descartes", "George Berkeley"],
+        "quotes": ["Düşünüyorum, öyleyse varım."],
+        "daily_reflection": "Dışarıdaki kaosun aslında zihninin ona verdiği tepkiden ibaret olduğunu fark et.",
+        "archetype": "YALNIZ BİLİNÇ"
     }
 }
 
@@ -661,7 +754,10 @@ def match_with_religion(data: VectorInput):
         figures=top_match["data"].get("figures", []),
         quotes=top_match["data"].get("quotes", []),
         daily_reflection=top_match["data"].get("daily_reflection", ""),
-        archetype=top_match["data"].get("archetype", "KAYIP RUH")
+        archetype=top_match["data"].get("archetype", "KAYIP RUH"),
+        books=top_match["data"].get("books", []),
+        movies=top_match["data"].get("movies", []),
+        extended_essay=top_match["data"].get("extended_essay", [])
     )
 
 @app.post("/api/verify-and-register")
@@ -1026,27 +1122,27 @@ def generate_offline_ai_reading(archetype: str, similarity: float, vector: list[
     dogma = vector[3] if len(vector) > 3 else 0.5
     doga = vector[4] if len(vector) > 4 else 0.5
 
-    p1 = f"Zihninin kozmik haritasına baktığımda, %{similarity} oranında {archetype} arketipinin izlerini taşıyorsun. Sen varoluşu sıradan bir seyirci gibi değil, onun dokusunu sorgulayan bir yolcu gibi deneyimliyorsun. "
+    p1 = f"{archetype} arketipiyle kurduğun bu derin frekans, varoluşu sıradan bir seyirci gibi değil, onun dokusunu ve çatışmalarını derinden hisseden bir düşünür gibi deneyimlediğini gösteriyor. "
     if tektanri > 0.6:
-        p1 += "Kainatın arkasında bilinçli, tek ve muazzam bir zekanın nabzını hissediyorsun; varoluş senin için tesadüflerin savurduğu bir yaprak değil, ilahi bir mimarinin nakışı."
+        p1 += "Kainatın arkasında bilinçli, tek ve muazzam bir aklın nabzını hissediyorsun; varoluş senin için tesadüflerin savurduğu bir yaprak değil, hikmetli bir mimarinin nakışı."
     elif tektanri < 0.4:
-        p1 += "Kişisel ve dogmatik bir tanrı figüründen ziyade, evrenin kendi iç dinamiğine, soğuk ve görkemli sessizliğine yaslanmayı daha dürüst buluyorsun."
+        p1 += "Kişisel ve dogmatik bir tanrı figüründen ziyade, evrenin kendi iç dinamiğine, soğuk ve görkemli sessizliğine yaslanmayı daha dürüst ve sahici buluyorsun."
     else:
-        p1 += "Aklın şüpheyle kalbin sezgisi arasında hassas bir sarkaç gibi salınıyorsun; ne kör bir inanca teslim oluyor ne de gizemi tamamen inkar ediyorsun."
+        p1 += "Aklın şüpheyle kalbin sezgisi arasında hassas bir sarkaç gibi salınıyorsun; ne kör bir inanca teslim oluyor ne de evrenin gizemini tamamen inkar ediyorsun."
 
-    p2 = "İç dünyandaki felsefi gerilim dikkat çekici. "
+    p2 = "Karakterindeki düşünsel gerilim oldukça dikkat çekici: "
     if dogma < 0.4 and rituel > 0.6:
-        p2 += "Dışarıdan dikte edilen katı kurallardan ve dogmalardan nefret ederken, kendi içsel ritüellerine, sessizlik anlarına ve tefekkür disiplinine derinden bağlısın. Şekilcilik değil, samimi deneyim senin pusulandır."
+        p2 += "Dışarıdan dikte edilen katı kurallardan ve dogmalardan uzak dururken, kendi içsel ritüellerine, sessizlik anlarına ve tefekkür disiplinine derinden bağlısın. Şekilcilik değil, sahici içsel deneyim senin pusulandır."
     elif dogma > 0.6:
         p2 += "Kadim köklerin, nesiller boyu sınanmış mutlak ilkelerin ve sarsılmaz prensiplerin insanı anlamsızlık kaosundan koruyan yegane kale olduğuna inanıyorsun."
     else:
-        p2 += "Kendi ahlak pusulanı kendi vicdanında eğitiyorsun; başkalarının yazdığı reçeteler yerine kendi deneyimlerinin imbiklerinden süzülen gerçeğe güveniyorsun."
+        p2 += "Kendi ahlak pusulanı kendi vicdanında eğitiyorsun; başkalarının yazdığı hazır reçeteler yerine kendi deneyimlerinin imbiklerinden süzülen gerçeğe güveniyorsun."
 
     p3 = "Geleceğe ve evrensel akışa dair duruşun ise çok net: "
     if doga > 0.6:
-        p3 += "Doğanın ve kainatın bir parçası olduğunu, bir ağacın ya da yıldızın senden ayrı olmadığını biliyorsun. Bu kozmik aidiyet sana ölüm karşısında bile huzurlu bir dinginlik kazandırıyor."
+        p3 += "Doğanın ve kainatın ayrılmaz bir parçası olduğunu, bir ağacın ya da yıldızın senden kopuk olmadığını biliyorsun. Bu kozmik aidiyet sana hayatın fırtınaları karşısında bile dingin bir sükunet kazandırıyor."
     else:
-        p3 += "Zihninin sınırlarını genişletmek, bilginin ve iradenin ışığıyla karanlığı aydınlatmak en büyük tutkun. Şimdi bu içsel pusulana güven ve kendi hakikatini yaşamaktan asla çekinme."
+        p3 += "Zihninin sınırlarını genişletmek, aklın ve iradenin ışığıyla belirsizliği aydınlatmak en büyük erdemin. Bu içsel pusulana güven ve kendi hakikatini yaşamaktan asla çekinme."
 
     return f"{p1}\n\n{p2}\n\n{p3}"
 
@@ -1056,11 +1152,16 @@ async def get_ai_reading(data: AIRequest):
         try:
             model = genai.GenerativeModel('gemini-1.5-flash')
             prompt = f"""
-            Sen mistik, felsefi ve analitik bir yapay zeka rehberisin. 
+            Sen saygın bir edebiyat ve felsefe yazarı, bilge bir karakter analistisin (Montaigne, Schopenhauer ve The School of Life üslubunda).
             Kullanıcı %{data.similarity} oranında {data.archetype} arketipiyle eşleşti.
-            5 boyutlu ruhsal vektörü: {data.vector}
-            Kullanıcıya özel, doğrudan 'sen' diliyle hitap eden, onun karanlık ve aydınlık felsefi yönlerini analiz eden, 
-            3 paragraflık derin bir psikolojik döküm yaz. Asla emoji kullanma. Net ve sarsıcı ol.
+            5 boyutlu zihinsel vektörü: {data.vector}
+            
+            Kullanıcıya doğrudan 'sen' diliyle hitap eden, onun entelektüel derinliğini, çelişkilerini ve güçlü yönlerini ele alan 3 paragraflık edebi bir deneme yaz.
+            Kurallar:
+            - Asla yapay zeka olduğunu söyleme.
+            - Asla emoji kullanma.
+            - Klişe motivasyon cümleleri ve robotik ifadeler kullanma.
+            - Ciddi, edebi, düşündürücü ve sıcak bir üslup kullan.
             """
             response = model.generate_content(prompt)
             if response and response.text:

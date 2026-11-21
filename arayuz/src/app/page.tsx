@@ -30,6 +30,7 @@ import { DreamArchiveModal } from '../components/DreamArchiveModal';
 import { CosmicCourtModal } from '../components/CosmicCourtModal';
 import { PulseDashboard } from '../components/PulseDashboard';
 import { getBrutalTruth, decodeSoulDuel, SoulDuelData, getHumanizedPersona } from '../lib/viral';
+import { getPhilosophyDeepDive } from '../lib/philosophyData';
 
 export default function Home() {
   const [testType, setTestType] = useState<'short' | 'medium' | 'long' | null>(null);
@@ -744,7 +745,7 @@ export default function Home() {
           Aslında Neye İnanıyorsun?
         </h1>
         <p style={{ textAlign: 'center', color: '#cbd5e1', fontSize: '15px', letterSpacing: '0.5px', marginBottom: '35px', maxWidth: '580px', margin: '0 auto 35px auto', lineHeight: '1.6' }}>
-          Geceleri tek başına kaldığında evrenle fısıldaşan zihnin... 20 kadim felsefeden hangisinin frekansında titreşiyor?
+          Geceleri tek başına kaldığında evrenle fısıldaşan zihnin... 30 kadim ve çağdaş felsefeden hangisinin frekansında titreşiyor?
         </p>
 
         {/* SONUÇ EKRANI */}
@@ -755,7 +756,7 @@ export default function Home() {
             <h2 style={{ margin: '0 0 10px 0', color: '#FFE699', fontSize: '3.4rem', textShadow: '0 0 25px rgba(212, 175, 55, 0.4)' }}>%{result.similarity_percentage}</h2>
             <p style={{ color: '#d1d5db', fontSize: '16px', fontStyle: 'italic', marginBottom: '25px', maxWidth: '580px', margin: '0 auto 25px auto' }}>"{result.description}"</p>
 
-            {/* HALK DİLİYLE SEN • KOZMİK KİMLİK KARTI (VIRAL & HUMANIZE) */}
+            {/* HALK DİLİYLE SEN • KOZMİK KİMLİK KARTI */}
             <div style={{
               background: 'linear-gradient(135deg, rgba(212, 175, 55, 0.08) 0%, rgba(13, 11, 20, 0.95) 100%)',
               border: '1.5px solid #D4AF37',
@@ -769,8 +770,8 @@ export default function Home() {
                 <span style={{ fontSize: '11px', color: '#FFE699', letterSpacing: '3px', textTransform: 'uppercase', fontWeight: 'bold' }}>
                   ✦ HALK DİLİYLE SEN • KİMLİK KARTI ✦
                 </span>
-                <span style={{ fontSize: '12px', color: '#c084fc', backgroundColor: 'rgba(138, 43, 226, 0.2)', padding: '3px 10px', borderRadius: '12px', border: '1px solid #8A2BE2' }}>
-                  🎭 Ruh İkizin: {getHumanizedPersona(result.archetype).popCultureTwin}
+                <span style={{ fontSize: '12px', color: '#FFE699', backgroundColor: 'rgba(212, 175, 55, 0.12)', padding: '4px 12px', borderRadius: '999px', border: '1px solid rgba(212, 175, 55, 0.35)' }}>
+                  Ruh İkizin: {getHumanizedPersona(result.archetype).popCultureTwin}
                 </span>
               </div>
 
@@ -782,47 +783,180 @@ export default function Home() {
                 "{getHumanizedPersona(result.archetype).everydayYou}"
               </p>
 
+              {/* Hashtag'siz Özellik Hapları */}
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '18px' }}>
                 {getHumanizedPersona(result.archetype).threeWords.map((word, idx) => (
-                  <span key={idx} style={{ backgroundColor: 'rgba(212, 175, 55, 0.15)', color: '#FFE699', border: '1px solid rgba(212, 175, 55, 0.4)', padding: '4px 12px', borderRadius: '14px', fontSize: '12px', fontWeight: 'bold' }}>
-                    #{word}
+                  <span key={idx} style={{ backgroundColor: 'rgba(255, 230, 153, 0.1)', color: '#FFE699', border: '1px solid rgba(255, 230, 153, 0.3)', padding: '5px 14px', borderRadius: '999px', fontSize: '12px', fontWeight: 600 }}>
+                    {word}
                   </span>
                 ))}
               </div>
 
+              {/* Red Flag & Green Flag */}
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '12px', marginBottom: '16px' }}>
-                <div style={{ backgroundColor: 'rgba(244, 63, 94, 0.1)', border: '1px solid rgba(244, 63, 94, 0.3)', borderRadius: '10px', padding: '12px 14px' }}>
-                  <div style={{ fontSize: '11px', color: '#f43f5e', fontWeight: 'bold', marginBottom: '4px' }}>🚩 Kırmızı Bayrağın — Zayıf Yönün</div>
+                <div style={{ backgroundColor: 'rgba(244, 63, 94, 0.08)', border: '1px solid rgba(244, 63, 94, 0.3)', borderRadius: '10px', padding: '14px 16px' }}>
+                  <div style={{ fontSize: '11px', color: '#f43f5e', fontWeight: 600, letterSpacing: '0.5px', marginBottom: '4px', textTransform: 'uppercase' }}>Red Flag · Dikkat Noktan</div>
                   <p style={{ color: '#fda4af', fontSize: '13px', margin: 0, lineHeight: '1.5' }}>{getHumanizedPersona(result.archetype).redFlag}</p>
                 </div>
-                <div style={{ backgroundColor: 'rgba(16, 185, 129, 0.1)', border: '1px solid rgba(16, 185, 129, 0.3)', borderRadius: '10px', padding: '12px 14px' }}>
-                  <div style={{ fontSize: '11px', color: '#10b981', fontWeight: 'bold', marginBottom: '4px' }}>💚 Yeşil Bayrağın — Süper Gücün</div>
+                <div style={{ backgroundColor: 'rgba(16, 185, 129, 0.08)', border: '1px solid rgba(16, 185, 129, 0.3)', borderRadius: '10px', padding: '14px 16px' }}>
+                  <div style={{ fontSize: '11px', color: '#10b981', fontWeight: 600, letterSpacing: '0.5px', marginBottom: '4px', textTransform: 'uppercase' }}>Green Flag · Güçlü Yönün</div>
                   <p style={{ color: '#a7f3d0', fontSize: '13px', margin: 0, lineHeight: '1.5' }}>{getHumanizedPersona(result.archetype).greenFlag}</p>
                 </div>
               </div>
 
-              <div style={{ backgroundColor: '#13111f', border: '1px solid #2d2645', borderRadius: '10px', padding: '12px 14px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
-                <div style={{ fontSize: '12px', color: '#9ca3af' }}>
-                  ⚡ <strong style={{ color: '#e2e8f0' }}>Seni Ne Çıldırtır:</strong> {getHumanizedPersona(result.archetype).triggersYou}
+              <div style={{ backgroundColor: '#111019', border: '1px solid rgba(255, 230, 153, 0.15)', borderRadius: '10px', padding: '12px 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
+                <div style={{ fontSize: '12px', color: '#94a3b8' }}>
+                  <strong style={{ color: '#FFE699' }}>Hassas Noktan:</strong> {getHumanizedPersona(result.archetype).triggersYou}
                 </div>
                 <button
+                  type="button"
                   onClick={() => setShowArchetype(true)}
                   style={{
-                    background: 'linear-gradient(135deg, #FFE699 0%, #D4AF37 100%)',
+                    background: '#FFE699',
                     border: 'none',
                     color: '#07060c',
-                    borderRadius: '16px',
-                    padding: '6px 14px',
+                    borderRadius: '999px',
+                    padding: '6px 16px',
                     fontSize: '11px',
-                    fontWeight: 'bold',
-                    cursor: 'pointer',
-                    boxShadow: '0 0 15px rgba(212, 175, 55, 0.3)'
+                    fontWeight: 600,
+                    cursor: 'pointer'
                   }}
                 >
-                  📸 Hikayede Paylaş
+                  Hikaye Kartını Gör
                 </button>
               </div>
             </div>
+
+            {/* DERİN FELSEFİ PORTRE, SÖZLER, KİTAP VE FİLM ÖNERİLERİ */}
+            {(() => {
+              const deepDive = getPhilosophyDeepDive(result.belief_name, result.archetype);
+              return (
+                <div style={{
+                  backgroundColor: 'rgba(15, 14, 22, 0.9)',
+                  border: '1px solid rgba(255, 230, 153, 0.18)',
+                  borderRadius: '16px',
+                  padding: '28px 24px',
+                  marginBottom: '32px',
+                  textAlign: 'left',
+                  boxShadow: '0 20px 50px rgba(0, 0, 0, 0.6)'
+                }}>
+                  {/* Başlık & Motto */}
+                  <div style={{ borderBottom: '1px solid rgba(255, 230, 153, 0.12)', paddingBottom: '16px', marginBottom: '22px' }}>
+                    <span style={{ fontSize: '11px', color: '#d4af37', letterSpacing: '3px', textTransform: 'uppercase', fontWeight: 600 }}>
+                      ✦ DÜNYA GÖRÜŞÜNÜN FELSEFİ ÖZÜ
+                    </span>
+                    <h3 style={{ color: '#FFE699', fontSize: '22px', margin: '6px 0 8px 0', fontFamily: 'Georgia, serif' }}>
+                      {deepDive.name.replace(/\s*\([^)]*\)/g, '').trim()}
+                    </h3>
+                    <p style={{ color: '#e2e8f0', fontSize: '14.5px', fontStyle: 'italic', margin: 0, lineHeight: 1.5 }}>
+                      &ldquo;{deepDive.motto}&rdquo;
+                    </p>
+                  </div>
+
+                  {/* Genişletilmiş Edebi Anlatım (Extended Essay) */}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', marginBottom: '28px' }}>
+                    {deepDive.extended_essay.map((paragraph, pIdx) => (
+                      <p key={pIdx} style={{ color: '#cbd5e1', fontSize: '14px', lineHeight: '1.75', margin: 0, textAlign: 'justify' }}>
+                        {paragraph}
+                      </p>
+                    ))}
+                  </div>
+
+                  {/* Kadim Filozofların Sözleri */}
+                  {deepDive.quotes && deepDive.quotes.length > 0 && (
+                    <div style={{ marginBottom: '28px' }}>
+                      <h4 style={{ color: '#FFE699', fontSize: '12px', letterSpacing: '2px', textTransform: 'uppercase', marginBottom: '14px', fontWeight: 600 }}>
+                        ✦ TARİHTEKİ İZLER & FİLOZOFLARIN SÖZLERİ
+                      </h4>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                        {deepDive.quotes.map((q, qIdx) => (
+                          <div
+                            key={qIdx}
+                            style={{
+                              backgroundColor: 'rgba(255, 255, 255, 0.025)',
+                              borderLeft: '3px solid #FFE699',
+                              borderTop: '1px solid rgba(255, 255, 255, 0.05)',
+                              borderRight: '1px solid rgba(255, 255, 255, 0.05)',
+                              borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
+                              borderRadius: '0 8px 8px 0',
+                              padding: '14px 16px'
+                            }}
+                          >
+                            <p style={{ color: '#f8fafc', fontSize: '14px', fontStyle: 'italic', fontFamily: 'Georgia, serif', margin: '0 0 6px 0', lineHeight: 1.5 }}>
+                              &ldquo;{q.quote}&rdquo;
+                            </p>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '6px' }}>
+                              <span style={{ color: '#FFE699', fontSize: '12px', fontWeight: 600 }}>
+                                {q.author}
+                              </span>
+                              <span style={{ color: '#64748b', fontSize: '11px', fontStyle: 'italic' }}>
+                                {q.context}
+                              </span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Başucu Kitapları ve Kült Filmler - Yan Yana 2 Kolon */}
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px' }}>
+                    {/* Kitaplar */}
+                    {deepDive.books && deepDive.books.length > 0 && (
+                      <div style={{ backgroundColor: 'rgba(255, 255, 255, 0.02)', border: '1px solid rgba(255, 255, 255, 0.07)', borderRadius: '12px', padding: '18px' }}>
+                        <h4 style={{ color: '#FFE699', fontSize: '12px', letterSpacing: '2px', textTransform: 'uppercase', margin: '0 0 14px 0', fontWeight: 600 }}>
+                          ✦ BAŞUCU KİTAPLARI
+                        </h4>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                          {deepDive.books.map((b, bIdx) => (
+                            <div key={bIdx} style={{ borderBottom: bIdx < deepDive.books.length - 1 ? '1px solid rgba(255, 255, 255, 0.06)' : 'none', paddingBottom: bIdx < deepDive.books.length - 1 ? '10px' : '0' }}>
+                              <div style={{ color: '#f8fafc', fontSize: '13.5px', fontWeight: 600 }}>
+                                {b.title}
+                              </div>
+                              <div style={{ color: '#94a3b8', fontSize: '11.5px', marginBottom: '4px' }}>
+                                {b.author}
+                              </div>
+                              <p style={{ color: '#cbd5e1', fontSize: '12px', margin: 0, lineHeight: 1.4, fontStyle: 'italic' }}>
+                                {b.note}
+                              </p>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Filmler */}
+                    {deepDive.movies && deepDive.movies.length > 0 && (
+                      <div style={{ backgroundColor: 'rgba(255, 255, 255, 0.02)', border: '1px solid rgba(255, 255, 255, 0.07)', borderRadius: '12px', padding: '18px' }}>
+                        <h4 style={{ color: '#FFE699', fontSize: '12px', letterSpacing: '2px', textTransform: 'uppercase', margin: '0 0 14px 0', fontWeight: 600 }}>
+                          ✦ SİNEMA & FİLM ÖNERİLERİ
+                        </h4>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                          {deepDive.movies.map((m, mIdx) => (
+                            <div key={mIdx} style={{ borderBottom: mIdx < deepDive.movies.length - 1 ? '1px solid rgba(255, 255, 255, 0.06)' : 'none', paddingBottom: mIdx < deepDive.movies.length - 1 ? '10px' : '0' }}>
+                              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                <span style={{ color: '#f8fafc', fontSize: '13.5px', fontWeight: 600 }}>
+                                  {m.title}
+                                </span>
+                                <span style={{ color: '#64748b', fontSize: '11px' }}>
+                                  {m.year}
+                                </span>
+                              </div>
+                              <div style={{ color: '#94a3b8', fontSize: '11.5px', marginBottom: '4px' }}>
+                                Yönetmen: {m.director}
+                              </div>
+                              <p style={{ color: '#cbd5e1', fontSize: '12px', margin: 0, lineHeight: 1.4, fontStyle: 'italic' }}>
+                                {m.note}
+                              </p>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })()}
 
             {/* Birincil Eylemler: Odaklanmış, İnsan Vari ve Net 3 Seçenek */}
             <div style={{ display: 'flex', justifyContent: 'center', gap: '12px', marginBottom: '28px', flexWrap: 'wrap' }}>
@@ -1015,16 +1149,32 @@ export default function Home() {
               )}
             </div>
 
-            {/* Yapay Zeka Kozmik Okuması */}
-            <div style={{ backgroundColor: '#110f1c', border: '1px solid #2d2645', borderRadius: '8px', padding: '20px', textAlign: 'left', marginBottom: '25px' }}>
-              <h4 style={{ color: '#FFE699', marginBottom: '10px', fontSize: '13px', letterSpacing: '2px', textTransform: 'uppercase' }}>✦ Yapay Zeka Kozmik Okuması</h4>
+            {/* Felsefi Portre & Edebi Okuma */}
+            <div style={{ backgroundColor: 'rgba(15, 14, 22, 0.85)', border: '1px solid rgba(255, 230, 153, 0.15)', borderRadius: '12px', padding: '24px 20px', textAlign: 'left', marginBottom: '25px', boxShadow: '0 8px 30px rgba(0,0,0,0.4)' }}>
+              <h4 style={{ color: '#FFE699', marginBottom: '10px', fontSize: '12px', letterSpacing: '2px', textTransform: 'uppercase', fontWeight: 600 }}>✦ Kişiselleştirilmiş Felsefi Analiz & Derin Okuma</h4>
               {!aiReading && !isAiLoading && (
-                <button onClick={fetchAiReading} style={{ width: '100%', padding: '12px', backgroundColor: '#171426', border: '1px dashed #D4AF37', color: '#FFE699', cursor: 'pointer', borderRadius: '6px', fontWeight: 'bold' }}>
-                  Senin İçin Derin Kozmik Okuma Yarat
+                <button
+                  type="button"
+                  onClick={fetchAiReading}
+                  style={{
+                    width: '100%',
+                    padding: '14px',
+                    backgroundColor: 'rgba(255, 230, 153, 0.05)',
+                    border: '1px solid rgba(255, 230, 153, 0.3)',
+                    color: '#FFE699',
+                    cursor: 'pointer',
+                    borderRadius: '8px',
+                    fontWeight: 600,
+                    fontSize: '13px',
+                    letterSpacing: '0.3px',
+                    transition: 'all 0.2s ease'
+                  }}
+                >
+                  Karakterine Özel Felsefi Analiz Metnini Oluştur
                 </button>
               )}
-              {isAiLoading && <p style={{ color: '#9ca3af', fontSize: '14px', fontStyle: 'italic', textAlign: 'center', margin: '10px 0' }}>Yıldızlar okunuyor, bilinçaltı frekansın taranıyor...</p>}
-              {aiReading && <p style={{ color: '#f1f5f9', fontSize: '14px', lineHeight: '1.8', whiteSpace: 'pre-wrap', fontStyle: 'italic', margin: 0 }}>{aiReading}</p>}
+              {isAiLoading && <p style={{ color: '#94a3af', fontSize: '13px', fontStyle: 'italic', textAlign: 'center', margin: '14px 0' }}>Kadim felsefi metinler ve düşünsel argümanlar inceleniyor...</p>}
+              {aiReading && <p style={{ color: '#f1f5f9', fontSize: '14px', lineHeight: '1.85', whiteSpace: 'pre-wrap', fontStyle: 'italic', margin: 0, textAlign: 'justify' }}>{aiReading}</p>}
             </div>
 
             {/* Günün Ruhsal Pratiği */}

@@ -112,6 +112,66 @@ const BRUTAL_TRUTHS: Record<string, BrutalTruth> = {
     contradiction: "Tüketim toplumunu lanetliyorsun ama cebindeki cihazla ormanda story çekmeden duramıyorsun.",
     socraticQuestion: "Ruhların sesini mi duyuyorsun, yoksa kendi bilinçaltının sana oynadığı zihinsel bir eko mu?",
     historicalMirror: "Mircea Eliade & Kadim Kamlar"
+  },
+  "ÖZGÜR VAROLUŞÇU": {
+    quote: "Özgürlüğe mahkûm olduğunu söyleyip duruyorsun; fakat hayatındaki en ufak bir belirsizlikte hemen bir otoriteye sığınacak liman arıyorsun.",
+    contradiction: "Kendi özünü kendin inşa ettiğini söylüyorsun ama aldığın kararların onayını hala başkalarının gözünde arıyorsun.",
+    socraticQuestion: "Eğer gerçekten radikal şekilde özgürsen, neden hala seçimlerinin ağırlığından kaçıp duruyorsun?",
+    historicalMirror: "Jean-Paul Sartre & Simone de Beauvoir"
+  },
+  "KİNİK BOHEM": {
+    quote: "Dünyevi hiçbir eşyaya ve unvana değer vermediğini iddia ediyorsun; oysa bu pervasızlık bazen sadece hayatta rekabet edemeyişinin tembel bir kılıfı.",
+    contradiction: "Toplumun kurallarını hiçe sayıyorsun ama toplum seni alkışlamadığında gizlice öfkeleniyorsun.",
+    socraticQuestion: "Fıçının içinde gerçekten mutlu musun, yoksa saraylara kabul edilmeyeceğin için mi sarayları lanetliyorsun?",
+    historicalMirror: "Sinoplu Diyojen & Antisthenes"
+  },
+  "HUZUR BAHÇIVANI": {
+    quote: "Acıdan kaçıp sakin bir bahçe hayatı istediğini söylüyorsun; oysa acı çekmekten öyle çok korkuyorsun ki gerçek anlamda yaşamaya bile cesaret edemiyorsun.",
+    contradiction: "Dostluğu her şeyin üstünde tutuyorsun ama bir dostun kalbini kırdığında anında kabuğuna çekiliyorsun.",
+    socraticQuestion: "Huzurun bir erdem mi, yoksa kırılmaktan duyduğun ödlekçe bir saklanış mı?",
+    historicalMirror: "Epikuros & Lucretius"
+  },
+  "EZOTERİK SİMYACI": {
+    quote: "Kozmik yasaları ve gizli simyayı bildiğini söylüyorsun; fakat kendi günlük hayatının sıradan dağınıklığını bile toparlamaktan acizsin.",
+    contradiction: "Ruhunu altına dönüştürdüğünü iddia ediyorsun ama küçük dünyevi krizlerde kurşun gibi ağırlaşıyorsun.",
+    socraticQuestion: "Evrenin sırlarını çözdün de, kendi zihnindeki vesveseyi çözebildin mi?",
+    historicalMirror: "Hermes Trismegistus & Paracelsus"
+  },
+  "KUTSAL HARMONİ": {
+    quote: "Her varlıkta bir kutsal ruh gördüğünü söylüyorsun; ama trafikte önüne kıran bir insana karşı içindeki o vahşi öfkeyi bastıramıyorsun.",
+    contradiction: "Doğayla saf bir ahenk içindesin güya; ama beton şehrin tüm yapay lükslerinden bir gün bile vazgeçemiyorsun.",
+    socraticQuestion: "Doğanın ruhunu mu seviyorsun, yoksa sadece pastoral bir tablonun yarattığı romantizmi mi?",
+    historicalMirror: "Motoori Norinaga & Kadim Kannushiler"
+  },
+  "IŞIK İŞRAKİSİ": {
+    quote: "Gönlünün nur ile aydınlandığını sanıyorsun; oysa aklının kibirli gölgeleri hala en parlak fikirleri bile karartmaya yetiyor.",
+    contradiction: "Sezgisel ışığa tapıyorsun ama mantığınla çelişen tek bir gerçekle karşılaştığında darmadağın oluyorsun.",
+    socraticQuestion: "Gördüğün ışık gerçekten hakikatin nuru mu, yoksa kendi arzularının yarattığı bir serap mı?",
+    historicalMirror: "Şehabeddin Sühreverdi & Molla Sadra"
+  },
+  "GÖNÜL İNSANI": {
+    quote: "Her ne ararsan kendinde ara diyorsun; ama başın sıkıştığında yine kurtuluşu dışarıdaki insanlardan ve övgülerden dileniyorsun.",
+    contradiction: "Yetmiş iki milleti bir görüyorsun ama fikrine uymayan birini iki dakikada aforoz edebiliyorsun.",
+    socraticQuestion: "Gönlün gerçekten bir dergah mı, yoksa sadece seni sevenlerin girebildiği dar bir kulübe mi?",
+    historicalMirror: "Hacı Bektaş Veli & Yunus Emre"
+  },
+  "PRAGMATİK EYLEMCİ": {
+    quote: "Sadece işe yarayan şeylerin doğru olduğunu söylüyorsun; fakat kalbinin en derinindeki o çocuksu idealleri fayda cetveliyle ölçmeye kalktığında ruhun çölleşiyor.",
+    contradiction: "Soyut felsefeyi boş lakırdı sayıyorsun ama neden yaşadığını sorsalar tek bir somut cevap veremiyorsun.",
+    socraticQuestion: "Her şeyi faydayla açıklıyorsun; peki karşılıksız sevginin kâr-zarar bilançosu nedir?",
+    historicalMirror: "William James & John Dewey"
+  },
+  "EVRİLEN ZİHİN": {
+    quote: "Kozmik aklın tarih boyunca diyalektik bir dansla evrildiğini savunuyorsun; oysa kendi iç çelişkilerini çözmekten aciz bir döngüde debeleniyorsun.",
+    contradiction: "Tanrı'nın evrenle birlikte geliştiğini söylüyorsun ama kendi zihnini yenilemeye gelince eski inatlarına tutunuyorsun.",
+    socraticQuestion: "Tarihin sonunu gördün mü, yoksa kendi felsefi kibrinin zirvesinde mi mahsur kaldın?",
+    historicalMirror: "G.W.F. Hegel & A.N. Whitehead"
+  },
+  "YALNIZ BİLİNÇ": {
+    quote: "Sadece kendi zihninin varlığından emin olduğunu söylüyorsun; oysa yapayalnız kaldığın o sessiz gecelerde başkalarının varlığına duyduğun açlık iliklerini titretiyor.",
+    contradiction: "Dış dünyayı bir rüya sanıyorsun ama biri canını yaktığında o rüya sana cehennem gibi gerçek geliyor.",
+    socraticQuestion: "Eğer her şey sadece senin zihninin bir oyunuysa, neden kendini bu kadar çok hırpalıyorsun?",
+    historicalMirror: "René Descartes & George Berkeley"
   }
 };
 
@@ -592,6 +652,106 @@ const HUMANIZED_PERSONAS: Record<string, HumanizedPersona> = {
     popCultureTwin: "Mevlânâ & Küçük Prens",
     threeWords: ["Aşık", "Gönlü Zengin", "İlham Verici"],
     vibeQuote: "Aşk bir yolculuktur, menzil ise bizzat kalbin kendisidir."
+  },
+  "ÖZGÜR VAROLUŞÇU": {
+    title: "Kendi Özünü Yaratan Bağımsız Ruh",
+    everydayYou: "Toplumun kalıplarını ve hazır etiketleri yırtıp atan, yaptığı her seçimin bedelini dimdik ödeyen radikal özgür zihin.",
+    redFlag: "Karar alma anlarında aşırı varoluşsal kaygıya kapılıp sevdiklerine mesafeli davranman.",
+    greenFlag: "Asla sürü psikolojisine uymazsın; özgünlüğün ve bağımsız duruşun herkesi büyüler.",
+    triggersYou: "Koyun gibi sürüye uyanlar ve kendi hayatının sorumluluğunu alamayanlar.",
+    popCultureTwin: "Jean-Paul Sartre & Rick Sanchez",
+    threeWords: ["Özgür", "Özgün", "Sorumlu"],
+    vibeQuote: "Varoluş özden önce gelir; kim olacağına sadece sen karar verirsin."
+  },
+  "KİNİK BOHEM": {
+    title: "Yalın Doğallık & Pervasız Özgür",
+    everydayYou: "Şatafatı, marka çılgınlığını ve sahte nezaketleri alaya alan, doğallıktan ve dürüstlükten zerre taviz vermeyen bilge aylak.",
+    redFlag: "Bazen sivri dilinle insanları istemeden kırıp toplumdan tamamen izole olman.",
+    greenFlag: "Hiçbir yapay hırsın esiri değilsin; en sade şartlarda bile krallardan daha huzurlusun.",
+    triggersYou: "Görgüsüzce hava atanlar ve statü budalaları.",
+    popCultureTwin: "Sinoplu Diyojen & Rust Cohle",
+    threeWords: ["Yalın", "Cesur", "Filtresiz"],
+    vibeQuote: "Gölge etme, başka ihsan istemem."
+  },
+  "HUZUR BAHÇIVANI": {
+    title: "Sakin Yaşam Ustası & Vefa Bahçesi",
+    everydayYou: "Gereksiz hırslardan uzak durup iyi dostlarla sade bir masada sohbet etmeyi saraylara değişmeyen dingin kalp.",
+    redFlag: "Konfor alanını korumak için bazen yüzleşilmesi gereken krizleri halının altına süpürmen.",
+    greenFlag: "Varlığın etrafına dinginlik ve güven yayar; dostluğun bir ömür boyu sığınılacak limandır.",
+    triggersYou: "Hırslı kavgalar, bağırtı çağırtı ve gösteriş merakı.",
+    popCultureTwin: "Epikuros & Samwise Gamgee",
+    threeWords: ["Dingin", "Vefalı", "Huzurlu"],
+    vibeQuote: "Dostluk bütün dünyayı dolaşır ve hepimizi uyanıp hayatı kutlamaya çağırır."
+  },
+  "EZOTERİK SİMYACI": {
+    title: "Kozmik Sır Avcısı & Gizemli Bilinç",
+    everydayYou: "Görünenin arkasındaki gizli sembolleri, kaderin eşzamanlılıklarını ve ruhsal simyayı arayan derin kaşif.",
+    redFlag: "Her olayın altında gizli bir işaret ararken hayatın basit gerçekliğini ıskalaman.",
+    greenFlag: "Sezgilerin bir radar gibidir; krizlerin arkasındaki saklı fırsatları altın gibi parlatırsın.",
+    triggersYou: "Sığ materyalizm ve her şeyi basite indirgeyen küçümseyici tavırlar.",
+    popCultureTwin: "Hermes Trismegistus & Doctor Strange",
+    threeWords: ["Ezoterik", "Sezgisel", "Derin"],
+    vibeQuote: "Yukarıda ne varsa aşağıda da o vardır; zihnin neyse evrenin de odur."
+  },
+  "KUTSAL HARMONİ": {
+    title: "Doğa ile Bir Olan Ruhsal Denge",
+    everydayYou: "Ormanın fısıltısını, yağmurun kokusunu ve rüzgarın nefesini kalbinde hisseden, doğanın kutsallığına hürmet duyan zarif ruh.",
+    redFlag: "Şehir hayatının gürültüsünde çabuk tükenip ruhsal olarak içine kapanman.",
+    greenFlag: "Bütün canlılara karşı derin bir merhamet beslersin; girdiğin her ortama bir tapınak ferahlığı getirirsin.",
+    triggersYou: "Doğanın katledilmesi ve canlılara saygısızlık.",
+    popCultureTwin: "San Prenses Mononoke & Totoro",
+    threeWords: ["Ahenkli", "Doğal", "Şefkatli"],
+    vibeQuote: "Her nehirde ve ağaçta yaşayan kutsal ruhla uyum içinde yaşa."
+  },
+  "IŞIK İŞRAKİSİ": {
+    title: "Nur Sezgisi & Kalp Aydınlığı",
+    everydayYou: "Kitabi bilgilerle yetinmeyip hakikati kalbinde parlayan bir şimşek gibi bizzat tecrübe etmek isteyen aydınlık arayıcı.",
+    redFlag: "Yüksek sezgilerine güvenip bazen mantıklı argümanları dinlemeyi reddetmen.",
+    greenFlag: "Karanlık ve umutsuz anlarda etrafındaki herkesin yolunu aydınlatan bir meşale olursun.",
+    triggersYou: "Karanlık kötümserlik ve ruhsuz bilgi ukalalığı.",
+    popCultureTwin: "Şehabeddin Sühreverdi & Galadriel",
+    threeWords: ["Aydınlık", "Sezgisel", "İlham Verici"],
+    vibeQuote: "Işık, hem kendi başına apaçık olan hem de her şeyi görünür kılan hakikattir."
+  },
+  "GÖNÜL İNSANI": {
+    title: "Anadolu Bilgesi & Kucaklayıcı Sevgi",
+    everydayYou: "Yetmiş iki milleti bir gören, kimseyi inancından ya da kimliğinden ötürü hor görmeyen, insanı baş tacı yapan koca yürek.",
+    redFlag: "Herkese iyi niyetle yaklaştığın için suistimal edilmeye açık olman.",
+    greenFlag: "Kibrin zerresi yoktur; sofranı da gönlünü de herkese ardına kadar açarsın.",
+    triggersYou: "Kibir, ayrımcılık ve insanı hor gören kibirli bağnazlık.",
+    popCultureTwin: "Hacı Bektaş Veli & Yunus Emre",
+    threeWords: ["Kucaklayıcı", "Cömert", "Mütevazı"],
+    vibeQuote: "Her ne ararsan kendinde ara; gönül kırmak Kabe yıkmaktan beterdir."
+  },
+  "PRAGMATİK EYLEMCİ": {
+    title: "Çözüm Mimarı & Sonuç Odaklı Deha",
+    everydayYou: "Boş laflara ve kuru teorilere karnı tok olan, işe yarayanı alıp hemen sahada uygulayan pratik zihin.",
+    redFlag: "Faydası hemen görünmeyen sanatsal ve duygusal nüansları küçümsemen.",
+    greenFlag: "Tıkanan her projeyi ve kaosu dakikalar içinde işler hale getiren müthiş bir problem çözücüsün.",
+    triggersYou: "Sonu gelmeyen teorik toplantılar ve icraatsız boş laflar.",
+    popCultureTwin: "William James & Tony Stark",
+    threeWords: ["Pratik", "Çözümcü", "Eylemsel"],
+    vibeQuote: "Felsefe soyut kütüphane sporu değil, hayatın krizlerini çözme sanatıdır."
+  },
+  "EVRİLEN ZİHİN": {
+    title: "Diyalektik Filozof & Süreç Bilgesi",
+    everydayYou: "Hayatın durağan değil sürekli bir oluş ve evrim içinde olduğunu bilen, zıtlıklardan yepyeni sentezler çıkaran analitik zeka.",
+    redFlag: "Her olayı aşırı felsefileştirip bazen basit duyguların tadını çıkarmayı unutman.",
+    greenFlag: "En büyük krizlerde bile 'bu da sürecin bir parçası' diyerek büyük resmi sakinlikle okursun.",
+    triggersYou: "Statükoculuk ve değişime direnen katı kafalar.",
+    popCultureTwin: "G.W.F. Hegel & Christopher Nolan",
+    threeWords: ["Vizyoner", "Diyalektik", "Derin"],
+    vibeQuote: "Varlık durağan bir heykel değil, sürekli kendini aşan canlı bir nehirdir."
+  },
+  "YALNIZ BİLİNÇ": {
+    title: "Epistemolojik Sorgulayıcı & Hakikat Dedektifi",
+    everydayYou: "Gördüğü hiçbir şeyi olduğu gibi kabul etmeyen, gerçekliğin dokusunu sürekli sorgulayan, kendi zihninin derinliklerinde yaşayan zeka.",
+    redFlag: "Aşırı şüphecilikten ötürü bazen en yakınlarına bile güvenmekte zorlanman.",
+    greenFlag: "Manipüle edilmesi imkansız bir zihne sahipsin; sahteliği kilometrelerce öteden koklarsın.",
+    triggersYou: "Sorgulanmadan kabul edilen dogmalar ve yüzeysel gerçeklik kabulleri.",
+    popCultureTwin: "René Descartes & Neo Matrix",
+    threeWords: ["Sorgulayıcı", "Bağımsız", "Keskin"],
+    vibeQuote: "Düşünüyorum, öyleyse varım; geriye kalan her şey sorgulanmaya muhtaçtır."
   }
 };
 
