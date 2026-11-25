@@ -1,7 +1,24 @@
 # 🌌 Kozmo-Teo: Bilinçaltı İnanç Eşleştirme & Anonim Teolojik Ağ
 
 <p align="center">
-  <strong>Kozmo-Teo</strong>, bireylerin bilinçaltındaki teolojik, ontolojik ve ahlaki eğilimlerini 5 temel boyutta analiz eden, 17+ farklı kadim ve çağdaş inanç sistemiyle matematiksel benzerliklerini hesaplayan ve benzer ya da zıt frekanstaki insanları ses doğrulamalı <strong>Anonim Teolojik Ağ</strong> üzerinde buluşturan tam kapsamlı bir web platformudur.
+  <a href="https://kozmoteo.vercel.app" target="_blank">
+    <img src="https://img.shields.io/badge/Canlı%20Demo-Vercel-black?style=for-the-badge&logo=vercel" alt="Vercel Canlı Demo" />
+  </a>
+  <a href="https://kozmoteo.netlify.app" target="_blank">
+    <img src="https://img.shields.io/badge/Canlı%20Demo-Netlify-00C7B7?style=for-the-badge&logo=netlify&logoColor=white" alt="Netlify Canlı Demo" />
+  </a>
+  <a href="https://github.com/coderuur/kozmoteo" target="_blank">
+    <img src="https://img.shields.io/badge/GitHub-Repo-181717?style=for-the-badge&logo=github" alt="GitHub Repo" />
+  </a>
+</p>
+
+<p align="center">
+  🚀 <strong>Vercel Canlı Dağıtım:</strong> <a href="https://kozmoteo.vercel.app">https://kozmoteo.vercel.app</a><br />
+  ⚡ <strong>Netlify Canlı Dağıtım:</strong> <a href="https://kozmoteo.netlify.app">https://kozmoteo.netlify.app</a>
+</p>
+
+<p align="center">
+  <strong>Kozmo-Teo</strong>, bireylerin bilinçaltındaki teolojik, ontolojik ve ahlaki eğilimlerini 5 temel boyutta analiz eden, 30 farklı felsefi ve düşünsel akımla matematiksel benzerliklerini hesaplayan ve benzer ya da zıt frekanstaki insanları ses doğrulamalı <strong>Anonim Teolojik Ağ</strong> üzerinde buluşturan tam kapsamlı bir web platformudur.
 </p>
 
 ---
