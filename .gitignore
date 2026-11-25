@@ -22,7 +22,6 @@ arayuz/node_modules/
 .next/
 arayuz/.next/
 out/
-arayuz/out/
 build/
 *.tsbuildinfo
 arayuz/*.tsbuildinfo
