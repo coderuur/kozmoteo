@@ -43,6 +43,7 @@ class MatchSession(Base):
     is_revealed = Column(Boolean, default=False)
     reveal_requested_by = Column(String, nullable=True)
     is_ai_companion = Column(Boolean, default=True)
+    room_secret = Column(String, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
 
 class ChatMessage(Base):

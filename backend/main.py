@@ -1,7 +1,11 @@
-from fastapi import FastAPI, Depends, UploadFile, File, Form, HTTPException, WebSocket, WebSocketDisconnect
+from fastapi import FastAPI, Depends, UploadFile, File, Form, HTTPException, WebSocket, WebSocketDisconnect, Header, Query
 from fastapi.middleware.cors import CORSMiddleware
+from sqlalchemy import text
 from sqlalchemy.orm import Session
 from pydantic import BaseModel
+import urllib.request
+import urllib.error
+import urllib.parse
 import shutil
 import os
 import uuid
@@ -22,6 +26,16 @@ import models, security, matching
 
 models.Base.metadata.create_all(bind=engine)
 
+# Mevcut SQLite veritabanlarında eksikse room_secret sütununu güvenle ekle
+try:
+    with engine.connect() as conn:
+        cols = [row[1] for row in conn.execute(text("PRAGMA table_info(match_sessions)")).fetchall()]
+        if "room_secret" not in cols:
+            conn.execute(text("ALTER TABLE match_sessions ADD COLUMN room_secret VARCHAR"))
+            conn.commit()
+except Exception:
+    pass
+
 app = FastAPI(
     title="Kozmo-Teo API",
     description="Bilinçaltı İnanç Eşleştirme ve Anonim Teolojik Ağ Motoru",
@@ -38,16 +52,19 @@ DREAM_COUNTER: int = 0
 
 
 # CORS Yapılandırması (Üretim ve Geliştirme Uyumlu)
-allowed_origins_env = os.environ.get("ALLOWED_ORIGINS", "*")
-if allowed_origins_env == "*":
+default_origins = "http://localhost:3000,http://127.0.0.1:3000,https://kozmoteo.vercel.app,https://kozmoteo.netlify.app"
+allowed_origins_env = os.environ.get("ALLOWED_ORIGINS", default_origins)
+if allowed_origins_env.strip() == "*":
     origins = ["*"]
+    allow_creds = False
 else:
     origins = [orig.strip() for orig in allowed_origins_env.split(",") if orig.strip()]
+    allow_creds = True
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
-    allow_credentials=True,
+    allow_credentials=allow_creds,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -488,6 +505,21 @@ def verify_password(password: str, stored_hash: str) -> bool:
 def generate_token() -> str:
     return secrets.token_urlsafe(32)
 
+def extract_bearer_token(authorization: str | None) -> str | None:
+    if not authorization:
+        return None
+    parts = authorization.split(" ", 1)
+    if len(parts) == 2 and parts[0].lower() == "bearer":
+        return parts[1].strip() or None
+    return None
+
+def verify_room_access(session: models.MatchSession | None, room_token: str | None):
+    if not session:
+        raise HTTPException(status_code=404, detail="Sohbet odası bulunamadı.")
+    if session.room_secret:
+        if not room_token or not secrets.compare_digest(session.room_secret, room_token.strip()):
+            raise HTTPException(status_code=403, detail="Bu sohbet odasına erişim yetkiniz yok.")
+
 class RegisterAnonymousInput(BaseModel):
     username: str
     password: str
@@ -497,12 +529,10 @@ class LoginAnonymousInput(BaseModel):
     password: str
 
 class GoogleAuthInput(BaseModel):
-    email: str
-    name: str
-    google_id: str
+    id_token: str
 
 class SaveResultInput(BaseModel):
-    token: str
+    token: str | None = None
     test_type: str = "short"
     archetype: str
     similarity_percentage: int
@@ -582,18 +612,40 @@ def login_anonymous(data: LoginAnonymousInput, db: Session = Depends(get_db)):
 
 @app.post("/api/auth/google")
 def google_auth(data: GoogleAuthInput, db: Session = Depends(get_db)):
-    clean_email = data.email.strip().lower()
-    clean_google_id = data.google_id.strip()
+    google_client_id = os.environ.get("GOOGLE_CLIENT_ID", "").strip()
+    if not google_client_id:
+        raise HTTPException(
+            status_code=501,
+            detail="Google OAuth sunucu tarafında yapılandırılmamış. Lütfen anonim giriş kullanın."
+        )
 
-    # Kullanıcıyı e-posta veya google_id ile bul
+    # Google ID Token doğrulaması (sahte e-posta ile hesap ele geçirmeyi önler)
+    try:
+        query = urllib.parse.urlencode({"id_token": data.id_token.strip()})
+        req = urllib.request.Request(f"https://oauth2.googleapis.com/tokeninfo?{query}", method="GET")
+        with urllib.request.urlopen(req, timeout=5) as resp:
+            token_info = json.loads(resp.read().decode("utf-8"))
+    except Exception:
+        raise HTTPException(status_code=401, detail="Geçersiz veya süresi dolmuş Google oturum belirteci.")
+
+    if token_info.get("aud") != google_client_id or token_info.get("email_verified") != "true":
+        raise HTTPException(status_code=401, detail="Google kimlik doğrulaması reddedildi.")
+
+    clean_email = str(token_info.get("email", "")).strip().lower()
+    clean_google_id = str(token_info.get("sub", "")).strip()
+    verified_name = str(token_info.get("name", "")).strip()
+    if not clean_email or not clean_google_id:
+        raise HTTPException(status_code=401, detail="Google hesabından geçerli kimlik bilgisi alınamadı.")
+
+    # Kullanıcıyı doğrulanmış google_id veya doğrulanmış e-posta ile bul
     user = db.query(models.User).filter(
         (models.User.google_id == clean_google_id) | (models.User.email == clean_email)
     ).first()
 
     if not user:
         # Yeni Google kullanıcısı oluştur
-        base_username = data.name.strip().lower().replace(" ", "_") if data.name else clean_email.split("@")[0]
-        base_username = "".join(c for c in base_username if c.isalnum() or c == "_")[:20]
+        base_username = verified_name.lower().replace(" ", "_") if verified_name else clean_email.split("@")[0]
+        base_username = "".join(c for c in base_username if c.isalnum() or c == "_")[:20] or "gezgin"
         unique_username = f"{base_username}_{secrets.token_hex(2)}"
 
         # Uniqueness garantisi
@@ -632,8 +684,15 @@ def google_auth(data: GoogleAuthInput, db: Session = Depends(get_db)):
     }
 
 @app.post("/api/user/save-result")
-def save_user_result(data: SaveResultInput, db: Session = Depends(get_db)):
-    user = db.query(models.User).filter(models.User.token == data.token).first()
+def save_user_result(
+    data: SaveResultInput,
+    authorization: str | None = Header(default=None),
+    db: Session = Depends(get_db)
+):
+    auth_token = extract_bearer_token(authorization) or (data.token.strip() if data.token else None)
+    if not auth_token:
+        raise HTTPException(status_code=401, detail="Oturum belirteci eksik.")
+    user = db.query(models.User).filter(models.User.token == auth_token).first()
     if not user:
         raise HTTPException(status_code=401, detail="Geçersiz kullanıcı oturumu.")
 
@@ -656,8 +715,14 @@ def save_user_result(data: SaveResultInput, db: Session = Depends(get_db)):
     return {"status": "ok", "message": "Test sonucu Kozmik Pasaportuna başarıyla kaydedildi."}
 
 @app.get("/api/user/profile")
-def get_user_profile(token: str, db: Session = Depends(get_db)):
-    user = db.query(models.User).filter(models.User.token == token).first()
+def get_user_profile(
+    authorization: str | None = Header(default=None),
+    db: Session = Depends(get_db)
+):
+    auth_token = extract_bearer_token(authorization)
+    if not auth_token:
+        raise HTTPException(status_code=401, detail="Yetkilendirme başlığı (Bearer token) gerekli.")
+    user = db.query(models.User).filter(models.User.token == auth_token).first()
     if not user:
         raise HTTPException(status_code=401, detail="Kullanıcı bulunamadı.")
 
@@ -842,6 +907,7 @@ def match_anonymous(req: AnonymousMatchRequest, db: Session = Depends(get_db)):
             break
 
     session_id = f"kozmo_{uuid.uuid4().hex[:10]}"
+    room_secret = generate_token()
 
     if matched_real_user:
         # İki gerçek kullanıcı eşleştirildi!
@@ -857,7 +923,8 @@ def match_anonymous(req: AnonymousMatchRequest, db: Session = Depends(get_db)):
             compatibility=final_score,
             intent=req.intent,
             is_revealed=False,
-            is_ai_companion=False
+            is_ai_companion=False,
+            room_secret=room_secret
         )
         db.add(match_session)
 
@@ -874,6 +941,7 @@ def match_anonymous(req: AnonymousMatchRequest, db: Session = Depends(get_db)):
 
         return {
             "session_id": session_id,
+            "room_token": room_secret,
             "partner_name": matched_real_user["username"],
             "partner_archetype": "GERÇEK YOLCU",
             "partner_gender": matched_real_user["gender"],
@@ -915,7 +983,8 @@ def match_anonymous(req: AnonymousMatchRequest, db: Session = Depends(get_db)):
         compatibility=final_score,
         intent=req.intent,
         is_revealed=False,
-        is_ai_companion=True
+        is_ai_companion=True,
+        room_secret=room_secret
     )
     db.add(match_session)
 
@@ -931,6 +1000,7 @@ def match_anonymous(req: AnonymousMatchRequest, db: Session = Depends(get_db)):
 
     return {
         "session_id": session_id,
+        "room_token": room_secret,
         "partner_name": best_partner["name"],
         "partner_archetype": best_partner["archetype"],
         "partner_gender": best_partner["gender"],
@@ -941,9 +1011,14 @@ def match_anonymous(req: AnonymousMatchRequest, db: Session = Depends(get_db)):
     }
 
 @app.get("/api/chat/messages/{session_id}")
-def get_chat_messages(session_id: str, db: Session = Depends(get_db)):
-    msgs = db.query(models.ChatMessage).filter(models.ChatMessage.session_id == session_id).order_by(models.ChatMessage.id.asc()).all()
+def get_chat_messages(
+    session_id: str,
+    x_room_token: str | None = Header(default=None),
+    db: Session = Depends(get_db)
+):
     session = db.query(models.MatchSession).filter(models.MatchSession.id == session_id).first()
+    verify_room_access(session, x_room_token)
+    msgs = db.query(models.ChatMessage).filter(models.ChatMessage.session_id == session_id).order_by(models.ChatMessage.id.asc()).all()
     return {
         "messages": [
             {
@@ -959,10 +1034,13 @@ def get_chat_messages(session_id: str, db: Session = Depends(get_db)):
     }
 
 @app.post("/api/chat/send")
-async def send_chat_message(req: SendMessageRequest, db: Session = Depends(get_db)):
+async def send_chat_message(
+    req: SendMessageRequest,
+    x_room_token: str | None = Header(default=None),
+    db: Session = Depends(get_db)
+):
     session = db.query(models.MatchSession).filter(models.MatchSession.id == req.session_id).first()
-    if not session:
-        raise HTTPException(status_code=404, detail="Sohbet odası bulunamadı.")
+    verify_room_access(session, x_room_token)
 
     clean_text = html.escape(req.text.strip()[:500])
     clean_sender = html.escape(req.sender_name.strip()[:30]) or "Sen"
@@ -1060,10 +1138,13 @@ async def send_chat_message(req: SendMessageRequest, db: Session = Depends(get_d
     }
 
 @app.post("/api/chat/reveal/{session_id}")
-async def reveal_identity(session_id: str, db: Session = Depends(get_db)):
+async def reveal_identity(
+    session_id: str,
+    x_room_token: str | None = Header(default=None),
+    db: Session = Depends(get_db)
+):
     session = db.query(models.MatchSession).filter(models.MatchSession.id == session_id).first()
-    if not session:
-        raise HTTPException(status_code=404, detail="Sohbet bulunamadı.")
+    verify_room_access(session, x_room_token)
 
     session.is_revealed = True
     system_msg = models.ChatMessage(
@@ -1093,21 +1174,34 @@ async def reveal_identity(session_id: str, db: Session = Depends(get_db)):
 
 # WEBSOCKET ENDPOINT
 @app.websocket("/ws/chat/{session_id}")
-async def websocket_chat_endpoint(websocket: WebSocket, session_id: str, db: Session = Depends(get_db)):
+async def websocket_chat_endpoint(
+    websocket: WebSocket,
+    session_id: str,
+    room_token: str | None = Query(default=None),
+    db: Session = Depends(get_db)
+):
+    session = db.query(models.MatchSession).filter(models.MatchSession.id == session_id).first()
+    if not session or (session.room_secret and (not room_token or not secrets.compare_digest(session.room_secret, room_token.strip()))):
+        await websocket.close(code=1008)
+        return
     await manager.connect(session_id, websocket)
     try:
         while True:
             raw_data = await websocket.receive_text()
             try:
                 data = json.loads(raw_data)
-                text = data.get("text", "")
+                text_val = data.get("text", "")
                 sender_name = data.get("sender_name", "Anonim")
-                if text.strip():
-                    await send_chat_message(SendMessageRequest(
-                        session_id=session_id,
-                        sender_name=sender_name,
-                        text=text
-                    ), db)
+                if text_val.strip():
+                    await send_chat_message(
+                        SendMessageRequest(
+                            session_id=session_id,
+                            sender_name=sender_name,
+                            text=text_val
+                        ),
+                        x_room_token=session.room_secret,
+                        db=db
+                    )
             except Exception:
                 pass
     except WebSocketDisconnect:

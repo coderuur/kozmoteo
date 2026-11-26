@@ -453,9 +453,11 @@ export default function Home() {
     try {
       const res = await fetch(`${getApiUrl()}/api/user/save-result`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${activeToken}`
+        },
         body: JSON.stringify({
-          token: activeToken,
           test_type: testType || 'short',
           archetype: result.archetype,
           similarity_percentage: result.similarity_percentage,

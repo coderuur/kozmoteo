@@ -20,7 +20,9 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({ onClose, onLogout, t
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const res = await fetch(`${getApiUrl()}/api/user/profile?token=${token}`);
+        const res = await fetch(`${getApiUrl()}/api/user/profile`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
         if (res.ok) {
           const data = await res.json();
           setProfileData(data);

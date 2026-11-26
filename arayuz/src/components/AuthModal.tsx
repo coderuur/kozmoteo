@@ -52,49 +52,10 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, onSuccess, soundE
     }
   };
 
-  // Google ile Giriş Simülasyonu / OAuth Akışı
+  // Google OAuth yalnızca sunucu tarafında imzalı id_token ile doğrulanır
   const handleGoogleLogin = async () => {
-    setError(null);
-    setIsLoading(true);
-    playTone(540, 'triangle', 0.3, soundEnabled);
-
-    try {
-      // Prompt ile hızlı Google e-postası veya demo hesabı
-      const userEmail = prompt(
-        "Google hesabınızın e-posta adresini girin:\n(Gerçek canlı entegrasyonda Google pop-up penceresi açılır)",
-        "gezgin@gmail.com"
-      );
-
-      if (!userEmail) {
-        setIsLoading(false);
-        return;
-      }
-
-      const res = await fetch(`${getApiUrl()}/api/auth/google`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email: userEmail,
-          name: userEmail.split('@')[0],
-          google_id: `g-${btoa(userEmail).replace(/=/g, '')}`
-        })
-      });
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.detail || 'Google girişi başarısız oldu.');
-      }
-
-      playCosmicChime(soundEnabled);
-      localStorage.setItem('kozmo_auth_token', data.token);
-      localStorage.setItem('kozmo_user', JSON.stringify(data.user));
-      onSuccess(data.user, data.token);
-      onClose();
-    } catch (err: any) {
-      setError(err.message || 'Google ile bağlanırken bir hata oluştu.');
-    } finally {
-      setIsLoading(false);
-    }
+    setError('Google ile giriş şu an bakımda. Güvenlik nedeniyle lütfen Kozmik Mahlas & Şifre ile giriş yapın veya kayıt olun.');
+    playTone(420, 'triangle', 0.25, soundEnabled);
   };
 
   return (

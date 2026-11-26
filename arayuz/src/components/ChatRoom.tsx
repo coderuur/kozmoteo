@@ -43,7 +43,8 @@ export const ChatRoom: React.FC<ChatRoomProps> = ({
   }, [messages, isPartnerTyping]);
 
   useEffect(() => {
-    const wsUrl = getWebSocketUrl(`/ws/chat/${session.session_id}`);
+    const tokenQuery = session.room_token ? `?room_token=${encodeURIComponent(session.room_token)}` : '';
+    const wsUrl = getWebSocketUrl(`/ws/chat/${session.session_id}${tokenQuery}`);
     let ws: WebSocket | null = null;
     let pollInterval: NodeJS.Timeout | null = null;
 
@@ -79,7 +80,9 @@ export const ChatRoom: React.FC<ChatRoomProps> = ({
         // Fallback polling
         pollInterval = setInterval(async () => {
           try {
-            const res = await fetch(`${getApiUrl()}/api/chat/messages/${session.session_id}`);
+            const res = await fetch(`${getApiUrl()}/api/chat/messages/${session.session_id}`, {
+              headers: session.room_token ? { 'X-Room-Token': session.room_token } : {}
+            });
             if (res.ok) {
               const data = await res.json();
               if (data.messages && data.messages.length > 0) {
@@ -106,7 +109,7 @@ export const ChatRoom: React.FC<ChatRoomProps> = ({
       if (ws) ws.close();
       if (pollInterval) clearInterval(pollInterval);
     };
-  }, [session.session_id, soundEnabled, onRevealSuccess]);
+  }, [session.session_id, session.room_token, soundEnabled, onRevealSuccess]);
 
   const handleSendText = async (textToSend: string) => {
     const cleanText = textToSend.trim();
@@ -137,7 +140,10 @@ export const ChatRoom: React.FC<ChatRoomProps> = ({
       } else {
         const res = await fetch(`${getApiUrl()}/api/chat/send`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json',
+            ...(session.room_token ? { 'X-Room-Token': session.room_token } : {})
+          },
           body: JSON.stringify({
             session_id: session.session_id,
             sender: 'user',
@@ -174,9 +180,12 @@ export const ChatRoom: React.FC<ChatRoomProps> = ({
           sender: 'user'
         }));
       } else {
-        await fetch(`${getApiUrl()}/api/chat/reveal`, {
+        await fetch(`${getApiUrl()}/api/chat/reveal/${session.session_id}`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json',
+            ...(session.room_token ? { 'X-Room-Token': session.room_token } : {})
+          },
           body: JSON.stringify({
             session_id: session.session_id,
             sender: 'user'

@@ -42,6 +42,7 @@ export interface ChatMessageItem {
 
 export interface MatchSessionData {
   session_id: string;
+  room_token?: string;
   partner_name: string;
   partner_archetype: string;
   partner_gender: string;
